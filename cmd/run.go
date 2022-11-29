@@ -2,13 +2,22 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cidverse/cid-actions-go/actions/api"
-	"github.com/cidverse/cid-actions-go/actions/gobuild"
+	"github.com/cidverse/cid-actions-go/actions/fossa"
+	"github.com/cidverse/cid-actions-go/actions/ggshield"
+	"github.com/cidverse/cid-actions-go/actions/gitleaks"
+	"github.com/cidverse/cid-actions-go/actions/golang"
 	"github.com/cidverse/cid-actions-go/actions/golintgolangci"
-	"github.com/cidverse/cid-actions-go/actions/gotest"
+	"github.com/cidverse/cid-actions-go/actions/helm"
+	"github.com/cidverse/cid-actions-go/actions/java"
+	"github.com/cidverse/cid-actions-go/actions/node"
+	"github.com/cidverse/cid-actions-go/actions/python"
+	"github.com/cidverse/cid-actions-go/actions/techdocs"
+	"github.com/cidverse/cid-actions-go/actions/upx"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func init() {
@@ -27,10 +36,40 @@ var runCmd = &cobra.Command{
 		}
 		// actions
 		actions := map[string]api.Action{
+			// changeloggenerate
+			// fossa
+			"fossa-scan": fossa.SourceScanAction{Sdk: *sdk},
+			// ggshield
+			"ggshield-scan": ggshield.ScanAction{Sdk: *sdk},
+			// gitleaks
+			"gitleaks-scan": gitleaks.ScanAction{Sdk: *sdk},
 			// golang
-			"go-build":         gobuild.Action{Sdk: *sdk},
-			"go-test":          gotest.Action{Sdk: *sdk},
+			"go-build":         golang.BuildAction{Sdk: *sdk},
+			"go-test":          golang.TestAction{Sdk: *sdk},
 			"go-lint-golangci": golintgolangci.Action{Sdk: *sdk},
+			// helm
+			"helm-build": helm.BuildAction{Sdk: *sdk},
+			"helm-lint":  helm.LintAction{Sdk: *sdk},
+			// java
+			"java-build": java.BuildAction{Sdk: *sdk},
+			"java-test":  java.TestAction{Sdk: *sdk},
+			// node
+			"node-build": node.BuildAction{Sdk: *sdk},
+			"node-test":  node.TestAction{Sdk: *sdk},
+			// python
+			"python-build": python.BuildAction{Sdk: *sdk},
+			"python-test":  python.TestAction{Sdk: *sdk},
+			"python-lint":  python.LintAction{Sdk: *sdk},
+			// sonarqube
+			// TODO: "sonarqube-scan": sonarqube.ScanAction{Sdk: *sdk},
+			// syft
+			// TODO: "syft-scan": syft.ScanAction{Sdk: *sdk},
+			// techdocs
+			"techdocs-build": techdocs.BuildAction{Sdk: *sdk},
+			// trivy
+			// TODO: "trivy-scan": trivy.ScanAction{Sdk: *sdk},
+			// upxoptimize
+			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
 		}
 
 		// execute

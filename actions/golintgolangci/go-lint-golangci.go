@@ -10,7 +10,7 @@ type Action struct {
 }
 
 func (a Action) Execute() (err error) {
-	ctx, err := a.Sdk.PrepareAction(nil)
+	ctx, err := a.Sdk.ModuleAction(nil)
 	if err != nil {
 		return err
 	}
