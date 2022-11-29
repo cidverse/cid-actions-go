@@ -4,8 +4,22 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-func GetUnknownTestData(debug bool) cidsdk.ActionEnv {
-	return cidsdk.ActionEnv{
+func GetProjectActionData(debug bool) cidsdk.ProjectActionData {
+	return cidsdk.ProjectActionData{
+		ProjectDir: "/my-project",
+		Config: cidsdk.CurrentConfig{
+			Debug:       debug,
+			Log:         map[string]string{},
+			ProjectDir:  "/my-project",
+			ArtifactDir: "/my-project/.dist",
+			TempDir:     "/my-project/.tmp",
+		},
+		Env: nil,
+	}
+}
+
+func GetUnknownTestData(debug bool) cidsdk.ModuleActionData {
+	return cidsdk.ModuleActionData{
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
@@ -26,17 +40,39 @@ func GetUnknownTestData(debug bool) cidsdk.ActionEnv {
 	}
 }
 
-func GetGoModTestData(debug bool) cidsdk.ActionEnv {
-	return cidsdk.ActionEnv{
+func GetNodeTestData(debug bool) cidsdk.ModuleActionData {
+	return cidsdk.ModuleActionData{
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []string{"file~/my-project/go.mod"},
-			Name:              "github.com/cidverse/my-project",
-			Slug:              "github-com-cidverse-my-project",
-			BuildSystem:       "gomod",
+			Discovery:         []string{"file~/my-project/package.json"},
+			Name:              "my-package",
+			Slug:              "my-package",
+			BuildSystem:       "node",
 			BuildSystemSyntax: "default",
-			Language:          &map[string]string{"go": "1.19.0"},
+			Language:          &map[string]string{},
+			Submodules:        nil,
+		},
+		Config: cidsdk.CurrentConfig{
+			Debug:       debug,
+			Log:         map[string]string{},
+			ArtifactDir: ".dist",
+			TempDir:     ".tmp",
+		},
+	}
+}
+
+func GetPythonTestData(buildSystem string, debug bool) cidsdk.ModuleActionData {
+	return cidsdk.ModuleActionData{
+		Module: cidsdk.ProjectModule{
+			ProjectDir:        "/my-project",
+			ModuleDir:         "/my-project",
+			Discovery:         []string{"file~/my-project/package.json"},
+			Name:              "my-package",
+			Slug:              "my-package",
+			BuildSystem:       buildSystem,
+			BuildSystemSyntax: "default",
+			Language:          &map[string]string{},
 			Submodules:        nil,
 		},
 		Config: cidsdk.CurrentConfig{

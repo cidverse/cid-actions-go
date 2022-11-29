@@ -1,16 +1,17 @@
-package golintgolangci
+package golang
 
 import (
 	"errors"
+
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type Action struct {
+type LintAction struct {
 	Sdk cidsdk.SDKClient
 }
 
-func (a Action) Execute() (err error) {
-	ctx, err := a.Sdk.PrepareAction(nil)
+func (a LintAction) Execute() (err error) {
+	ctx, err := a.Sdk.ModuleAction(nil)
 	if err != nil {
 		return err
 	}

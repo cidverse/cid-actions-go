@@ -1,35 +1,36 @@
-package golintgolangci
+package golang
 
 import (
-	"github.com/cidverse/cid-actions-go/actions/api"
+	"testing"
+
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cid-sdk-go/mocks"
 	"github.com/stretchr/testify/assert"
-	"testing"
+	"github.com/stretchr/testify/mock"
 )
 
-func TestGoMod(t *testing.T) {
+func TestGoModLint(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
-	sdk.On("PrepareAction", nil).Return(api.GetGoModTestData(false), nil)
+	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "golangci-lint run --sort-results --issues-exit-code 1",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
-	action := Action{Sdk: sdk}
+	action := LintAction{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
 
-func TestGoModDebug(t *testing.T) {
+func TestGoModLintDebug(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
-	sdk.On("PrepareAction", nil).Return(api.GetGoModTestData(true), nil)
+	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(true), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "golangci-lint run -v --sort-results --issues-exit-code 1",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
-	action := Action{Sdk: sdk}
+	action := LintAction{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

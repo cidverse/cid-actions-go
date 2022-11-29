@@ -1,29 +1,25 @@
-package gobuild
+package golang
 
 import (
 	"errors"
 	"fmt"
+	"runtime"
+
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/shomali11/parallelizer"
-	"runtime"
 )
 
-type Action struct {
+type BuildAction struct {
 	Sdk cidsdk.SDKClient
 }
 
-type Config struct {
+type BuildConfig struct {
 	Platform []Platform `json:"platform"`
 }
 
-type Platform struct {
-	Goos   string `required:"true" json:"goos"`
-	Goarch string `required:"true" json:"goarch"`
-}
-
-func (a Action) Execute() error {
-	cfg := Config{}
-	ctx, err := a.Sdk.PrepareAction(&cfg)
+func (a BuildAction) Execute() error {
+	cfg := BuildConfig{}
+	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
 		return err
 	}
@@ -41,7 +37,7 @@ func (a Action) Execute() error {
 		for _, p := range cfg.Platform {
 			goos := p.Goos
 			goarch := p.Goarch
-			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "go-build", Context: map[string]interface{}{"goos": goos, "goarch": goarch}})
+			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "compile binary", Context: map[string]interface{}{"goos": goos, "goarch": goarch}})
 
 			buildEnv := map[string]string{
 				"CGO_ENABLED": "false",
