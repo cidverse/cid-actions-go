@@ -40,6 +40,7 @@ func (a StartAction) Execute() (err error) {
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `hugo server ` + strings.Join(startArgs, " "),
 		WorkDir: ctx.Module.ModuleDir,
+		Ports: []int{cfg.Port},
 	})
 	if err != nil {
 		return err

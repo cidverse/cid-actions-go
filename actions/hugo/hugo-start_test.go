@@ -15,6 +15,7 @@ func TestTechdocsStart(t *testing.T) {
 	sdk.On(`ExecuteCommand`, cidsdk.ExecuteCommandRequest{
 		Command: `hugo server --source /my-project/docs --minify --gc --baseUrl / --watch --port 7600`,
 		WorkDir: `/my-project/docs`,
+		Ports: []int{7600},
 	}).Return(nil, nil)
 
 	action := StartAction{Sdk: sdk}

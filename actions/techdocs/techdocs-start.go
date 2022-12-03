@@ -35,8 +35,9 @@ func (a StartAction) Execute() (err error) {
 	}
 
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: `techdocs-cli serve ` + strings.Join(startArgs, " "),
+		Command: fmt.Sprintf(`techdocs-cli serve %s`, strings.Join(startArgs, " ")),
 		WorkDir: ctx.Module.ModuleDir,
+		Ports: []int{cfg.Port},
 	})
 	if err != nil {
 		return err

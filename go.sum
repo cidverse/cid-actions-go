@@ -1,5 +1,7 @@
 github.com/cidverse/cid-sdk-go v0.0.0-20221201224500-ad657935dcd5 h1:Cxw/qUNhuUZ06y92TA2y/quDlwg+Q26E3JZ3sREIDRo=
 github.com/cidverse/cid-sdk-go v0.0.0-20221201224500-ad657935dcd5/go.mod h1:DKhOya1a+0ZTXPfTN2TcdgB4hjhPJq6ByGrqNEztKs4=
+github.com/cidverse/cid-sdk-go v0.0.0-20221203143244-66318c0f41a2 h1:lwUaarGG9QSwnzFErpZW3XFIQ5/ohm1RBks4AOtss1o=
+github.com/cidverse/cid-sdk-go v0.0.0-20221203143244-66318c0f41a2/go.mod h1:DKhOya1a+0ZTXPfTN2TcdgB4hjhPJq6ByGrqNEztKs4=
 github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c h1:YuuUfvtjFnpEfPma36LCwOcWIFApZm0WcmnLhkNNdQE=
 github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c/go.mod h1:Wb6DFdoNGJgeBDDtJ4CJbnS3skGL/Dw4xm2EBunYfMw=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
