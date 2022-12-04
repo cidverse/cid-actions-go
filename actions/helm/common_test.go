@@ -8,7 +8,7 @@ func GetHelmTestData(debug bool) cidsdk.ModuleActionData {
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []string{"file~/my-project/package.json"},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/package.json"}},
 			Name:              "my-package",
 			Slug:              "my-package",
 			BuildSystem:       string(cidsdk.BuildSystemHelm),

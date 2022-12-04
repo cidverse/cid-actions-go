@@ -3,8 +3,9 @@ module github.com/cidverse/cid-actions-go
 go 1.19
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20221203143244-66318c0f41a2
+	github.com/cidverse/cid-sdk-go v0.0.0-20221204142742-517cd542665e
 	github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c
+	github.com/google/uuid v1.3.0
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.6.1

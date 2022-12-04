@@ -8,7 +8,7 @@ func GoModTestData(debug bool) cidsdk.ModuleActionData {
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []string{"file~/my-project/go.mod"},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/go.mod"}},
 			Name:              "github.com/cidverse/my-project",
 			Slug:              "github-com-cidverse-my-project",
 			BuildSystem:       "gomod",

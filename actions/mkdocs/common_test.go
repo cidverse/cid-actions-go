@@ -10,7 +10,7 @@ func MKDocsTestData(debug bool) cidsdk.ModuleActionData {
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project/docs",
-			Discovery:         []string{"file~/my-project/mkdocs.yaml"},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/mkdocs.yaml"}},
 			Name:              "my-module",
 			Slug:              "my-module",
 			BuildSystem:       string(cidsdk.BuildSystemMkdocs),

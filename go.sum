@@ -1,7 +1,5 @@
-github.com/cidverse/cid-sdk-go v0.0.0-20221201224500-ad657935dcd5 h1:Cxw/qUNhuUZ06y92TA2y/quDlwg+Q26E3JZ3sREIDRo=
-github.com/cidverse/cid-sdk-go v0.0.0-20221201224500-ad657935dcd5/go.mod h1:DKhOya1a+0ZTXPfTN2TcdgB4hjhPJq6ByGrqNEztKs4=
-github.com/cidverse/cid-sdk-go v0.0.0-20221203143244-66318c0f41a2 h1:lwUaarGG9QSwnzFErpZW3XFIQ5/ohm1RBks4AOtss1o=
-github.com/cidverse/cid-sdk-go v0.0.0-20221203143244-66318c0f41a2/go.mod h1:DKhOya1a+0ZTXPfTN2TcdgB4hjhPJq6ByGrqNEztKs4=
+github.com/cidverse/cid-sdk-go v0.0.0-20221204142742-517cd542665e h1:Ik0zuS8ssNxUwneZG7Uo4t7y261DJ4xzqoHz7vOih44=
+github.com/cidverse/cid-sdk-go v0.0.0-20221204142742-517cd542665e/go.mod h1:9iZsOaaNOQjlpBCGHyxBgNnC7X1wEGc1kpwiFWJG1kM=
 github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c h1:YuuUfvtjFnpEfPma36LCwOcWIFApZm0WcmnLhkNNdQE=
 github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c/go.mod h1:Wb6DFdoNGJgeBDDtJ4CJbnS3skGL/Dw4xm2EBunYfMw=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
@@ -11,6 +9,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-resty/resty/v2 v2.7.0 h1:me+K9p3uhSmXtrBZ4k9jcEAfJmuC8IivWHwaLZwPrFY=
 github.com/go-resty/resty/v2 v2.7.0/go.mod h1:9PWDzw47qPphMRFfhsyk0NnSgvluHcljSMVIq3w7q0I=
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/inconshreveable/mousetrap v1.0.1 h1:U3uMjPSQEBMNp1lFxmllqCPM6P5u/Xq7Pgzkat/bFNc=
 github.com/inconshreveable/mousetrap v1.0.1/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/cidverse/cid-actions-go/actions/api"
+	"github.com/cidverse/cid-actions-go/actions/container"
 	"github.com/cidverse/cid-actions-go/actions/fossa"
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
 	"github.com/cidverse/cid-actions-go/actions/gitleaks"
@@ -39,6 +40,9 @@ var runCmd = &cobra.Command{
 		// actions
 		actions := map[string]api.Action{
 			// changeloggenerate
+			// container
+			"buildah-build":   container.BuildahBuildAction{Sdk: *sdk},
+			"buildah-publish": container.BuildahPublishAction{Sdk: *sdk},
 			// fossa
 			"fossa-scan": fossa.SourceScanAction{Sdk: *sdk},
 			// ggshield

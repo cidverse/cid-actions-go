@@ -23,7 +23,7 @@ func GetUnknownTestData(debug bool) cidsdk.ModuleActionData {
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []string{"file~/my-project/go.mod"},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/go.mod"}},
 			Name:              "github.com/cidverse/my-project",
 			Slug:              "github-com-cidverse-my-project",
 			BuildSystem:       "unknown",
@@ -45,7 +45,7 @@ func GetNodeTestData(debug bool) cidsdk.ModuleActionData {
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []string{"file~/my-project/package.json"},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/package.json"}},
 			Name:              "my-package",
 			Slug:              "my-package",
 			BuildSystem:       "node",
@@ -67,7 +67,7 @@ func GetPythonTestData(buildSystem string, debug bool) cidsdk.ModuleActionData {
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []string{"file~/my-project/package.json"},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/package.json"}},
 			Name:              "my-package",
 			Slug:              "my-package",
 			BuildSystem:       buildSystem,
