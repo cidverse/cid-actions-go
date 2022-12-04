@@ -19,6 +19,12 @@ func TestGoModTest(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command:       "go test -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -json -covermode=count ./...",
+		WorkDir:       "/my-project",
+		CaptureOutput: true,
+	}).Return(&cidsdk.ExecuteCommandResponse{Stdout: "{}"}, nil)
+	sdk.On("FileWrite", "/my-project/.dist/github-com-cidverse-my-project/go-test/cover.json", []byte("{}")).Return(nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "go tool cover -html /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -o /my-project/.dist/github-com-cidverse-my-project/go-test/cover.html",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
@@ -35,6 +41,12 @@ func TestDebugTest(t *testing.T) {
 		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -v ./...",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command:       "go test -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -json -covermode=count ./...",
+		WorkDir:       "/my-project",
+		CaptureOutput: true,
+	}).Return(&cidsdk.ExecuteCommandResponse{Stdout: "{}"}, nil)
+	sdk.On("FileWrite", "/my-project/.dist/github-com-cidverse-my-project/go-test/cover.json", []byte("{}")).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "go tool cover -html /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -o /my-project/.dist/github-com-cidverse-my-project/go-test/cover.html",
 		WorkDir: "/my-project",

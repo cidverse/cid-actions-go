@@ -36,6 +36,7 @@ func (a TestAction) Execute() error {
 			testArgs = append(testArgs, `-v`)
 		}
 
+		// run tests
 		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "running tests"})
 		_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("go test %s ./...", strings.Join(testArgs, " ")),
@@ -45,7 +46,23 @@ func (a TestAction) Execute() error {
 			return errors.New("tests failed: " + err.Error())
 		}
 
-		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "generating coverage report", Context: map[string]interface{}{"output": covarageDir + "/cover.html"}})
+		// json report
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "generating json coverage report", Context: map[string]interface{}{"output": covarageDir + "/cover.json"}})
+		coverageJsonResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command:       fmt.Sprintf("go test -coverprofile %s/cover.out -json -covermode=count ./...", covarageDir),
+			WorkDir:       ctx.ProjectDir,
+			CaptureOutput: true,
+		})
+		if err != nil {
+			return errors.New("failed to generate json test coverage report: " + err.Error())
+		}
+		err = a.Sdk.FileWrite(covarageDir+"/cover.json", []byte(coverageJsonResult.Stdout))
+		if err != nil {
+			return errors.New("failed to store json test coverage report on filesystem: " + err.Error())
+		}
+
+		// html report
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "generating html coverage report", Context: map[string]interface{}{"output": covarageDir + "/cover.html"}})
 		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("go tool cover -html %s/cover.out -o %s/cover.html", covarageDir, covarageDir),
 			WorkDir: ctx.ProjectDir,

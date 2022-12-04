@@ -16,6 +16,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/mkdocs"
 	"github.com/cidverse/cid-actions-go/actions/node"
 	"github.com/cidverse/cid-actions-go/actions/python"
+	"github.com/cidverse/cid-actions-go/actions/sonarqube"
 	"github.com/cidverse/cid-actions-go/actions/syft"
 	"github.com/cidverse/cid-actions-go/actions/techdocs"
 	"github.com/cidverse/cid-actions-go/actions/upx"
@@ -68,7 +69,7 @@ var runCmd = &cobra.Command{
 			"python-test":  python.TestAction{Sdk: *sdk},
 			"python-lint":  python.LintAction{Sdk: *sdk},
 			// sonarqube
-			// TODO: "sonarqube-scan": sonarqube.ScanAction{Sdk: *sdk},
+			"sonarqube-scan": sonarqube.ScanAction{Sdk: *sdk},
 			// syft
 			"syft-sbom-build":   syft.BuildAction{Sdk: *sdk},
 			"grype-sbom-report": syft.ReportAction{Sdk: *sdk},
