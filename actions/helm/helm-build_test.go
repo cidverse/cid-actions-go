@@ -16,11 +16,11 @@ func TestHelmBuild(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "helm package /my-project --version 0.0.1 --destination ",
+		Command: "helm package /my-project --version 0.0.1 --destination .dist/my-package/helm-charts",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "helm repo index ",
+		Command: "helm repo index .dist/my-package/helm-charts",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 

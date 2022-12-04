@@ -1,6 +1,8 @@
 package helm
 
 import (
+	"path"
+
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -12,13 +14,14 @@ type BuildConfig struct {
 }
 
 func (a BuildAction) Execute() (err error) {
-	chartDir := ""
-
 	cfg := BuildConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
 		return err
 	}
+
+	// globals
+	chartArtifactDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "helm-charts")
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemHelm) {
 		// restore the charts/ directory based on the Chart.lock file
@@ -32,7 +35,7 @@ func (a BuildAction) Execute() (err error) {
 
 		// package
 		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `helm package ` + ctx.Module.ModuleDir + ` --version 0.0.1 --destination ` + chartDir,
+			Command: `helm package ` + ctx.Module.ModuleDir + ` --version 0.0.1 --destination ` + chartArtifactDir,
 			WorkDir: ctx.Module.ProjectDir,
 		})
 		if err != nil {
@@ -41,7 +44,7 @@ func (a BuildAction) Execute() (err error) {
 
 		// update index
 		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `helm repo index ` + chartDir,
+			Command: `helm repo index ` + chartArtifactDir,
 			WorkDir: ctx.Module.ProjectDir,
 		})
 		if err != nil {

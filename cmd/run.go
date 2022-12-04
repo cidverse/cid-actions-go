@@ -54,8 +54,9 @@ var runCmd = &cobra.Command{
 			"go-test":  golang.TestAction{Sdk: *sdk},
 			"go-lint":  golang.LintAction{Sdk: *sdk},
 			// helm
-			"helm-build": helm.BuildAction{Sdk: *sdk},
-			"helm-lint":  helm.LintAction{Sdk: *sdk},
+			"helm-build":         helm.BuildAction{Sdk: *sdk},
+			"helm-lint":          helm.LintAction{Sdk: *sdk},
+			"helm-publish-nexus": helm.PublishNexusAction{Sdk: *sdk},
 			// java
 			"java-build": java.BuildAction{Sdk: *sdk},
 			"java-test":  java.TestAction{Sdk: *sdk},
