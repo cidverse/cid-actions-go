@@ -8,7 +8,6 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
-	github.com/rs/zerolog v1.27.0
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
@@ -21,8 +20,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/otiai10/copy v1.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
