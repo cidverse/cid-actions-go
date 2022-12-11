@@ -59,8 +59,9 @@ var runCmd = &cobra.Command{
 			"helm-lint":          helm.LintAction{Sdk: *sdk},
 			"helm-publish-nexus": helm.PublishNexusAction{Sdk: *sdk},
 			// java
-			"java-build": java.BuildAction{Sdk: *sdk},
-			"java-test":  java.TestAction{Sdk: *sdk},
+			"java-build":   java.BuildAction{Sdk: *sdk},
+			"java-test":    java.TestAction{Sdk: *sdk},
+			"java-publish": java.PublishAction{Sdk: *sdk},
 			// node
 			"node-build": node.BuildAction{Sdk: *sdk},
 			"node-test":  node.TestAction{Sdk: *sdk},
@@ -85,7 +86,7 @@ var runCmd = &cobra.Command{
 			"techdocs-publish": techdocs.PublishAction{Sdk: *sdk},
 			// trivy
 			// TODO: "trivy-scan": trivy.ScanAction{Sdk: *sdk},
-			// upxoptimize
+			// upx-optimize
 			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
 		}
 
