@@ -11,7 +11,7 @@ require (
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
-	github.com/thoas/go-funk v0.9.2
+	github.com/thoas/go-funk v0.9.3
 	gopkg.in/yaml.v3 v3.0.1
 )
 
