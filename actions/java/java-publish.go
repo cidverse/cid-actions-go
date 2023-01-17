@@ -30,7 +30,7 @@ func (a PublishAction) Execute() (err error) {
 	}
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
-		// TODO: run "gradle tasks --all" and check if the publish task is available?
+		// TODO: run "gradle tasks --all" and check if the "publish" task is available?
 		publishEnv := make(map[string]string)
 		if cfg.GPGSignKeyId != "" {
 			publishEnv["ORG_GRADLE_PROJECT_signingKeyId"] = cfg.GPGSignKeyId

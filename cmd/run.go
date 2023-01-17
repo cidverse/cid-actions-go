@@ -10,6 +10,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
 	"github.com/cidverse/cid-actions-go/actions/gitleaks"
 	"github.com/cidverse/cid-actions-go/actions/golang"
+	"github.com/cidverse/cid-actions-go/actions/gosec"
 	"github.com/cidverse/cid-actions-go/actions/helm"
 	"github.com/cidverse/cid-actions-go/actions/hugo"
 	"github.com/cidverse/cid-actions-go/actions/java"
@@ -54,6 +55,8 @@ var runCmd = &cobra.Command{
 			"go-build": golang.BuildAction{Sdk: *sdk},
 			"go-test":  golang.TestAction{Sdk: *sdk},
 			"go-lint":  golang.LintAction{Sdk: *sdk},
+			// gosec
+			"gosec-scan": gosec.ScanAction{Sdk: *sdk},
 			// helm
 			"helm-build":         helm.BuildAction{Sdk: *sdk},
 			"helm-lint":          helm.LintAction{Sdk: *sdk},

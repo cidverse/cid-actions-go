@@ -1,20 +1,19 @@
-package gitleaks
+package gosec
 
 import (
 	"testing"
 
-	"github.com/cidverse/cid-actions-go/actions/api"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cid-sdk-go/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGitleaksScanBuild(t *testing.T) {
+func TestGosecScan(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
-	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
+	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "gitleaks detect --source=. -v --no-git --report-format=sarif --report-path/my-project/.dist/gitleaks/sarif/report.sarif",
+		Command: "gosec -no-fail -fmt sarif -out /my-project/.dist/my-project/sarif/gosec.sarif ./...",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
