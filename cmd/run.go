@@ -17,6 +17,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/mkdocs"
 	"github.com/cidverse/cid-actions-go/actions/node"
 	"github.com/cidverse/cid-actions-go/actions/python"
+	"github.com/cidverse/cid-actions-go/actions/semgrep"
 	"github.com/cidverse/cid-actions-go/actions/sonarqube"
 	"github.com/cidverse/cid-actions-go/actions/syft"
 	"github.com/cidverse/cid-actions-go/actions/techdocs"
@@ -91,16 +92,21 @@ var runCmd = &cobra.Command{
 			// TODO: "trivy-scan": trivy.ScanAction{Sdk: *sdk},
 			// upx-optimize
 			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
+			// semgrep
+			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
 		}
 
 		// execute
 		action := actions[args[0]]
-		if action != nil {
-			err := action.Execute()
-			if err != nil {
-				fmt.Println("Fatal: Actions returned error status" + err.Error())
-				os.Exit(1)
-			}
+		if action == nil {
+			fmt.Printf("Fatal: action %s is not known!", args[0])
+			os.Exit(1)
+		}
+
+		err := action.Execute()
+		if err != nil {
+			fmt.Printf("Fatal: action encountered an error, %s", err.Error())
+			os.Exit(1)
 		}
 	},
 }

@@ -1,7 +1,6 @@
-package gitleaks
+package semgrep
 
 import (
-	"fmt"
 	"path"
 	"strings"
 
@@ -24,29 +23,22 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// files
-	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif.json")
-
-	// opts
-	var opts = []string{"gitleaks", "detect", "--source=.", "-v", "--no-git", "--report-format=sarif", "--report-path=" + reportFile}
-	if ctx.Env["CI"] == "true" {
-		opts = append(opts, "--redact")
-	}
+	reportFile := path.Join(ctx.Config.TempDir, "semgrep.sarif.json")
 
 	// scan
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: strings.Join(opts, " "),
-		WorkDir: ctx.ProjectDir,
+	var opts = []string{"semgrep", "scan", "--config p/default", "--sarif", "--quiet", "--metrics=off", "--disable-version-check", "--exclude=.dist", "--exclude=.tmp"}
+	commandResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command:       strings.Join(opts, " "),
+		WorkDir:       ctx.ProjectDir,
+		CaptureOutput: true,
 	})
 	if err != nil {
 		return err
 	}
+	_ = a.Sdk.FileWrite(reportFile, []byte(commandResult.Stdout))
 
 	// parse report
-	reportContent, err := a.Sdk.FileRead(reportFile)
-	if err != nil {
-		return fmt.Errorf("failed to read report content from file %s: %s", reportFile, err.Error())
-	}
-	report, err := sarif.FromBytes([]byte(reportContent))
+	report, err := sarif.FromBytes([]byte(commandResult.Stdout))
 	if err != nil {
 		return err
 	}
