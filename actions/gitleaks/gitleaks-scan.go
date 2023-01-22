@@ -24,7 +24,7 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// files
-	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif")
+	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif.json")
 
 	// opts
 	var opts = []string{"--source=.", "-v", "--no-git", "--report-format=sarif", "--report-path=" + reportFile}
