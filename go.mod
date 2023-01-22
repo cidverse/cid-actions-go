@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.19
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20221205214349-0e813aab7b21
+	github.com/cidverse/cid-sdk-go v0.0.0-20230122202509-49c99d36f210
 	github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/jarcoal/httpmock v1.2.0
@@ -19,14 +19,14 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/otiai10/copy v1.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
-	golang.org/x/net v0.2.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

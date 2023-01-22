@@ -1,11 +1,12 @@
 package gitleaks
 
 import (
-	"os"
+	"fmt"
 	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/owenrumney/go-sarif/v2/sarif"
 )
 
 type ScanAction struct {
@@ -22,22 +23,40 @@ func (a ScanAction) Execute() (err error) {
 		return err
 	}
 
-	sarifDir := path.Join(ctx.Config.ArtifactDir, "gitleaks", "sarif")
-	_ = os.MkdirAll(sarifDir, os.ModePerm)
+	// files
+	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif")
 
-	var opts []string
-	opts = append(opts, "--source=.")
-	opts = append(opts, "-v")
-	opts = append(opts, "--no-git")
-	opts = append(opts, "--report-format=sarif")
-	opts = append(opts, "--report-path"+path.Join(sarifDir, "report.sarif"))
+	// opts
+	var opts = []string{"--source=.", "-v", "--no-git", "--report-format=sarif", "--report-path=" + reportFile}
 	if ctx.Env["CI"] == "true" {
 		opts = append(opts, "--redact")
 	}
 
+	// scan
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: strings.TrimRight(`gitleaks detect `+strings.Join(opts, " "), " "),
 		WorkDir: ctx.ProjectDir,
+	})
+	if err != nil {
+		return err
+	}
+
+	// parse report
+	reportContent, err := a.Sdk.FileRead(reportFile)
+	if err != nil {
+		return fmt.Errorf("failed to read report content from file %s: %s", reportFile, err.Error())
+	}
+	report, err := sarif.FromBytes([]byte(reportContent))
+	if err != nil {
+		return err
+	}
+
+	// store report
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		File:          reportFile,
+		Type:          "report",
+		Format:        "sarif",
+		FormatVersion: report.Version,
 	})
 	if err != nil {
 		return err
