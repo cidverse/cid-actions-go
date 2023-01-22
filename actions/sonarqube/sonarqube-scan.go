@@ -53,6 +53,35 @@ func (a ScanAction) Execute() (err error) {
 	scanArgs = append(scanArgs, `-D sonar.sources=.`)
 	scanArgs = append(scanArgs, `-D sonar.tests=.`)
 
+	// publish sarif reports to sonarqube
+	if artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{}); err == nil {
+		files := make([]string, 0)
+
+		for _, artifact := range *artifacts {
+			if artifact.Type == "report" && artifact.Format == "sarif" {
+				targetFile := path.Join(ctx.Config.TempDir, artifact.Name)
+				err := a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
+					Module:     artifact.Module,
+					Type:       string(artifact.Type),
+					Name:       artifact.Name,
+					TargetFile: targetFile,
+				})
+				if err != nil {
+					_ = a.Sdk.Log(cidsdk.LogMessageRequest{
+						Level:   "warn",
+						Message: "failed to retrieve sarif report",
+						Context: map[string]interface{}{"artifact": artifact.Name},
+					})
+					continue
+				}
+
+				files = append(files, targetFile)
+			}
+		}
+
+		scanArgs = append(scanArgs, `-D sonar.sarifReportPaths=`+strings.Join(files, ","))
+	}
+
 	// module specific parameters
 	var sourceInclusion []string
 	var sourceExclusions []string

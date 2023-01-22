@@ -19,8 +19,25 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		arg.SonarProjectKey = "my-project-key"
 		arg.SonarToken = "my-token"
 	})
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{}).Return(&[]cidsdk.ActionArtifact{
+		{
+			BuildID:       "0",
+			JobID:         "0",
+			Module:        "root",
+			Type:          "report",
+			Name:          "test.sarif.json",
+			Format:        "sarif",
+			FormatVersion: "2.1.0",
+		},
+	}, nil)
+	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
+		Module:     "root",
+		Type:       "report",
+		Name:       "test.sarif.json",
+		TargetFile: "/my-project/.tmp/test.sarif.json",
+	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "sonar-scanner -D sonar.host.url=https://sonarcloud.local -D sonar.login=my-token -D sonar.organization=my-org -D sonar.projectKey=my-project-key -D sonar.projectName=my-project-name -D sonar.branch.name= -D sonar.sources=. -D sonar.tests=. -D sonar.go.coverage.reportPaths=/my-project/.dist/github-com-cidverse-my-project/go-test/coverage.out -D sonar.go.tests.reportPaths=/my-project/.dist/github-com-cidverse-my-project/go-test/coverage.json -D sonar.inclusions= -D sonar.exclusions=**/*_test.go,**/vendor/**,**/testdata/* -D sonar.test.inclusions=**/*_test.go -D sonar.test.exclusions=**/vendor/**",
+		Command: "sonar-scanner -D sonar.host.url=https://sonarcloud.local -D sonar.login=my-token -D sonar.organization=my-org -D sonar.projectKey=my-project-key -D sonar.projectName=my-project-name -D sonar.branch.name= -D sonar.sources=. -D sonar.tests=. -D sonar.sarifReportPaths=/my-project/.tmp/test.sarif.json -D sonar.go.coverage.reportPaths=/my-project/.dist/github-com-cidverse-my-project/go-test/coverage.out -D sonar.go.tests.reportPaths=/my-project/.dist/github-com-cidverse-my-project/go-test/coverage.json -D sonar.inclusions= -D sonar.exclusions=**/*_test.go,**/vendor/**,**/testdata/* -D sonar.test.inclusions=**/*_test.go -D sonar.test.exclusions=**/vendor/**",
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
