@@ -27,7 +27,7 @@ func (a ScanAction) Execute() (err error) {
 	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif.json")
 
 	// opts
-	var opts = []string{"gitleaks", "detect", "--source=.", "-v", "--no-git", "--report-format=sarif", "--report-path=" + reportFile}
+	var opts = []string{"gitleaks", "detect", "--source=.", "-v", "--no-git", "--report-format=sarif", "--report-path=" + reportFile, "--no-banner"}
 	if ctx.Env["CI"] == "true" {
 		opts = append(opts, "--redact")
 	}

@@ -27,6 +27,9 @@ func DockerfileTestData(debug bool) cidsdk.ModuleActionData {
 			"NCI_CONTAINERREGISTRY_HOST":       "ghcr.io",
 			"NCI_CONTAINERREGISTRY_REPOSITORY": "cidverse/dummy",
 			"NCI_CONTAINERREGISTRY_TAG":        "latest",
+			"NCI_REPOSITORY_KIND":              "git",
+			"NCI_REPOSITORY_REMOTE":            "https://github.com/cidverse/normalizeci.git",
+			"NCI_COMMIT_SHA":                   "abcdef123456",
 		},
 	}
 }

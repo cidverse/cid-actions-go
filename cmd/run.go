@@ -46,6 +46,7 @@ var runCmd = &cobra.Command{
 			// container
 			"buildah-build":   container.BuildahBuildAction{Sdk: *sdk},
 			"buildah-publish": container.BuildahPublishAction{Sdk: *sdk},
+			"container-sign":  container.SignAction{Sdk: *sdk},
 			// fossa
 			"fossa-scan": fossa.SourceScanAction{Sdk: *sdk},
 			// ggshield
