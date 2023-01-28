@@ -24,16 +24,11 @@ func (a BuildahPublishAction) Execute() error {
 	}
 
 	// target image reference
-	imageRefFile := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image", "image.txt")
+	ociDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image")
+	imageRefFile := path.Join(ociDir, "image.txt")
 	imageRef, err := a.Sdk.FileRead(imageRefFile)
 	if err != nil {
 		return fmt.Errorf("failed to parse image reference from %s", err.Error())
-	}
-
-	// dockerhub still has some issues with the oci format
-	format := "oci"
-	if strings.HasPrefix(imageRef, "docker.io/") {
-		format = "v2s2"
 	}
 
 	// for each container archive
@@ -51,7 +46,7 @@ func (a BuildahPublishAction) Execute() error {
 	// allow to publish single images as non-manifests
 	if !cfg.AlwaysPublishManifest && len(files) == 1 {
 		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("buildah push --format %s oci-archive:%s docker://%s", format, files[0].Path, imageRef),
+			Command: fmt.Sprintf("buildah push --format oci oci-archive:%s docker://%s", files[0].Path, imageRef),
 			WorkDir: ctx.ProjectDir,
 		})
 		if err != nil {
@@ -83,18 +78,46 @@ func (a BuildahPublishAction) Execute() error {
 	}
 
 	// print manifest
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: fmt.Sprintf("buildah manifest inspect %s", manifestName),
-		WorkDir: ctx.ProjectDir,
+	manifestFile := path.Join(ctx.Config.TempDir, "manifest.json")
+	manifestContent, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command:       fmt.Sprintf("buildah manifest inspect %s", manifestName),
+		WorkDir:       ctx.ProjectDir,
+		CaptureOutput: true,
+	})
+	if err != nil {
+		return err
+	}
+	err = a.Sdk.FileWrite(manifestFile, []byte(manifestContent.Stdout))
+	if err != nil {
+		return err
+	}
+
+	// store manifest
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		Module:        ctx.Module.Slug,
+		File:          manifestFile,
+		Type:          "oci-image",
+		Format:        "manifest",
+		FormatVersion: "v2s2",
 	})
 	if err != nil {
 		return err
 	}
 
 	// publish manifest to registry
+	digestFile := path.Join(ctx.Config.TempDir, "digest.txt")
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: fmt.Sprintf("buildah manifest push --all --format %s %s docker://%s", format, manifestName, imageRef),
+		Command: fmt.Sprintf("buildah manifest push --all --format oci --digestfile %s %s docker://%s", digestFile, manifestName, imageRef),
 		WorkDir: ctx.ProjectDir,
+	})
+	if err != nil {
+		return err
+	}
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		Module: ctx.Module.Slug,
+		File:   digestFile,
+		Type:   "oci-image",
+		Format: "digest",
 	})
 	if err != nil {
 		return err

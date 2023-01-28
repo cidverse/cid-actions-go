@@ -8,14 +8,14 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type BuildAction struct {
+type ScanAction struct {
 	Sdk cidsdk.SDKClient
 }
 
 type BuildConfig struct {
 }
 
-func (a BuildAction) Execute() (err error) {
+func (a ScanAction) Execute() (err error) {
 	cfg := BuildConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
@@ -37,20 +37,12 @@ func (a BuildAction) Execute() (err error) {
 
 	// run sbom generation for each image
 	for _, file := range files {
-		buildEnv := make(map[string]string)
-
-		baseName := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "sbom", strings.TrimSuffix(file.Name, ".tar"))
-		var outputFormats []string
-		outputFormats = append(outputFormats, "json="+baseName+".syft.json")
-		outputFormats = append(outputFormats, "text="+baseName+".txt") // human-readable
-		// outputFormats = append(outputFormats, "cyclonedx="+baseName+".cdx.xml")            // https://cyclonedx.org/specification/overview/
-		// outputFormats = append(outputFormats, "cyclonedx-json="+baseName+".cdx.json")      // https://cyclonedx.org/specification/overview/
-		outputFormats = append(outputFormats, "spdx-json="+baseName+".spdx.json")          // https://github.com/spdx/spdx-spec/blob/v2.2/schemas/spdx-schema.json
-		outputFormats = append(outputFormats, "spdx-tag-value="+baseName+".spdx-tag.json") // https://spdx.github.io/spdx-spec/
-		outputFormats = append(outputFormats, "github="+baseName+".github.json")           // A JSON report conforming to GitHub's dependency snapshot format
-
-		buildEnv["SYFT_CHECK_FOR_APP_UPDATE"] = "false"
-		buildEnv["SYFT_OUTPUT"] = strings.Join(outputFormats, ",")
+		baseName := path.Join(ctx.Config.TempDir, ctx.Module.Slug, strings.TrimSuffix(file.Name, ".tar"))
+		outputFormats := []string{
+			"json=" + baseName + ".syft.json",      // syft-json
+			"text=" + baseName + ".txt",            // human-readable
+			"spdx-json=" + baseName + ".spdx.json", // https://github.com/spdx/spdx-spec/blob/v2.2/schemas/spdx-schema.json
+		}
 
 		// scan
 		var buildArgs []string
@@ -60,9 +52,34 @@ func (a BuildAction) Execute() (err error) {
 		}
 		buildArgs = append(buildArgs, "oci-archive:"+file.Path)
 		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `syft packages ` + strings.Join(buildArgs, " "),
+			Command: `syft packages --quiet ` + strings.Join(buildArgs, " "),
 			WorkDir: ctx.ProjectDir,
-			Env:     buildEnv,
+			Env: map[string]string{
+				"SYFT_CHECK_FOR_APP_UPDATE": "false",
+				"SYFT_OUTPUT":               strings.Join(outputFormats, ","),
+			},
+		})
+		if err != nil {
+			return err
+		}
+
+		// store reports
+		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+			Module:        ctx.Module.Slug,
+			File:          baseName + ".syft.json",
+			Type:          "report",
+			Format:        "container-sbom",
+			FormatVersion: "syft-json",
+		})
+		if err != nil {
+			return err
+		}
+		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+			Module:        ctx.Module.Slug,
+			File:          baseName + ".spdx.json",
+			Type:          "report",
+			Format:        "container-sbom",
+			FormatVersion: "spdx-json",
 		})
 		if err != nil {
 			return err

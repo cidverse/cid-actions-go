@@ -92,7 +92,13 @@ func (a BuildahBuildAction) Execute() error {
 	}
 
 	// store image ref
-	err = a.Sdk.FileWrite(path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image", "image.txt"), []byte(imageReference))
+	err = a.Sdk.ArtifactUploadByteArray(cidsdk.ArtifactUploadByteArrayRequest{
+		File:    "image.txt",
+		Content: []byte(imageReference),
+		Module:  ctx.Module.Slug,
+		Type:    "oci-image",
+		Format:  "container-ref",
+	})
 	if err != nil {
 		return errors.New("failed to store file with the image ref: " + err.Error())
 	}

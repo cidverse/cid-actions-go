@@ -6,6 +6,7 @@ import (
 
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/actions/container"
+	"github.com/cidverse/cid-actions-go/actions/cosign"
 	"github.com/cidverse/cid-actions-go/actions/fossa"
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
 	"github.com/cidverse/cid-actions-go/actions/gitleaks"
@@ -46,7 +47,9 @@ var runCmd = &cobra.Command{
 			// container
 			"buildah-build":   container.BuildahBuildAction{Sdk: *sdk},
 			"buildah-publish": container.BuildahPublishAction{Sdk: *sdk},
-			"container-sign":  container.SignAction{Sdk: *sdk},
+			// cosign
+			"cosign-container-sign":        cosign.SignAction{Sdk: *sdk},
+			"cosign-container-sbom-attach": cosign.AttachAction{Sdk: *sdk},
 			// fossa
 			"fossa-scan": fossa.SourceScanAction{Sdk: *sdk},
 			// ggshield
@@ -77,8 +80,8 @@ var runCmd = &cobra.Command{
 			// sonarqube
 			"sonarqube-scan": sonarqube.ScanAction{Sdk: *sdk},
 			// syft
-			"syft-sbom-build":   syft.BuildAction{Sdk: *sdk},
-			"grype-sbom-report": syft.ReportAction{Sdk: *sdk},
+			"syft-container-sbom-scan":    syft.ScanAction{Sdk: *sdk},
+			"grype-container-sbom-report": syft.ReportAction{Sdk: *sdk},
 			// mkdocs
 			"mkdocs-start": mkdocs.StartAction{Sdk: *sdk},
 			"mkdocs-build": mkdocs.BuildAction{Sdk: *sdk},

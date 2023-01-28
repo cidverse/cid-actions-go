@@ -3,8 +3,9 @@ module github.com/cidverse/cid-actions-go
 go 1.19
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20230124230919-e6a3312dd014
+	github.com/cidverse/cid-sdk-go v0.0.0-20230128232551-ea4026dbff22
 	github.com/cidverse/cidverseutils v0.0.0-20220818230102-9d2a18677b1c
+	github.com/containers/image/v5 v5.24.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/jarcoal/httpmock v1.2.0
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
@@ -17,13 +18,20 @@ require (
 )
 
 require (
+	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
+	github.com/containers/ocicrypt v1.1.7 // indirect
+	github.com/containers/storage v1.45.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/docker/docker v20.10.23+incompatible // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
+	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
 	github.com/otiai10/copy v1.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/net v0.5.0 // indirect

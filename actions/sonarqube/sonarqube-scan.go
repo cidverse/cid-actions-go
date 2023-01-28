@@ -54,7 +54,10 @@ func (a ScanAction) Execute() (err error) {
 	scanArgs = append(scanArgs, `-D sonar.tests=.`)
 
 	// publish sarif reports to sonarqube
-	if artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{}); err == nil {
+	if artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
+		ArtifactType: "report",
+		Format:       "sarif",
+	}); err == nil {
 		files := make([]string, 0)
 
 		for _, artifact := range *artifacts {

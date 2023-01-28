@@ -19,7 +19,7 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		arg.SonarProjectKey = "my-project-key"
 		arg.SonarToken = "my-token"
 	})
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "report", Format: "sarif"}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",
 			JobID:         "0",
