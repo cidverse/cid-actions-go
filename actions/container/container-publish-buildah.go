@@ -58,22 +58,26 @@ func (a BuildahPublishAction) Execute() error {
 
 	// create manifest
 	manifestName := strings.Replace(a.Sdk.UUID(), "-", "", -1)
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	manifestCreateResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf("buildah manifest create %s", manifestName),
 		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {
 		return err
+	} else if manifestCreateResult.Code != 0 {
+		return fmt.Errorf("failed, exit code %d", manifestCreateResult.Code)
 	}
 
 	// add images to manifest
 	for _, file := range files {
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		manifestAddResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("buildah manifest add %s oci-archive:%s", manifestName, file.Path),
 			WorkDir: ctx.ProjectDir,
 		})
 		if err != nil {
 			return err
+		} else if manifestAddResult.Code != 0 {
+			return fmt.Errorf("failed, exit code %d", manifestAddResult.Code)
 		}
 	}
 
@@ -106,13 +110,17 @@ func (a BuildahPublishAction) Execute() error {
 
 	// publish manifest to registry
 	digestFile := path.Join(ctx.Config.TempDir, "digest.txt")
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	pushResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf("buildah manifest push --all --format oci --digestfile %s %s docker://%s", digestFile, manifestName, imageRef),
 		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {
 		return err
+	} else if pushResult.Code != 0 {
+		return fmt.Errorf("failed, exit code %d", pushResult.Code)
 	}
+
+	// store digest
 	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
 		Module: ctx.Module.Slug,
 		File:   digestFile,
