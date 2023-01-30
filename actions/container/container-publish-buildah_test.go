@@ -9,10 +9,35 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+func TestContainerPublishOCI(t *testing.T) {
+	sdk := mocks.NewSDKClient(t)
+	sdk.On("ModuleAction", mock.Anything).Return(DockerfileTestData(false), nil).Run(func(args mock.Arguments) {
+		arg := args.Get(0).(*BuildahPublishConfig)
+		arg.AlwaysPublishManifest = false
+	})
+	sdk.On("FileRead", "/my-project/.dist/my-project/oci-image/image.txt").Return("localhost/my-image:latest", nil)
+	sdk.On("FileList", cidsdk.FileRequest{Directory: "/my-project/.dist/my-project/oci-image", Extensions: []string{".tar"}}).Return([]cidsdk.File{cidsdk.NewFile("/my-project/.dist/my-project/oci-image/linux_amd64.tar")}, nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: "buildah push --format oci --digestfile /my-project/.tmp/digest.txt oci-archive:/my-project/.dist/my-project/oci-image/linux_amd64.tar docker://localhost/my-image:latest",
+		WorkDir: "/my-project",
+	}).Return(nil, nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		Module: "my-project",
+		File:   "/my-project/.tmp/digest.txt",
+		Type:   "oci-image",
+		Format: "digest",
+	}).Return(nil)
+
+	action := BuildahPublishAction{Sdk: sdk}
+	err := action.Execute()
+	assert.NoError(t, err)
+}
+
 func TestContainerPublishOCIManifest(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ModuleAction", mock.Anything).Return(DockerfileTestData(false), nil).Run(func(args mock.Arguments) {
-		// arg := args.Get(0).(*BuildConfig)
+		arg := args.Get(0).(*BuildahPublishConfig)
+		arg.AlwaysPublishManifest = true
 	})
 	sdk.On("FileRead", "/my-project/.dist/my-project/oci-image/image.txt").Return("localhost/my-image:latest", nil)
 	sdk.On("FileList", cidsdk.FileRequest{Directory: "/my-project/.dist/my-project/oci-image", Extensions: []string{".tar"}}).Return([]cidsdk.File{cidsdk.NewFile("/my-project/.dist/my-project/oci-image/linux_amd64.tar")}, nil)
@@ -20,16 +45,16 @@ func TestContainerPublishOCIManifest(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "buildah manifest create 58b1ee4558a64c1dbe6815aa1ce24268",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "buildah manifest add 58b1ee4558a64c1dbe6815aa1ce24268 oci-archive:/my-project/.dist/my-project/oci-image/linux_amd64.tar",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command:       "buildah manifest inspect 58b1ee4558a64c1dbe6815aa1ce24268",
 		WorkDir:       "/my-project",
 		CaptureOutput: true,
-	}).Return(&cidsdk.ExecuteCommandResponse{Stdout: "{}"}, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0, Stdout: "{}"}, nil)
 	sdk.On("FileWrite", "/my-project/.tmp/manifest.json", []byte("{}")).Return(nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		Module:        "my-project",
@@ -41,7 +66,7 @@ func TestContainerPublishOCIManifest(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "buildah manifest push --all --format oci --digestfile /my-project/.tmp/digest.txt 58b1ee4558a64c1dbe6815aa1ce24268 docker://localhost/my-image:latest",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		Module: "my-project",
 		File:   "/my-project/.tmp/digest.txt",

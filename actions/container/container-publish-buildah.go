@@ -13,15 +13,18 @@ type BuildahPublishAction struct {
 }
 
 type BuildahPublishConfig struct {
-	AlwaysPublishManifest bool
+	AlwaysPublishManifest bool `json:"buildah_always_publish_manifest" env:"BUILDAH_ALWAYS_PUBLISH_MANIFEST"`
 }
 
 func (a BuildahPublishAction) Execute() error {
-	cfg := BuildahPublishConfig{AlwaysPublishManifest: true}
+	cfg := BuildahPublishConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
 		return err
 	}
+
+	// properties
+	digestFile := path.Join(ctx.Config.TempDir, "digest.txt")
 
 	// target image reference
 	ociDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image")
@@ -44,10 +47,22 @@ func (a BuildahPublishAction) Execute() error {
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "publish container image", Context: map[string]interface{}{"repository": imageRef, "manifest_size": len(files)}})
 
 	// allow to publish single images as non-manifests
-	if !cfg.AlwaysPublishManifest && len(files) == 1 {
+	if cfg.AlwaysPublishManifest == false && len(files) == 1 {
+		// push
 		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("buildah push --format oci oci-archive:%s docker://%s", files[0].Path, imageRef),
+			Command: fmt.Sprintf("buildah push --format oci --digestfile %s oci-archive:%s docker://%s", digestFile, files[0].Path, imageRef),
 			WorkDir: ctx.ProjectDir,
+		})
+		if err != nil {
+			return err
+		}
+
+		// store digest
+		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+			Module: ctx.Module.Slug,
+			File:   digestFile,
+			Type:   "oci-image",
+			Format: "digest",
 		})
 		if err != nil {
 			return err
@@ -109,7 +124,6 @@ func (a BuildahPublishAction) Execute() error {
 	}
 
 	// publish manifest to registry
-	digestFile := path.Join(ctx.Config.TempDir, "digest.txt")
 	pushResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf("buildah manifest push --all --format oci --digestfile %s %s docker://%s", digestFile, manifestName, imageRef),
 		WorkDir: ctx.ProjectDir,
