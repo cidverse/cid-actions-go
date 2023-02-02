@@ -6,6 +6,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/cidverse/cid-actions-go/util/container"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -37,7 +38,7 @@ func (a SignAction) Execute() (err error) {
 		return fmt.Errorf("failed to parse image reference from %s", err.Error())
 	}
 
-	// fetch
+	// digest
 	digest, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
 		Module: ctx.Module.Slug,
 		Type:   "oci-image",
@@ -58,8 +59,8 @@ func (a SignAction) Execute() (err error) {
 
 	if cfg.CosignMode == cosignModeKeyless {
 		// sign container
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf(`cosign sign %s %s@%s`, strings.Join(opts, " "), getContainerImageReferenceWithoutTag(string(imageRef)), digest),
+		signResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command: fmt.Sprintf(`cosign sign %s %s@%s`, strings.Join(opts, " "), container.GetImageReferenceWithoutTag(string(imageRef)), digest),
 			WorkDir: ctx.ProjectDir,
 			Env: map[string]string{
 				"COSIGN_EXPERIMENTAL": "1",
@@ -67,6 +68,8 @@ func (a SignAction) Execute() (err error) {
 		})
 		if err != nil {
 			return err
+		} else if signResult.Code != 0 {
+			return fmt.Errorf("cosign sign failed, exit code %d", signResult.Code)
 		}
 	} else if cfg.CosignMode == cosignModePrivateKey {
 		// private key
@@ -81,8 +84,8 @@ func (a SignAction) Execute() (err error) {
 		}
 
 		// sign container
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf(`cosign sign --key "%s" %s %s@%s`, certFile, strings.Join(opts, " "), getContainerImageReferenceWithoutTag(string(imageRef)), digest),
+		signResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command: fmt.Sprintf(`cosign sign --key "%s" %s %s@%s`, certFile, strings.Join(opts, " "), container.GetImageReferenceWithoutTag(string(imageRef)), digest),
 			WorkDir: ctx.ProjectDir,
 			Env: map[string]string{
 				"COSIGN_PASSWORD": cfg.CosignPassword,
@@ -90,6 +93,8 @@ func (a SignAction) Execute() (err error) {
 		})
 		if err != nil {
 			return err
+		} else if signResult.Code != 0 {
+			return fmt.Errorf("cosign sign failed, exit code %d", signResult.Code)
 		}
 	} else {
 		return fmt.Errorf("COSIGN_MODE [%s] is not supported, choose either PRIVATEKEY or KEYLESS", cfg.CosignMode)

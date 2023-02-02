@@ -78,12 +78,14 @@ func (a BuildahBuildAction) Execute() error {
 					buildArgs = append(buildArgs, `--build-arg TARGETVARIANT=`+platform.Variant)
 				}
 
-				_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 					Command: fmt.Sprintf("buildah build %s %s", strings.Join(buildArgs, " "), ctx.Module.ModuleDir),
 					WorkDir: ctx.ProjectDir,
 				})
 				if err != nil {
 					return err
+				} else if buildResult.Code != 0 {
+					return fmt.Errorf("buildah build failed, exit code %d", buildResult.Code)
 				}
 			}
 		} else {

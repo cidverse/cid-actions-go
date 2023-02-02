@@ -1,0 +1,181 @@
+package cosign
+
+import (
+	"encoding/base64"
+	"fmt"
+	"path"
+	"strings"
+
+	"github.com/cidverse/cid-actions-go/util/container"
+	cidsdk "github.com/cidverse/cid-sdk-go"
+)
+
+type AttachAction struct {
+	Sdk cidsdk.SDKClient
+}
+
+type AttachConfig struct {
+	CosignMode                   string `json:"cosign_mode" env:"COSIGN_MODE"`
+	CosignKey                    string `json:"cosign_key" env:"COSIGN_KEY"`
+	CosignPassword               string `json:"cosign_password" env:"COSIGN_PASSWORD"`
+	CosignTransparencyLogDisable bool   `json:"cosign_tlog_disable" env:"COSIGN_TLOG_DISABLE"`
+}
+
+func (a AttachAction) Execute() (err error) {
+	cfg := AttachConfig{}
+	ctx, err := a.Sdk.ModuleAction(&cfg)
+	if err != nil {
+		return err
+	}
+
+	// private key for signing
+	certFile := path.Join(ctx.Config.TempDir, "private.key")
+	if cfg.CosignMode == cosignModePrivateKey {
+		data, err := base64.StdEncoding.DecodeString(cfg.CosignKey)
+		if err != nil {
+			return fmt.Errorf("failed to decode private key file: %s", err.Error())
+		}
+		err = a.Sdk.FileWrite(certFile, data)
+		if err != nil {
+			return fmt.Errorf("failed to write private key file: %s", err.Error())
+		}
+	}
+
+	// target image reference
+	imageRef, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
+		Module: ctx.Module.Slug,
+		Type:   "oci-image",
+		Name:   "image.txt",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to parse image reference from %s", err.Error())
+	}
+
+	// digest
+	digest, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
+		Module: ctx.Module.Slug,
+		Type:   "oci-image",
+		Name:   "digest.txt",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to read image digest: %s", err.Error())
+	}
+
+	// get manifests
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
+		Module:       ctx.Module.Slug,
+		ArtifactType: "oci-image",
+		Format:       "manifest",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to query manifest artifact list: %s", err.Error())
+	}
+	if len(*artifacts) > 0 {
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "warn", Message: "attachments for manifests are not supported yet"})
+		return nil
+	}
+
+	// query reports
+	reportList, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
+		Module:       ctx.Module.Slug,
+		ArtifactType: "report",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to query sbom artifact list: %s", err.Error())
+	}
+
+	// attach reports
+	for _, report := range *reportList {
+		if !shouldAttachReport(report.Format, report.FormatVersion) {
+			continue
+		}
+
+		// log
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{
+			Level:   "info",
+			Message: "attaching file to container image",
+			Context: map[string]interface{}{
+				"file":            report.Name,
+				"format":          report.Format,
+				"format_version":  report.FormatVersion,
+				"container-image": imageRef,
+			},
+		})
+
+		// download file
+		targetFile := path.Join(ctx.Config.TempDir, report.Name)
+		err := a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
+			Module:     report.Module,
+			Type:       string(report.Type),
+			Name:       report.Name,
+			TargetFile: targetFile,
+		})
+		if err != nil {
+			return err
+		}
+
+		// attach
+		opts := []string{
+			"--type",
+			formatVersionToAttestationType(report.Format, report.FormatVersion),
+			"--predicate",
+			targetFile,
+		}
+		if cfg.CosignTransparencyLogDisable {
+			opts = append(opts, "--no-tlog-upload=true")
+		}
+		if cfg.CosignMode == "KEYLESS" {
+			_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+				Command: fmt.Sprintf(`cosign attest %s %s@%s`, strings.Join(opts, " "), container.GetImageReferenceWithoutTag(string(imageRef)), digest),
+				WorkDir: ctx.Module.ModuleDir,
+				Env: map[string]string{
+					"COSIGN_EXPERIMENTAL": "1",
+				},
+			})
+			if err != nil {
+				return err
+			}
+		} else if cfg.CosignMode == cosignModePrivateKey {
+			_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+				Command: fmt.Sprintf(`cosign attest --key "%s" %s %s@%s`, certFile, strings.Join(opts, " "), container.GetImageReferenceWithoutTag(string(imageRef)), digest),
+				WorkDir: ctx.Module.ModuleDir,
+				Env: map[string]string{
+					"COSIGN_PASSWORD": cfg.CosignPassword,
+				},
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			return fmt.Errorf("COSIGN_MODE [%s] is not supported, choose either PRIVATEKEY or KEYLESS", cfg.CosignMode)
+		}
+	}
+
+	return nil
+}
+
+func shouldAttachReport(format string, formatVersion string) bool {
+	if format == "container-sbom" {
+		if formatVersion == "spdx-json" || formatVersion == "syft-json" || formatVersion == "cyclonedx-json" {
+			return true
+		}
+	} else if format == "container-slsaprovenance" {
+		return true
+	}
+
+	return false
+}
+
+func formatVersionToAttestationType(format string, formatVersion string) string {
+	if format == "container-slsaprovenance" {
+		return formatVersion
+	} else if format == "container-sbom" {
+		if formatVersion == "spdx-json" {
+			return "spdxjson"
+		} else if formatVersion == "syft-json" {
+			return "https://syft.dev/bom"
+		}
+	}
+
+	return "custom"
+}

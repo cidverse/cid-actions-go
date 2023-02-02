@@ -18,7 +18,7 @@ func TestContainerBuildDockerfile(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "buildah build --platform linux/amd64 -f Dockerfile -t oci-archive:.dist/my-project/oci-image/linux_amd64.tar --layers --squash --annotation \"org.opencontainers.image.source=${NCI_REPOSITORY_REMOTE}\" --annotation \"org.opencontainers.image.created=${TIMESTAMP_RFC3339}\" --annotation \"org.opencontainers.image.authors=\" --annotation \"org.opencontainers.image.title=my-project\" --annotation \"org.opencontainers.image.description=\" /my-project",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUploadByteArray", cidsdk.ArtifactUploadByteArrayRequest{
 		File:          "image.txt",
 		Content:       []byte("ghcr.io/cidverse/dummy:latest"),

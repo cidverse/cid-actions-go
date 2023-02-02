@@ -5,6 +5,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/cidverse/cid-actions-go/util/container"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -17,7 +18,7 @@ type BuildahPublishConfig struct {
 }
 
 func (a BuildahPublishAction) Execute() error {
-	cfg := BuildahPublishConfig{}
+	cfg := BuildahPublishConfig{AlwaysPublishManifest: false}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
 		return err
@@ -47,14 +48,16 @@ func (a BuildahPublishAction) Execute() error {
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "publish container image", Context: map[string]interface{}{"repository": imageRef, "manifest_size": len(files)}})
 
 	// allow to publish single images as non-manifests
-	if cfg.AlwaysPublishManifest == false && len(files) == 1 {
+	if !cfg.AlwaysPublishManifest && len(files) == 1 {
 		// push
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("buildah push --format oci --digestfile %s oci-archive:%s docker://%s", digestFile, files[0].Path, imageRef),
+		pushResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command: fmt.Sprintf(`skopeo copy --digestfile %s oci-archive:%s docker://%s`, digestFile, files[0].Path, imageRef),
 			WorkDir: ctx.ProjectDir,
 		})
 		if err != nil {
 			return err
+		} else if pushResult.Code != 0 {
+			return fmt.Errorf("failed, exit code %d", pushResult.Code)
 		}
 
 		// store digest
@@ -96,33 +99,6 @@ func (a BuildahPublishAction) Execute() error {
 		}
 	}
 
-	// print manifest
-	manifestFile := path.Join(ctx.Config.TempDir, "manifest.json")
-	manifestContent, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command:       fmt.Sprintf("buildah manifest inspect %s", manifestName),
-		WorkDir:       ctx.ProjectDir,
-		CaptureOutput: true,
-	})
-	if err != nil {
-		return err
-	}
-	err = a.Sdk.FileWrite(manifestFile, []byte(manifestContent.Stdout))
-	if err != nil {
-		return err
-	}
-
-	// store manifest
-	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
-		Module:        ctx.Module.Slug,
-		File:          manifestFile,
-		Type:          "oci-image",
-		Format:        "manifest",
-		FormatVersion: "v2s2",
-	})
-	if err != nil {
-		return err
-	}
-
 	// publish manifest to registry
 	pushResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf("buildah manifest push --all --format oci --digestfile %s %s docker://%s", digestFile, manifestName, imageRef),
@@ -140,6 +116,41 @@ func (a BuildahPublishAction) Execute() error {
 		File:   digestFile,
 		Type:   "oci-image",
 		Format: "digest",
+	})
+	if err != nil {
+		return err
+	}
+	digest, err := a.Sdk.FileRead(digestFile)
+	if err != nil {
+		return fmt.Errorf("failed to read digest file: %s", err.Error())
+	}
+
+	// retrieve manifest
+	manifestResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command:       fmt.Sprintf("buildah manifest inspect %s@%s", container.GetImageReferenceWithoutTag(imageRef), digest),
+		WorkDir:       ctx.ProjectDir,
+		CaptureOutput: true,
+	})
+	if err != nil {
+		return err
+	} else if manifestResult.Code != 0 {
+		return fmt.Errorf("failed, exit code %d", manifestResult.Code)
+	}
+
+	// store manifest with correct digests
+	manifestFile := path.Join(ctx.Config.TempDir, "manifest.json")
+	err = a.Sdk.FileWrite(manifestFile, []byte(manifestResult.Stdout))
+	if err != nil {
+		return err
+	}
+
+	// upload manifest
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		Module:        ctx.Module.Slug,
+		File:          manifestFile,
+		Type:          "oci-image",
+		Format:        "manifest",
+		FormatVersion: "oci",
 	})
 	if err != nil {
 		return err

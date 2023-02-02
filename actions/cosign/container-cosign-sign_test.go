@@ -35,7 +35,7 @@ func TestContainerSignPrivateKey(t *testing.T) {
 		Env: map[string]string{
 			"COSIGN_PASSWORD": "123456",
 		},
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := SignAction{Sdk: sdk}
 	err := action.Execute()
@@ -64,7 +64,7 @@ func TestContainerSignKeyless(t *testing.T) {
 		Env: map[string]string{
 			"COSIGN_EXPERIMENTAL": "1",
 		},
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := SignAction{Sdk: sdk}
 	err := action.Execute()
