@@ -27,18 +27,29 @@ func (a ScanAction) Execute() (err error) {
 	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif.json")
 
 	// opts
-	var opts = []string{"gitleaks", "detect", "--source=.", "-v", "--no-git", "--report-format=sarif", "--report-path=" + reportFile, "--no-banner"}
+	var opts = []string{
+		"gitleaks",
+		"detect",
+		"--source=.",
+		"-v",
+		"--no-git",
+		"--report-format=sarif",
+		"--report-path=" + reportFile,
+		"--no-banner",
+	}
 	if ctx.Env["CI"] == "true" {
 		opts = append(opts, "--redact")
 	}
 
 	// scan
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: strings.Join(opts, " "),
 		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {
 		return err
+	} else if scanResult.Code != 0 {
+		return fmt.Errorf("gitleaks scan failed, exit code %d", scanResult.Code)
 	}
 
 	// parse report

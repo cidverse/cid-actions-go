@@ -20,7 +20,7 @@ func TestGitleaksScanBuild(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "gitleaks detect --source=. -v --no-git --report-format=sarif --report-path=/my-project/.tmp/gitleaks.sarif.json --no-banner",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("FileRead", "/my-project/.tmp/gitleaks.sarif.json").Return(reportJson, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		File:          "/my-project/.tmp/gitleaks.sarif.json",
