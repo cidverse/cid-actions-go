@@ -7,10 +7,10 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-var apiClient = resty.New()
+var ApiClient = resty.New()
 
 func init() {
-	apiClient.SetDisableWarn(true)
+	ApiClient.SetDisableWarn(true)
 }
 
 type ProjectBranchesList struct {
@@ -33,8 +33,8 @@ type Status struct {
 	Vulnerabilities   int64  `json:"vulnerabilities,omitempty"`
 }
 
-func createProject(server string, accessToken string, organization string, projectKey string, projectName string) error {
-	resp, err := apiClient.R().
+func CreateProject(server string, accessToken string, organization string, projectKey string, projectName string) error {
+	resp, err := ApiClient.R().
 		SetQueryParams(map[string]string{
 			"organization": organization,
 			"project":      projectKey,
@@ -53,8 +53,8 @@ func createProject(server string, accessToken string, organization string, proje
 	return nil
 }
 
-func getDefaultBranch(server string, accessToken string, projectKey string) (ProjectBranchesList, error) {
-	resp, err := apiClient.R().
+func GetDefaultBranch(server string, accessToken string, projectKey string) (ProjectBranchesList, error) {
+	resp, err := ApiClient.R().
 		SetQueryParams(map[string]string{
 			"project": projectKey,
 		}).
@@ -74,8 +74,8 @@ func getDefaultBranch(server string, accessToken string, projectKey string) (Pro
 	return result, nil
 }
 
-func renameMainBranch(server string, accessToken string, projectKey string, name string) error {
-	resp, err := apiClient.R().
+func RenameMainBranch(server string, accessToken string, projectKey string, name string) error {
+	resp, err := ApiClient.R().
 		SetQueryParams(map[string]string{
 			"project": projectKey,
 			"name":    name,
@@ -94,8 +94,8 @@ func renameMainBranch(server string, accessToken string, projectKey string, name
 	return nil
 }
 
-func deleteBranch(server string, accessToken string, projectKey string, name string) error {
-	resp, err := apiClient.R().
+func DeleteBranch(server string, accessToken string, projectKey string, name string) error {
+	resp, err := ApiClient.R().
 		SetQueryParams(map[string]string{
 			"project": projectKey,
 			"branch":  name,

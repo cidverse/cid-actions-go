@@ -15,19 +15,42 @@ func TestGoModTest(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out ./...",
+		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out ./...",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		File:          "/my-project/.tmp/cover.out",
+		Module:        "github-com-cidverse-my-project",
+		Type:          "report",
+		Format:        "go-coverage",
+		FormatVersion: "out",
+	}).Return(nil)
+
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command:       "go test -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -json -covermode=count ./...",
+		Command:       "go test -coverprofile /my-project/.tmp/cover.out -json -covermode=count ./...",
 		WorkDir:       "/my-project",
 		CaptureOutput: true,
-	}).Return(&cidsdk.ExecuteCommandResponse{Stdout: "{}"}, nil)
-	sdk.On("FileWrite", "/my-project/.dist/github-com-cidverse-my-project/go-test/cover.json", []byte("{}")).Return(nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0, Stdout: "{}"}, nil)
+	sdk.On("FileWrite", "/my-project/.tmp/cover.json", []byte("{}")).Return(nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		File:          "/my-project/.tmp/cover.json",
+		Module:        "github-com-cidverse-my-project",
+		Type:          "report",
+		Format:        "go-coverage",
+		FormatVersion: "json",
+	}).Return(nil)
+
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "go tool cover -html /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -o /my-project/.dist/github-com-cidverse-my-project/go-test/cover.html",
+		Command: "go tool cover -html /my-project/.tmp/cover.out -o /my-project/.tmp/cover.html",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		File:          "/my-project/.tmp/cover.html",
+		Module:        "github-com-cidverse-my-project",
+		Type:          "report",
+		Format:        "go-coverage",
+		FormatVersion: "html",
+	}).Return(nil)
 
 	action := TestAction{Sdk: sdk}
 	err := action.Execute()
@@ -38,19 +61,42 @@ func TestDebugTest(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(true), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -v ./...",
+		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -v ./...",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		File:          "/my-project/.tmp/cover.out",
+		Module:        "github-com-cidverse-my-project",
+		Type:          "report",
+		Format:        "go-coverage",
+		FormatVersion: "out",
+	}).Return(nil)
+
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command:       "go test -coverprofile /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -json -covermode=count ./...",
+		Command:       "go test -coverprofile /my-project/.tmp/cover.out -json -covermode=count ./...",
 		WorkDir:       "/my-project",
 		CaptureOutput: true,
-	}).Return(&cidsdk.ExecuteCommandResponse{Stdout: "{}"}, nil)
-	sdk.On("FileWrite", "/my-project/.dist/github-com-cidverse-my-project/go-test/cover.json", []byte("{}")).Return(nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0, Stdout: "{}"}, nil)
+	sdk.On("FileWrite", "/my-project/.tmp/cover.json", []byte("{}")).Return(nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		File:          "/my-project/.tmp/cover.json",
+		Module:        "github-com-cidverse-my-project",
+		Type:          "report",
+		Format:        "go-coverage",
+		FormatVersion: "json",
+	}).Return(nil)
+
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "go tool cover -html /my-project/.dist/github-com-cidverse-my-project/go-test/cover.out -o /my-project/.dist/github-com-cidverse-my-project/go-test/cover.html",
+		Command: "go tool cover -html /my-project/.tmp/cover.out -o /my-project/.tmp/cover.html",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		File:          "/my-project/.tmp/cover.html",
+		Module:        "github-com-cidverse-my-project",
+		Type:          "report",
+		Format:        "go-coverage",
+		FormatVersion: "html",
+	}).Return(nil)
 
 	action := TestAction{Sdk: sdk}
 	err := action.Execute()

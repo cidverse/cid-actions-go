@@ -12,11 +12,9 @@ type PublishAction struct {
 }
 
 type PublishConfig struct {
-	// Signing
-	GPGSignKeyId      string `json:"gpg_sign_key_id"  env:"GPG_SIGN_KEYID"`
-	GPGSignPrivateKey string `json:"gpg_sign_private_key" env:"GPG_SIGN_PRIVATEKEY"`
-	GPGSignPassword   string `json:"gpg_sign_password"  env:"GPG_SIGN_PASSWORD"`
-	// Maven Repo
+	GPGSignKeyId            string `json:"gpg_sign_key_id"  env:"GPG_SIGN_KEYID"`
+	GPGSignPrivateKey       string `json:"gpg_sign_private_key" env:"GPG_SIGN_PRIVATEKEY"`
+	GPGSignPassword         string `json:"gpg_sign_password"  env:"GPG_SIGN_PASSWORD"`
 	MavenRepositoryUrl      string `json:"maven_repo_url"  env:"MAVEN_REPO_URL"`
 	MavenRepositoryUsername string `json:"maven_repo_username"  env:"MAVEN_REPO_USERNAME"`
 	MavenRepositoryPassword string `json:"maven_repo_password"  env:"MAVEN_REPO_PASSWORD"`
@@ -42,21 +40,23 @@ func (a PublishAction) Execute() (err error) {
 		publishEnv["MAVEN_REPO_PASSWORD"] = cfg.MavenRepositoryPassword
 
 		// args
-		var publishArgs []string
-		publishArgs = append(publishArgs, fmt.Sprintf(`-Pversion="%s"`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])))
-		publishArgs = append(publishArgs, `publish`)
-		publishArgs = append(publishArgs, `--no-daemon`)
-		publishArgs = append(publishArgs, `--warning-mode=all`)
-		publishArgs = append(publishArgs, `--console=plain`)
-		publishArgs = append(publishArgs, `--stacktrace`)
-
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		publishArgs := []string{
+			fmt.Sprintf(`-Pversion=%q`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])),
+			`publish`,
+			`--no-daemon`,
+			`--warning-mode=all`,
+			`--console=plain`,
+			`--stacktrace`,
+		}
+		publishResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("%s %s", javaGradleCmd, strings.Join(publishArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 			Env:     publishEnv,
 		})
 		if err != nil {
 			return err
+		} else if publishResult.Code != 0 {
+			return fmt.Errorf("gradle publish failed, exit code %d", publishResult.Code)
 		}
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
 

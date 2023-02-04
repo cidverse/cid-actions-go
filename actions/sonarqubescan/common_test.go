@@ -1,4 +1,4 @@
-package sonarqube
+package sonarqubescan
 
 import (
 	cidsdk "github.com/cidverse/cid-sdk-go"

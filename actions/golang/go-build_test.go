@@ -32,7 +32,7 @@ func TestGoModBuild(t *testing.T) {
 			"GOOS":        "linux",
 			"GOARCH":      "amd64",
 		},
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := BuildAction{Sdk: sdk}
 	err := action.Execute()

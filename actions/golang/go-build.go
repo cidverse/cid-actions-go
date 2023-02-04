@@ -47,14 +47,17 @@ func (a BuildAction) Execute() error {
 			}
 
 			err := group.Add(func() error {
-				_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 					Command: fmt.Sprintf("go build -buildvcs=false %s-o %s/%s/bin/%s_%s .", ctx.Config.DebugFlag("bin-go", "-v "), ctx.Config.ArtifactDir, ctx.Module.Slug, goos, goarch),
 					WorkDir: ctx.Module.ModuleDir,
 					Env:     buildEnv,
 				})
 				if err != nil {
 					return err
+				} else if buildResult.Code != 0 {
+					return fmt.Errorf("go build failed, exit code %d", buildResult.Code)
 				}
+
 				return nil
 			})
 			if err != nil {

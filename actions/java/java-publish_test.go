@@ -25,7 +25,7 @@ func TestJavaPublishGradle(t *testing.T) {
 			"MAVEN_REPO_USERNAME": "admin",
 			"MAVEN_REPO_PASSWORD": "secret",
 		},
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := PublishAction{Sdk: sdk}
 	err := action.Execute()

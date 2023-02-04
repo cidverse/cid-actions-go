@@ -22,20 +22,22 @@ func (a TestAction) Execute() (err error) {
 	}
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
-		var testArgs []string
-		testArgs = append(testArgs, fmt.Sprintf(`-Pversion="%s"`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])))
-		testArgs = append(testArgs, `check`)
-		testArgs = append(testArgs, `--no-daemon`)
-		testArgs = append(testArgs, `--warning-mode=all`)
-		testArgs = append(testArgs, `--console=plain`)
-		testArgs = append(testArgs, `--stacktrace`)
-
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		testArgs := []string{
+			fmt.Sprintf(`-Pversion=%q`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])),
+			`check`,
+			`--no-daemon`,
+			`--warning-mode=all`,
+			`--console=plain`,
+			`--stacktrace`,
+		}
+		testResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("%s %s", javaGradleCmd, strings.Join(testArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 		})
 		if err != nil {
 			return err
+		} else if testResult.Code != 0 {
+			return fmt.Errorf("gradle test failed, exit code %d", testResult.Code)
 		}
 
 		// collect test reports

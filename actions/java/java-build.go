@@ -22,20 +22,22 @@ func (a BuildAction) Execute() (err error) {
 	}
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
-		var buildArgs []string
-		buildArgs = append(buildArgs, fmt.Sprintf(`-Pversion="%s"`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])))
-		buildArgs = append(buildArgs, `assemble`)
-		buildArgs = append(buildArgs, `--no-daemon`)
-		buildArgs = append(buildArgs, `--warning-mode=all`)
-		buildArgs = append(buildArgs, `--console=plain`)
-		buildArgs = append(buildArgs, `--stacktrace`)
-
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		buildArgs := []string{
+			fmt.Sprintf(`-Pversion=%q`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])),
+			`assemble`,
+			`--no-daemon`,
+			`--warning-mode=all`,
+			`--console=plain`,
+			`--stacktrace`,
+		}
+		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("%s %s", javaGradleCmd, strings.Join(buildArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 		})
 		if err != nil {
 			return err
+		} else if buildResult.Code != 0 {
+			return fmt.Errorf("gradle build failed, exit code %d", buildResult.Code)
 		}
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
 
