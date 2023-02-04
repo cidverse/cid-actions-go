@@ -47,7 +47,7 @@ func CreateProject(server string, accessToken string, organization string, proje
 		return err
 	}
 	if !resp.IsSuccess() {
-		return fmt.Errorf("SonarQube deleteBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
+		return fmt.Errorf("SonarQube CreateProject failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
 	}
 
 	return nil
@@ -65,7 +65,7 @@ func GetDefaultBranch(server string, accessToken string, projectKey string) (Pro
 		return ProjectBranchesList{}, err
 	}
 	if !resp.IsSuccess() {
-		return ProjectBranchesList{}, fmt.Errorf("SonarQube deleteBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
+		return ProjectBranchesList{}, fmt.Errorf("SonarQube GetDefaultBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
 	}
 
 	result := ProjectBranchesList{}
@@ -88,7 +88,7 @@ func RenameMainBranch(server string, accessToken string, projectKey string, name
 		return err
 	}
 	if !resp.IsSuccess() {
-		return fmt.Errorf("SonarQube deleteBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
+		return fmt.Errorf("SonarQube RenameMainBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
 	}
 
 	return nil
@@ -108,7 +108,7 @@ func DeleteBranch(server string, accessToken string, projectKey string, name str
 		return err
 	}
 	if !resp.IsSuccess() {
-		return fmt.Errorf("SonarQube deleteBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
+		return fmt.Errorf("SonarQube DeleteBranch failed - HTTP %d: %s", resp.StatusCode(), string(resp.Body()))
 	}
 
 	return nil
