@@ -15,6 +15,9 @@ func GoModTestData(debug bool) cidsdk.ModuleActionData {
 			BuildSystemSyntax: "default",
 			Language:          &map[string]string{"go": "1.19.0"},
 			Submodules:        nil,
+			Files: []string{
+				"/my-project/app.go",
+			},
 		},
 		Config: cidsdk.CurrentConfig{
 			Debug:       debug,

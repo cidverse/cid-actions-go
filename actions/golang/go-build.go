@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"runtime"
 
+	"github.com/cidverse/cid-actions-go/util/golang"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/shomali11/parallelizer"
 )
@@ -27,6 +28,12 @@ func (a BuildAction) Execute() error {
 	// default to current platform
 	if len(cfg.Platform) == 0 {
 		cfg.Platform = append(cfg.Platform, Platform{Goos: runtime.GOOS, Goarch: runtime.GOARCH})
+	}
+
+	// don't build libraries
+	if golang.IsGoLibrary(&ctx.Module) {
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "no go files in module root, not attempting to build library projects"})
+		return nil
 	}
 
 	// build
