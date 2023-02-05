@@ -20,6 +20,7 @@ func GetProjectActionData(debug bool) cidsdk.ProjectActionData {
 			"NCI_REPOSITORY_REMOTE": "https://github.com/cidverse/normalizeci.git",
 			"NCI_COMMIT_REF_NAME":   "v1.2.0",
 			"NCI_COMMIT_SHA":        "abcdef123456",
+			"NCI_COMMIT_REF_VCS":    "refs/tags/v1.2.0",
 		},
 	}
 }

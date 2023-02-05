@@ -4,8 +4,8 @@ github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkE
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cidverse/cid-sdk-go v0.0.0-20230205155457-caaefa7900c5 h1:3foSCmE3IXWsCCTNY3TNkwNha4ri4wF4M7edBiZQh/Q=
 github.com/cidverse/cid-sdk-go v0.0.0-20230205155457-caaefa7900c5/go.mod h1:crALIi0k3qSYZKIdPQ5Pk8JLuFAGh7BbBdYaGfSsIOc=
-github.com/cidverse/cidverseutils v0.0.0-20230205160052-0e24a0956dbf h1:FxVqn7n+XeuORSILUjVKk2HElDpacS/S+akhYay1te0=
-github.com/cidverse/cidverseutils v0.0.0-20230205160052-0e24a0956dbf/go.mod h1:EA4AFIHu3JXI9o6oyviofn+OjtqOGICEu6VWjNc7Pms=
+github.com/cidverse/cidverseutils v0.0.0-20230205193610-2f97684b74c5 h1:UQL6AL3FlklkZGXMl3jw25h6wqAHcohcwazsviJkkPA=
+github.com/cidverse/cidverseutils v0.0.0-20230205193610-2f97684b74c5/go.mod h1:EA4AFIHu3JXI9o6oyviofn+OjtqOGICEu6VWjNc7Pms=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/containers/image/v5 v5.24.0 h1:2Pu8ztTntqNxteVN15bORCQnM8rfnbYuyKwUiiKUBuc=

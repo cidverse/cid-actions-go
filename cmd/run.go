@@ -101,6 +101,7 @@ var runCmd = &cobra.Command{
 			// semgrep
 			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
 			// github
+			"github-sarif-upload":    github.SarifUploadAction{Sdk: *sdk},
 			"github-release-publish": github.PublishAction{Sdk: *sdk},
 		}
 

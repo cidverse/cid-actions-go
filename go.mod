@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230205155457-caaefa7900c5
-	github.com/cidverse/cidverseutils v0.0.0-20230205160052-0e24a0956dbf
+	github.com/cidverse/cidverseutils v0.0.0-20230205193610-2f97684b74c5
 	github.com/containers/image/v5 v5.24.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v50 v50.0.0
