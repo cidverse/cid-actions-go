@@ -9,6 +9,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/cosign"
 	"github.com/cidverse/cid-actions-go/actions/fossa"
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
+	"github.com/cidverse/cid-actions-go/actions/github"
 	"github.com/cidverse/cid-actions-go/actions/gitleaks"
 	"github.com/cidverse/cid-actions-go/actions/golang"
 	"github.com/cidverse/cid-actions-go/actions/gosec"
@@ -44,6 +45,7 @@ var runCmd = &cobra.Command{
 		// actions
 		actions := map[string]api.Action{
 			// changeloggenerate
+			"changelog-generate": container.BuildahBuildAction{Sdk: *sdk},
 			// container
 			"buildah-build":   container.BuildahBuildAction{Sdk: *sdk},
 			"buildah-publish": container.BuildahPublishAction{Sdk: *sdk},
@@ -98,6 +100,8 @@ var runCmd = &cobra.Command{
 			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
 			// semgrep
 			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
+			// github
+			"github-release-publish": github.PublishAction{Sdk: *sdk},
 		}
 
 		// execute

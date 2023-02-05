@@ -15,7 +15,12 @@ func GetProjectActionData(debug bool) cidsdk.ProjectActionData {
 			TempDir:     "/my-project/.tmp",
 		},
 		Modules: nil,
-		Env:     nil,
+		Env: map[string]string{
+			"NCI_REPOSITORY_KIND":   "git",
+			"NCI_REPOSITORY_REMOTE": "https://github.com/cidverse/normalizeci.git",
+			"NCI_COMMIT_REF_NAME":   "v1.2.0",
+			"NCI_COMMIT_SHA":        "abcdef123456",
+		},
 	}
 }
 
