@@ -23,6 +23,9 @@ func TestGithubReleasePublishWithChangelog(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: `gh release create "v1.2.0" -F "/my-project/.tmp/github.changelog"`,
 		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GH_TOKEN": "",
+		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := PublishAction{Sdk: sdk}
@@ -41,6 +44,9 @@ func TestGithubReleasePublishAutoChangelog(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: `gh release create "v1.2.0" --generate-notes`,
 		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GH_TOKEN": "",
+		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := PublishAction{Sdk: sdk}

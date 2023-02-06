@@ -43,6 +43,9 @@ func (a PublishAction) Execute() (err error) {
 	releaseResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf(`gh release create %q %s`, ctx.Env["NCI_COMMIT_REF_NAME"], strings.Join(releaseOpts, " ")),
 		WorkDir: ctx.ProjectDir,
+		Env: map[string]string{
+			"GH_TOKEN": ctx.Env["GITHUB_TOKEN"],
+		},
 	})
 	if err != nil {
 		return err

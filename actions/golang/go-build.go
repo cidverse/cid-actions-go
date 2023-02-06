@@ -55,7 +55,7 @@ func (a BuildAction) Execute() error {
 
 			err := group.Add(func() error {
 				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-					Command: fmt.Sprintf("go build -buildvcs=false %s-o %s/%s/bin/%s_%s .", ctx.Config.DebugFlag("bin-go", "-v "), ctx.Config.ArtifactDir, ctx.Module.Slug, goos, goarch),
+					Command: fmt.Sprintf(`go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" %s-o %s/%s/bin/%s_%s .`, ctx.Config.DebugFlag("bin-go", "-v "), ctx.Config.ArtifactDir, ctx.Module.Slug, goos, goarch),
 					WorkDir: ctx.Module.ModuleDir,
 					Env:     buildEnv,
 				})
