@@ -8,15 +8,15 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type ScanAction struct {
+type ContainerGenerateAction struct {
 	Sdk cidsdk.SDKClient
 }
 
-type BuildConfig struct {
+type ContainerGenerateConfig struct {
 }
 
-func (a ScanAction) Execute() (err error) {
-	cfg := BuildConfig{}
+func (a ContainerGenerateAction) Execute() (err error) {
+	cfg := ContainerGenerateConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
 		return err

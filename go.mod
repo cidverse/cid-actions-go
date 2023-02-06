@@ -8,6 +8,7 @@ require (
 	github.com/containers/image/v5 v5.24.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v50 v50.0.0
+	github.com/in-toto/in-toto-golang v0.6.0
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
 	github.com/owenrumney/go-sarif/v2 v2.1.2

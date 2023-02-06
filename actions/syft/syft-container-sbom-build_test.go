@@ -36,7 +36,7 @@ func TestSyftSBOMScan(t *testing.T) {
 		FormatVersion: "spdx-json",
 	}).Return(nil)
 
-	action := ScanAction{Sdk: sdk}
+	action := ContainerGenerateAction{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

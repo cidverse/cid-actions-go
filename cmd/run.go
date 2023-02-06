@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/cidverse/cid-actions-go/actions/api"
+	"github.com/cidverse/cid-actions-go/actions/changeloggenerate"
 	"github.com/cidverse/cid-actions-go/actions/container"
 	"github.com/cidverse/cid-actions-go/actions/cosign"
 	"github.com/cidverse/cid-actions-go/actions/fossa"
@@ -20,6 +21,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/node"
 	"github.com/cidverse/cid-actions-go/actions/python"
 	"github.com/cidverse/cid-actions-go/actions/semgrep"
+	"github.com/cidverse/cid-actions-go/actions/slsa"
 	"github.com/cidverse/cid-actions-go/actions/sonarqubescan"
 	"github.com/cidverse/cid-actions-go/actions/syft"
 	"github.com/cidverse/cid-actions-go/actions/techdocs"
@@ -45,7 +47,7 @@ var runCmd = &cobra.Command{
 		// actions
 		actions := map[string]api.Action{
 			// changeloggenerate
-			"changelog-generate": container.BuildahBuildAction{Sdk: *sdk},
+			"changelog-generate": changeloggenerate.GenerateAction{Sdk: *sdk},
 			// container
 			"buildah-build":   container.BuildahBuildAction{Sdk: *sdk},
 			"buildah-publish": container.BuildahPublishAction{Sdk: *sdk},
@@ -82,8 +84,9 @@ var runCmd = &cobra.Command{
 			// sonarqube
 			"sonarqube-scan": sonarqubescan.ScanAction{Sdk: *sdk},
 			// syft
-			"syft-container-sbom-scan":    syft.ScanAction{Sdk: *sdk},
-			"grype-container-sbom-report": syft.ReportAction{Sdk: *sdk},
+			"syft-container-sbom-generate": syft.ContainerGenerateAction{Sdk: *sdk},
+			"syft-artifact-sbom-generate":  syft.ArtifactGenerateAction{Sdk: *sdk},
+			"grype-container-sbom-report":  syft.ReportAction{Sdk: *sdk},
 			// mkdocs
 			"mkdocs-start": mkdocs.StartAction{Sdk: *sdk},
 			"mkdocs-build": mkdocs.BuildAction{Sdk: *sdk},
@@ -100,6 +103,8 @@ var runCmd = &cobra.Command{
 			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
 			// semgrep
 			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
+			// slsa
+			"slsa-generate": slsa.GenerateAction{Sdk: *sdk},
 			// github
 			"github-sarif-upload":    github.SarifUploadAction{Sdk: *sdk},
 			"github-release-publish": github.PublishAction{Sdk: *sdk},
