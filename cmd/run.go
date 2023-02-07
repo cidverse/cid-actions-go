@@ -11,6 +11,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/fossa"
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
 	"github.com/cidverse/cid-actions-go/actions/github"
+	"github.com/cidverse/cid-actions-go/actions/gitlab"
 	"github.com/cidverse/cid-actions-go/actions/gitleaks"
 	"github.com/cidverse/cid-actions-go/actions/golang"
 	"github.com/cidverse/cid-actions-go/actions/gosec"
@@ -108,6 +109,8 @@ var runCmd = &cobra.Command{
 			// github
 			"github-sarif-upload":    github.SarifUploadAction{Sdk: *sdk},
 			"github-release-publish": github.PublishAction{Sdk: *sdk},
+			// gitlab
+			"gitlab-release-publish": gitlab.PublishAction{Sdk: *sdk},
 		}
 
 		// execute
