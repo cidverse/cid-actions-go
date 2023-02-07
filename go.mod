@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.19
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20230205155457-caaefa7900c5
+	github.com/cidverse/cid-sdk-go v0.0.0-20230207190313-07b63a205570
 	github.com/cidverse/cidverseutils v0.0.0-20230205193610-2f97684b74c5
 	github.com/containers/image/v5 v5.24.0
 	github.com/go-resty/resty/v2 v2.7.0
@@ -45,7 +45,7 @@ require (
 	github.com/stretchr/objx v0.5.0 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
