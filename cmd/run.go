@@ -21,6 +21,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/mkdocs"
 	"github.com/cidverse/cid-actions-go/actions/node"
 	"github.com/cidverse/cid-actions-go/actions/python"
+	"github.com/cidverse/cid-actions-go/actions/qodana"
 	"github.com/cidverse/cid-actions-go/actions/semgrep"
 	"github.com/cidverse/cid-actions-go/actions/slsa"
 	"github.com/cidverse/cid-actions-go/actions/sonarqubescan"
@@ -106,6 +107,8 @@ var runCmd = &cobra.Command{
 			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
 			// slsa
 			"slsa-generate": slsa.GenerateAction{Sdk: *sdk},
+			// qodana
+			"qodana-scan": qodana.ScanAction{Sdk: *sdk},
 			// github
 			"github-sarif-upload":    github.SarifUploadAction{Sdk: *sdk},
 			"github-release-publish": github.PublishAction{Sdk: *sdk},
