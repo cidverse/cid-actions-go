@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/cidverse/cidverseutils/pkg/cihelper"
 )
 
 type PublishAction struct {
@@ -39,12 +40,21 @@ func (a PublishAction) Execute() (err error) {
 		releaseOpts = append(releaseOpts, fmt.Sprintf("--notes %q", "no release notes"))
 	}
 
+	// support for self-hosted instances
+	host, err := cihelper.GetHostFromGitRemote(ctx.Env["NCI_REPOSITORY_REMOTE"])
+	if err != nil {
+		return err
+	}
+
 	// create release
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "creating gitlab release", Context: map[string]interface{}{"host": host, "name": ctx.Env["NCI_COMMIT_REF_NAME"]}})
 	releaseResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf(`glab release create %q %s`, ctx.Env["NCI_COMMIT_REF_NAME"], strings.Join(releaseOpts, " ")),
 		WorkDir: ctx.ProjectDir,
 		Env: map[string]string{
-			"GITLAB_TOKEN": ctx.Env["GITLAB_TOKEN"],
+			"GITLAB_HOST":     host,
+			"GITLAB_API_HOST": host,
+			"GITLAB_TOKEN":    ctx.Env["GITLAB_TOKEN"],
 		},
 	})
 	if err != nil {

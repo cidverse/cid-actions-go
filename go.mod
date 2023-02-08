@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230207190313-07b63a205570
-	github.com/cidverse/cidverseutils v0.0.0-20230205193610-2f97684b74c5
+	github.com/cidverse/cidverseutils v0.0.0-20230208185206-be183c16a909
 	github.com/containers/image/v5 v5.24.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v50 v50.0.0
@@ -32,14 +32,12 @@ require (
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
 	github.com/otiai10/copy v1.9.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
-	github.com/rs/zerolog v1.29.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect

@@ -114,7 +114,8 @@ func latestReleaseOfSameType(releases *[]cidsdk.VCSRelease, currentRelease strin
 	currentReleaseStable := version.IsStable(currentRelease)
 
 	for _, release := range *releases {
-		if version.Compare(currentRelease, release.Version) > 0 && version.IsStable(release.Version) == currentReleaseStable {
+		compare, _ := version.Compare(currentRelease, release.Version)
+		if compare > 0 && version.IsStable(release.Version) == currentReleaseStable {
 			return release
 		}
 	}
