@@ -28,9 +28,9 @@ func TestGoModBuild(t *testing.T) {
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"CGO_ENABLED": "false",
-			"GOPROXY":     "https://goproxy.io,direct",
-			"GOOS":        "linux",
-			"GOARCH":      "amd64",
+			//"GOPROXY":     "https://goproxy.io,direct",
+			"GOOS":   "linux",
+			"GOARCH": "amd64",
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 

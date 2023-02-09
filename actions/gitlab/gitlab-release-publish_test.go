@@ -20,7 +20,7 @@ func TestGithubReleasePublishWithChangelog(t *testing.T) {
 		TargetFile: "/my-project/.tmp/github.changelog",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `glab release create "v1.2.0" -F "/my-project/.tmp/github.changelog"`,
+		Command: `glab release create "v1.2.0" -F /my-project/.tmp/github.changelog`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"GITLAB_HOST":     "gitlab.com",
@@ -66,7 +66,11 @@ func TestGithubReleasePublishSelfHosted(t *testing.T) {
 		TargetFile: "/my-project/.tmp/github.changelog",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `glab release create "v1.2.0" -F "/my-project/.tmp/github.changelog"`,
+		Command: `glab config set skip_tls_verify true --host "gitlab.local"`,
+		WorkDir: "/my-project",
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: `glab release create "v1.2.0" -F /my-project/.tmp/github.changelog`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"GITLAB_HOST":     "gitlab.local",

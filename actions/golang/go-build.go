@@ -48,9 +48,9 @@ func (a BuildAction) Execute() error {
 
 			buildEnv := map[string]string{
 				"CGO_ENABLED": "false",
-				"GOPROXY":     "https://goproxy.io,direct",
-				"GOOS":        goos,
-				"GOARCH":      goarch,
+				//"GOPROXY":     "https://goproxy.io,direct",
+				"GOOS":   goos,
+				"GOARCH": goarch,
 			}
 
 			err := group.Add(func() error {
