@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/pkg/sonarqube"
+	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -36,7 +37,7 @@ func (a ScanAction) Execute() (err error) {
 		cfg.SonarProjectKey = ctx.Env["NCI_PROJECT_ID"]
 	}
 	if cfg.SonarDefaultBranch == "" {
-		cfg.SonarDefaultBranch = "develop"
+		cfg.SonarDefaultBranch = util.FirstNonEmpty([]string{ctx.Env["NCI_PROJECT_DEFAULT_BRANCH"], "main"})
 	}
 
 	// ensure that the default branch is configured correctly
