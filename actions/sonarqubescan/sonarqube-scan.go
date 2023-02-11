@@ -96,6 +96,20 @@ func (a ScanAction) Execute() (err error) {
 			} else if artifact.FormatVersion == "json" {
 				files["go-coverage-json"] = append(files["go-coverage-json"], targetFile)
 			}
+		} else if artifact.Type == "report" && artifact.Format == "jacoco" {
+			targetFile := path.Join(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
+			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
+				Module:     artifact.Module,
+				Type:       string(artifact.Type),
+				Name:       artifact.Name,
+				TargetFile: targetFile,
+			})
+			if dlErr != nil {
+				_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "warn", Message: "failed to retrieve jacoco report", Context: map[string]interface{}{"artifact": fmt.Sprintf("%s-%s", artifact.Module, artifact.Name)}})
+				continue
+			}
+
+			files["java-jacoco"] = append(files["java-jacoco"], targetFile)
 		}
 	}
 	if len(files["sarif"]) > 0 {
@@ -107,6 +121,9 @@ func (a ScanAction) Execute() (err error) {
 	if len(files["go-coverage-json"]) > 0 {
 		scanArgs = append(scanArgs, `-D sonar.go.tests.reportPaths=`+strings.Join(files["go-coverage-json"], ","))
 	}
+	if len(files["java-jacoco"]) > 0 {
+		scanArgs = append(scanArgs, `-D sonar.coverage.jacoco.xmlReportPaths=`+strings.Join(files["java-jacoco"], ","))
+	}
 
 	// module specific parameters
 	var sourceInclusion []string
@@ -117,7 +134,6 @@ func (a ScanAction) Execute() (err error) {
 		if module.BuildSystem == string(cidsdk.BuildSystemGradle) || module.BuildSystem == string(cidsdk.BuildSystemMaven) {
 			sourceInclusion = append(sourceInclusion, "**/src/main/java/**", "**/src/main/kotlin/**")
 			testInclusion = append(testInclusion, "**/src/test/java/**", "**/src/test/kotlin/**")
-			scanArgs = append(scanArgs, `-D sonar.coverage.jacoco.xmlReportPaths=`+path.Join(ctx.Config.ArtifactDir, "**", "test", "jacoco.xml"))
 			scanArgs = append(scanArgs, `-D sonar.java.binaries=.`)
 			scanArgs = append(scanArgs, `-D sonar.java.test.binaries=.`)
 		} else if module.BuildSystem == string(cidsdk.BuildSystemGoMod) {

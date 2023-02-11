@@ -2,6 +2,7 @@ package java
 
 import (
 	"fmt"
+	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -40,7 +41,24 @@ func (a TestAction) Execute() (err error) {
 			return fmt.Errorf("gradle test failed, exit code %d", testResult.Code)
 		}
 
-		// collect test reports
+		// collect and store jacoco test reports
+		testReports, err := a.Sdk.FileList(cidsdk.FileRequest{
+			Directory:  ctx.Module.ModuleDir,
+			Extensions: []string{"jacocoTestReport.xml"},
+		})
+		for _, report := range testReports {
+			if strings.HasSuffix(report.Path, path.Join("build", "reports", "jacoco", "test", "jacocoTestReport.xml")) {
+				err := a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+					File:   report.Path,
+					Module: ctx.Module.Slug,
+					Type:   "report",
+					Format: "jacoco",
+				})
+				if err != nil {
+					return err
+				}
+			}
+		}
 
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
 
