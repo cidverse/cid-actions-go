@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/cidverse/cid-actions-go/pkg/githubapi"
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -66,10 +67,18 @@ func (a SarifUploadAction) Execute() (err error) {
 		}
 
 		// upload
-		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.String(ctx.Env["NCI_COMMIT_SHA"]), Ref: github.String(ref), Sarif: github.String(sarifEncoded), CheckoutURI: github.String(ctx.Config.ProjectDir), ToolName: github.String("cid")}
-		_, _, err = client.CodeScanning.UploadSarif(context.Background(), organization, repository, sarifAnalysis)
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading sarif report to github code scanning api", Context: map[string]interface{}{"report": report.Name, "ref": ref, "commit_hash": ctx.Env["NCI_COMMIT_SHA"]}})
+		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.String(ctx.Env["NCI_COMMIT_SHA"]), Ref: github.String(ref), Sarif: github.String(sarifEncoded), CheckoutURI: github.String(ctx.Config.ProjectDir)}
+		sarifId, _, err := client.CodeScanning.UploadSarif(context.Background(), organization, repository, sarifAnalysis)
 		if err != nil {
-			return fmt.Errorf("failed to upload sarif to github code-scanning api: %s", err.Error())
+			// "job scheduled on GitHub side" is not a error, job just isn't completed yet
+			if strings.Contains(err.Error(), "job scheduled on GitHub side") {
+				_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "sarif upload successful", Context: map[string]interface{}{"report": report.Name, "state": "github_job_pending"}})
+			} else {
+				return fmt.Errorf("failed to upload sarif to github code-scanning api: %s", err.Error())
+			}
+		} else {
+			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "sarif upload successful", Context: map[string]interface{}{"report": report.Name, "state": "ok", "id": *sarifId.ID, "url": *sarifId.URL}})
 		}
 	}
 
