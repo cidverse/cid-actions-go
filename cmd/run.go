@@ -20,6 +20,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/java"
 	"github.com/cidverse/cid-actions-go/actions/mkdocs"
 	"github.com/cidverse/cid-actions-go/actions/node"
+	"github.com/cidverse/cid-actions-go/actions/ossf"
 	"github.com/cidverse/cid-actions-go/actions/python"
 	"github.com/cidverse/cid-actions-go/actions/qodana"
 	"github.com/cidverse/cid-actions-go/actions/semgrep"
@@ -114,6 +115,8 @@ var runCmd = &cobra.Command{
 			"github-release-publish": github.PublishAction{Sdk: *sdk},
 			// gitlab
 			"gitlab-release-publish": gitlab.PublishAction{Sdk: *sdk},
+			// ossf
+			"ossf-scorecard-scan": ossf.ScorecardScanAction{Sdk: *sdk},
 		}
 
 		// execute
