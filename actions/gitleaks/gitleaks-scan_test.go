@@ -18,7 +18,7 @@ func TestGitleaksScanBuild(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "gitleaks detect --source=. -v --no-git --report-format=sarif --report-path=/my-project/.tmp/gitleaks.sarif.json --no-banner",
+		Command: "gitleaks detect --source=. -v --no-git --report-format=sarif --report-path=/my-project/.tmp/gitleaks.sarif.json --no-banner --exit-code 0",
 		WorkDir: "/my-project",
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("FileRead", "/my-project/.tmp/gitleaks.sarif.json").Return(reportJson, nil)

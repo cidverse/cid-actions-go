@@ -36,6 +36,7 @@ func (a ScanAction) Execute() (err error) {
 		"--report-format=sarif",
 		"--report-path=" + reportFile,
 		"--no-banner",
+		"--exit-code 0",
 	}
 	if ctx.Env["CI"] == "true" {
 		opts = append(opts, "--redact")
