@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.19
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20230209164243-4159685d046d
+	github.com/cidverse/cid-sdk-go v0.0.0-20230213191516-f6b0426bc034
 	github.com/cidverse/cidverseutils v0.0.0-20230212184034-e92b7dd985f1
 	github.com/containers/image/v5 v5.24.1
 	github.com/go-resty/resty/v2 v2.7.0
@@ -29,6 +29,8 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gosimple/slug v1.13.1 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect

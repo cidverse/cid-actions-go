@@ -2,12 +2,14 @@ package sonarqubescan
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/pkg/sonarqube"
 	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/gosimple/slug"
 )
 
 type ScanAction struct {
@@ -34,7 +36,7 @@ func (a ScanAction) Execute() (err error) {
 		cfg.SonarHostURL = "https://sonarcloud.io"
 	}
 	if cfg.SonarProjectKey == "" {
-		cfg.SonarProjectKey = ctx.Env["NCI_PROJECT_ID"]
+		cfg.SonarProjectKey = slug.Make(ctx.Env["NCI_REPOSITORY_HOST_SERVER"]) + "-" + ctx.Env["NCI_PROJECT_ID"]
 	}
 	if cfg.SonarDefaultBranch == "" {
 		cfg.SonarDefaultBranch = util.FirstNonEmpty([]string{ctx.Env["NCI_PROJECT_DEFAULT_BRANCH"], "main"})
@@ -51,7 +53,7 @@ func (a ScanAction) Execute() (err error) {
 		`-D sonar.projectName=` + ctx.Env["NCI_PROJECT_NAME"],
 		`-D sonar.branch.name=` + ctx.Env["NCI_COMMIT_REF_SLUG"],
 		`-D sonar.sources=.`,
-		`-D sonar.tests=.`,
+		//`-D sonar.tests=.`,
 	}
 	if cfg.SonarOrganization != "" {
 		scanArgs = append(scanArgs, `-D sonar.organization=`+cfg.SonarOrganization)
@@ -142,14 +144,37 @@ func (a ScanAction) Execute() (err error) {
 			testExclusions = append(testExclusions, "**/vendor/**")
 		}
 	}
-	scanArgs = append(scanArgs, `-D sonar.inclusions=`+strings.Join(sourceInclusion, ","))
-	scanArgs = append(scanArgs, `-D sonar.exclusions=`+strings.Join(sourceExclusions, ","))
-	scanArgs = append(scanArgs, `-D sonar.test.inclusions=`+strings.Join(testInclusion, ","))
-	scanArgs = append(scanArgs, `-D sonar.test.exclusions=`+strings.Join(testExclusions, ","))
+	if len(sourceInclusion) > 0 {
+		scanArgs = append(scanArgs, `-D sonar.inclusions=`+strings.Join(sourceInclusion, ","))
+	}
+	if len(sourceExclusions) > 0 {
+		scanArgs = append(scanArgs, `-D sonar.exclusions=`+strings.Join(sourceExclusions, ","))
+	}
+	if len(testInclusion) > 0 {
+		scanArgs = append(scanArgs, `-D sonar.test.inclusions=`+strings.Join(testInclusion, ","))
+	}
+	if len(testExclusions) > 0 {
+		scanArgs = append(scanArgs, `-D sonar.test.exclusions=`+strings.Join(testExclusions, ","))
+	}
 
+	// jvm opts
+	var scanJvmArgs = []string{
+		"-Xmx512m",
+	}
+	if len(os.Getenv("HTTP_PROXY_HOST")) > 0 {
+		scanJvmArgs = append(scanJvmArgs, "-Dhttp.proxyHost="+os.Getenv("HTTP_PROXY_HOST"))
+		scanJvmArgs = append(scanJvmArgs, "-Dhttp.proxyPort="+os.Getenv("HTTP_PROXY_PORT"))
+	}
+	if len(os.Getenv("HTTPS_PROXY_HOST")) > 0 {
+		scanJvmArgs = append(scanJvmArgs, "-Dhttps.proxyHost="+os.Getenv("HTTPS_PROXY_HOST"))
+		scanJvmArgs = append(scanJvmArgs, "-Dhttps.proxyPort="+os.Getenv("HTTPS_PROXY_PORT"))
+	}
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `sonar-scanner ` + strings.Join(scanArgs, " "),
 		WorkDir: ctx.ProjectDir,
+		Env: map[string]string{
+			"SONAR_SCANNER_OPTS": strings.Join(scanJvmArgs, " "),
+		},
 	})
 	if err != nil {
 		return err

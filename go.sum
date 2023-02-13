@@ -2,8 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/cidverse/cid-sdk-go v0.0.0-20230209164243-4159685d046d h1:5pnS9X22NxcFGCQq+q3kabRBHXynIfuIU1Q++M6ffms=
-github.com/cidverse/cid-sdk-go v0.0.0-20230209164243-4159685d046d/go.mod h1:crALIi0k3qSYZKIdPQ5Pk8JLuFAGh7BbBdYaGfSsIOc=
+github.com/cidverse/cid-sdk-go v0.0.0-20230213191516-f6b0426bc034 h1:tYOLt4U202ncE1kDqbYLZE3PDSMEyLKVZp2PWrLAFdE=
+github.com/cidverse/cid-sdk-go v0.0.0-20230213191516-f6b0426bc034/go.mod h1:crALIi0k3qSYZKIdPQ5Pk8JLuFAGh7BbBdYaGfSsIOc=
 github.com/cidverse/cidverseutils v0.0.0-20230212184034-e92b7dd985f1 h1:qE4twTaZnFhOUgb5294jbQnI5T5GZF2FYNRznciaDoU=
 github.com/cidverse/cidverseutils v0.0.0-20230212184034-e92b7dd985f1/go.mod h1:PhiLiRO4nG+tzuBRSgbiwKhy6W9GLhWG42d2BrjCy3s=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
@@ -60,6 +60,10 @@ github.com/google/go-querystring v1.1.0/go.mod h1:Kcdr2DB4koayq7X8pmAG4sNG59So17
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/gosimple/slug v1.13.1 h1:bQ+kpX9Qa6tHRaK+fZR0A0M2Kd7Pa5eHPPsb1JpHD+Q=
+github.com/gosimple/slug v1.13.1/go.mod h1:UiRaFH+GEilHstLUmcBgWcI42viBN7mAb818JrYOeFQ=
+github.com/gosimple/unidecode v1.0.1 h1:hZzFTMMqSswvf0LBJZCZgThIZrpDHFXux9KeGmn6T/o=
+github.com/gosimple/unidecode v1.0.1/go.mod h1:CP0Cr1Y1kogOtx0bJblKzsVWrqYaqfNOnHzpgWw4Awc=
 github.com/hashicorp/go-version v1.6.0 h1:feTTfFNnjP967rlCxM/I9g701jU+RN74YKx2mOkIeek=
 github.com/hashicorp/go-version v1.6.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
 github.com/in-toto/in-toto-golang v0.6.0 h1:1s7cyzb5zGyzKPLgFsi4sC0o3EA24HLKlne8BrnOrSc=

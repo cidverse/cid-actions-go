@@ -1,6 +1,7 @@
 package sonarqubescan
 
 import (
+	"os"
 	"testing"
 
 	"github.com/cidverse/cid-actions-go/pkg/sonarqube"
@@ -12,6 +13,10 @@ import (
 )
 
 func TestSonarqubeScanGoMod(t *testing.T) {
+	os.Setenv("HTTP_PROXY_HOST", "localhost")
+	os.Setenv("HTTP_PROXY_PORT", "3128")
+	os.Setenv("HTTPS_PROXY_HOST", "localhost")
+	os.Setenv("HTTPS_PROXY_PORT", "3128")
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ProjectAction", &ScanConfig{}).Return(SonarqubeGoModTestData(false), nil).Run(func(args mock.Arguments) {
 		arg := args.Get(0).(*ScanConfig)
@@ -68,8 +73,11 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		TargetFile: "/my-project/.tmp/root-coverage.json",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "sonar-scanner -D sonar.host.url=https://sonarcloud.local -D sonar.login=my-token -D sonar.projectKey=my-project-key -D sonar.projectName=my-project-name -D sonar.branch.name= -D sonar.sources=. -D sonar.tests=. -D sonar.organization=my-org -D sonar.sarifReportPaths=/my-project/.tmp/root-test.sarif.json -D sonar.go.coverage.reportPaths=/my-project/.tmp/root-coverage.out -D sonar.go.tests.reportPaths=/my-project/.tmp/root-coverage.json -D sonar.inclusions= -D sonar.exclusions=**/*_test.go,**/vendor/**,**/testdata/* -D sonar.test.inclusions=**/*_test.go -D sonar.test.exclusions=**/vendor/**",
+		Command: "sonar-scanner -D sonar.host.url=https://sonarcloud.local -D sonar.login=my-token -D sonar.projectKey=my-project-key -D sonar.projectName=my-project-name -D sonar.branch.name= -D sonar.sources=. -D sonar.organization=my-org -D sonar.sarifReportPaths=/my-project/.tmp/root-test.sarif.json -D sonar.go.coverage.reportPaths=/my-project/.tmp/root-coverage.out -D sonar.go.tests.reportPaths=/my-project/.tmp/root-coverage.json -D sonar.exclusions=**/*_test.go,**/vendor/**,**/testdata/* -D sonar.test.inclusions=**/*_test.go -D sonar.test.exclusions=**/vendor/**",
 		WorkDir: "/my-project",
+		Env: map[string]string{
+			"SONAR_SCANNER_OPTS": "-Xmx512m -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128 -Dhttps.proxyHost=localhost -Dhttps.proxyPort=3128",
+		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	httpmock.ActivateNonDefault(sonarqube.ApiClient.GetClient())
@@ -80,4 +88,5 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 	action := ScanAction{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
+	os.Clearenv()
 }
