@@ -58,8 +58,8 @@ func (a BuildahBuildAction) Execute() error {
 				}
 
 				// labels (oci annotations: https://github.com/opencontainers/image-spec/blob/main/annotations.md)
-				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.source=${NCI_REPOSITORY_REMOTE}"`)
-				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.created=${TIMESTAMP_RFC3339}"`)
+				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.source={NCI_REPOSITORY_REMOTE}"`)
+				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.created={TIMESTAMP_RFC3339}"`)
 				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.authors="`)
 				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.title=`+ctx.Module.Name+`"`)
 				buildArgs = append(buildArgs, `--annotation "org.opencontainers.image.description="`)
