@@ -35,8 +35,10 @@ func (a ScorecardScanAction) Execute() (err error) {
 		`--checks "Contributors,Dependency-Update-Tool,Maintained,Security-Policy,Fuzzing,Branch-Protection,CI-Tests,Signed-Releases,Binary-Artifacts,SAST,License,Pinned-Dependencies,CII-Best-Practices,Code-Review,Dangerous-Workflow,Packaging,Token-Permissions,Vulnerabilities"`,
 	}
 	scanEnv := map[string]string{}
-	if strings.HasPrefix(ctx.Env["NCI_REPOSITORY_URL"], "https://github.com") {
-		scanEnv["GITHUB_TOKEN"] = ctx.Env["GITHUB_TOKEN"]
+	if ctx.Env["NCI_REPOSITORY_HOST_TYPE"] == "github" {
+		scanEnv["GITHUB_AUTH_TOKEN"] = ctx.Env["GITHUB_TOKEN"]
+	} else if ctx.Env["NCI_REPOSITORY_HOST_TYPE"] == "gitlab" {
+		scanEnv["GITLAB_AUTH_TOKEN"] = ctx.Env["GITLAB_TOKEN"]
 	}
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		CaptureOutput: true,

@@ -18,11 +18,9 @@ func TestOSSFScorecardScan(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `scorecard --repo "https://github.com/cidverse/normalizeci" --format json --commit "abcdef123456" --checks "Contributors,Dependency-Update-Tool,Maintained,Security-Policy,Fuzzing,Branch-Protection,CI-Tests,Signed-Releases,Binary-Artifacts,SAST,License,Pinned-Dependencies,CII-Best-Practices,Code-Review,Dangerous-Workflow,Packaging,Token-Permissions,Vulnerabilities"`,
-		WorkDir: "/my-project",
-		Env: map[string]string{
-			"GITHUB_TOKEN": "",
-		},
+		Command:       `scorecard --repo "https://github.com/cidverse/normalizeci" --format json --commit "abcdef123456" --checks "Contributors,Dependency-Update-Tool,Maintained,Security-Policy,Fuzzing,Branch-Protection,CI-Tests,Signed-Releases,Binary-Artifacts,SAST,License,Pinned-Dependencies,CII-Best-Practices,Code-Review,Dangerous-Workflow,Packaging,Token-Permissions,Vulnerabilities"`,
+		WorkDir:       "/my-project",
+		Env:           map[string]string{},
 		CaptureOutput: true,
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0, Stdout: reportJson}, nil)
 	sdk.On("ArtifactUploadByteArray", cidsdk.ArtifactUploadByteArrayRequest{
