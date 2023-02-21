@@ -5,9 +5,10 @@ go 1.19
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230213191516-f6b0426bc034
 	github.com/cidverse/cidverseutils v0.0.0-20230212184034-e92b7dd985f1
-	github.com/containers/image/v5 v5.24.1
+	github.com/containers/image/v5 v5.24.2
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v50 v50.0.0
+	github.com/gosimple/slug v1.13.1
 	github.com/in-toto/in-toto-golang v0.6.0
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/oriser/regroup v0.0.0-20210730155327-fca8d7531263
@@ -29,7 +30,6 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
