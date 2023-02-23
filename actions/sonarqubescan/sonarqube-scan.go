@@ -2,7 +2,6 @@ package sonarqubescan
 
 import (
 	"fmt"
-	"os"
 	"path"
 	"strings"
 
@@ -157,24 +156,16 @@ func (a ScanAction) Execute() (err error) {
 		scanArgs = append(scanArgs, `-D sonar.test.exclusions=`+strings.Join(testExclusions, ","))
 	}
 
+	// pull request
+	if ctx.Env["NCI_PIPELINE_TRIGGER"] == "pull_request" {
+		scanArgs = append(scanArgs, `-D sonar.pullrequest.key=`+ctx.Env["NCI_PIPELINE_PULL_REQUEST_ID"])
+		scanArgs = append(scanArgs, `-D sonar.pullrequest.branch=`+ctx.Env["NCI_COMMIT_REF_SLUG"])
+	}
+
 	// jvm opts
-	var scanJvmArgs = []string{
-		"-Xmx512m",
-	}
-	if len(os.Getenv("HTTP_PROXY_HOST")) > 0 {
-		scanJvmArgs = append(scanJvmArgs, "-Dhttp.proxyHost="+os.Getenv("HTTP_PROXY_HOST"))
-		scanJvmArgs = append(scanJvmArgs, "-Dhttp.proxyPort="+os.Getenv("HTTP_PROXY_PORT"))
-	}
-	if len(os.Getenv("HTTPS_PROXY_HOST")) > 0 {
-		scanJvmArgs = append(scanJvmArgs, "-Dhttps.proxyHost="+os.Getenv("HTTPS_PROXY_HOST"))
-		scanJvmArgs = append(scanJvmArgs, "-Dhttps.proxyPort="+os.Getenv("HTTPS_PROXY_PORT"))
-	}
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: `sonar-scanner ` + strings.Join(scanArgs, " "),
+		Command: `sonar-scanner -X ` + strings.Join(scanArgs, " "),
 		WorkDir: ctx.ProjectDir,
-		Env: map[string]string{
-			"SONAR_SCANNER_OPTS": strings.Join(scanJvmArgs, " "),
-		},
 	})
 	if err != nil {
 		return err

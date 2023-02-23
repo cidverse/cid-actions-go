@@ -24,7 +24,7 @@ func TestGoModBuild(t *testing.T) {
 	})
 
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" -o /my-project/.dist/github-com-cidverse-my-project/bin/linux_amd64 .`,
+		Command: `go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" -o /my-project/.tmp/linux_amd64 .`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"CGO_ENABLED": "false",
@@ -33,6 +33,13 @@ func TestGoModBuild(t *testing.T) {
 			"GOARCH": "amd64",
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		Module:        "github-com-cidverse-my-project",
+		File:          "/my-project/.tmp/linux_amd64",
+		Type:          "binary",
+		Format:        "go",
+		FormatVersion: "",
+	}).Return(nil)
 
 	action := BuildAction{Sdk: sdk}
 	err := action.Execute()

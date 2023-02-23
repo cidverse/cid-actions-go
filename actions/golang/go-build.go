@@ -3,6 +3,7 @@ package golang
 import (
 	"errors"
 	"fmt"
+	"path"
 	"runtime"
 
 	"github.com/cidverse/cid-actions-go/util/golang"
@@ -54,8 +55,11 @@ func (a BuildAction) Execute() error {
 			}
 
 			err := group.Add(func() error {
+				outputFile := path.Join(ctx.Config.TempDir, fmt.Sprintf("%s_%s", goos, goarch))
+
+				// build
 				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-					Command: fmt.Sprintf(`go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" %s-o %s/%s/bin/%s_%s .`, ctx.Config.DebugFlag("bin-go", "-v "), ctx.Config.ArtifactDir, ctx.Module.Slug, goos, goarch),
+					Command: fmt.Sprintf(`go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" -o %s .`, outputFile),
 					WorkDir: ctx.Module.ModuleDir,
 					Env:     buildEnv,
 				})
@@ -63,6 +67,17 @@ func (a BuildAction) Execute() error {
 					return err
 				} else if buildResult.Code != 0 {
 					return fmt.Errorf("go build failed, exit code %d", buildResult.Code)
+				}
+
+				// store result
+				err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+					File:   outputFile,
+					Module: ctx.Module.Slug,
+					Type:   "binary",
+					Format: "go",
+				})
+				if err != nil {
+					return err
 				}
 
 				return nil
