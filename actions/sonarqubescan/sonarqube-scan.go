@@ -2,6 +2,7 @@ package sonarqubescan
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -42,7 +43,10 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// ensure that the default branch is configured correctly
-	sonarqube.PrepareProject(cfg.SonarHostURL, cfg.SonarToken, cfg.SonarOrganization, cfg.SonarProjectKey, ctx.Env["NCI_PROJECT_NAME"], ctx.Env["NCI_PROJECT_DESCRIPTION"], cfg.SonarDefaultBranch)
+	err = sonarqube.PrepareProject(cfg.SonarHostURL, cfg.SonarToken, cfg.SonarOrganization, cfg.SonarProjectKey, ctx.Env["NCI_PROJECT_NAME"], ctx.Env["NCI_PROJECT_DESCRIPTION"], cfg.SonarDefaultBranch)
+	if err != nil {
+		return err
+	}
 
 	// run scan
 	scanArgs := []string{
@@ -50,7 +54,6 @@ func (a ScanAction) Execute() (err error) {
 		`-D sonar.login=` + cfg.SonarToken,
 		`-D sonar.projectKey=` + cfg.SonarProjectKey,
 		`-D sonar.projectName=` + ctx.Env["NCI_PROJECT_NAME"],
-		`-D sonar.branch.name=` + ctx.Env["NCI_COMMIT_REF_SLUG"],
 		`-D sonar.sources=.`,
 		//`-D sonar.tests=.`,
 	}
@@ -156,16 +159,27 @@ func (a ScanAction) Execute() (err error) {
 		scanArgs = append(scanArgs, `-D sonar.test.exclusions=`+strings.Join(testExclusions, ","))
 	}
 
-	// pull request
-	if ctx.Env["NCI_PIPELINE_TRIGGER"] == "pull_request" {
-		scanArgs = append(scanArgs, `-D sonar.pullrequest.key=`+ctx.Env["NCI_PIPELINE_PULL_REQUEST_ID"])
-		scanArgs = append(scanArgs, `-D sonar.pullrequest.branch=`+ctx.Env["NCI_COMMIT_REF_SLUG"])
+	// merge request
+	if ctx.Env["NCI_PIPELINE_TRIGGER"] == "merge_request" {
+		scanArgs = append(scanArgs, `-D sonar.pullrequest.key=`+ctx.Env["NCI_MERGE_REQUEST_ID"])
+
+		if _, ok := ctx.Env["NCI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]; ok {
+			scanArgs = append(scanArgs, `-D sonar.pullrequest.branch=`+ctx.Env["NCI_MERGE_REQUEST_SOURCE_BRANCH_NAME"])
+		}
+		if _, ok := ctx.Env["NCI_MERGE_REQUEST_TARGET_BRANCH_NAME"]; ok {
+			scanArgs = append(scanArgs, `-D sonar.pullrequest.base=`+ctx.Env["NCI_MERGE_REQUEST_TARGET_BRANCH_NAME"])
+		}
+	} else {
+		scanArgs = append(scanArgs, fmt.Sprintf(`-D sonar.branch.name=%q`, ctx.Env["NCI_COMMIT_REF_NAME"]))
 	}
 
-	// jvm opts
+	// execute
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `sonar-scanner -X ` + strings.Join(scanArgs, " "),
 		WorkDir: ctx.ProjectDir,
+		Env: map[string]string{
+			"SONAR_SCANNER_OPTS": strings.Join([]string{os.Getenv("CID_PROXY_JVM"), os.Getenv("SONAR_SCANNER_OPTS")}, " "),
+		},
 	})
 	if err != nil {
 		return err

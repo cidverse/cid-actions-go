@@ -1,22 +1,26 @@
 package sonarqube
 
-func PrepareProject(server string, accessToken string, organization string, projectKey string, projectName string, projectDescription string, mainBranch string) {
+import (
+	"fmt"
+)
+
+func PrepareProject(server string, accessToken string, organization string, projectKey string, projectName string, projectDescription string, mainBranch string) error {
 	// query branches
 	branchList, branchListErr := GetDefaultBranch(server, accessToken, projectKey)
 	if branchListErr != nil {
 		// no access or project doesn't exist - create
 		createErr := CreateProject(server, accessToken, organization, projectKey, projectName)
 		if createErr != nil {
-			//log.Error().Err(createErr).Msg("failed to create sonarqube project")
+			return fmt.Errorf("failed to create sonarqube project: %s", createErr.Error())
 		}
 
 		// rename main branch
 		renameErr := RenameMainBranch(server, accessToken, projectKey, mainBranch)
 		if renameErr != nil {
-			//log.Error().Err(renameErr).Msg("failed to rename sonarqube main branch")
+			return fmt.Errorf("failed to rename sonarqube main branch: %s", renameErr.Error())
 		}
 
-		return
+		return nil
 	}
 
 	currentMainBranch := ""
@@ -28,18 +32,18 @@ func PrepareProject(server string, accessToken string, organization string, proj
 
 	// rename main branch if needed
 	if mainBranch != currentMainBranch {
-		//log.Info().Str("current-main-branch", currentMainBranch).Str("new-main-branch", mainBranch).Msg("changing sonarqube main branch")
-
 		// delete possible conflicts
 		deleteErr := DeleteBranch(server, accessToken, projectKey, mainBranch)
 		if deleteErr != nil {
-			//log.Debug().Err(deleteErr).Str("branch", mainBranch).Msg("failed to delete sonarqube branch")
+			return fmt.Errorf("failed to delete branch %s: %s", mainBranch, deleteErr.Error())
 		}
 
 		// rename main branch
 		renameErr := RenameMainBranch(server, accessToken, projectKey, mainBranch)
 		if renameErr != nil {
-			//log.Error().Err(renameErr).Msg("failed to rename sonarqube main branch")
+			return fmt.Errorf("failed to rename main branch: %s", renameErr.Error())
 		}
 	}
+
+	return nil
 }
