@@ -2,7 +2,6 @@ package java
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -47,7 +46,7 @@ func (a TestAction) Execute() (err error) {
 			Extensions: []string{"jacocoTestReport.xml"},
 		})
 		for _, report := range testReports {
-			if strings.HasSuffix(report.Path, path.Join("build", "reports", "jacoco", "test", "jacocoTestReport.xml")) {
+			if strings.HasSuffix(report.Path, cidsdk.JoinPath("build", "reports", "jacoco", "test", "jacocoTestReport.xml")) {
 				err := a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
 					File:   report.Path,
 					Module: ctx.Module.Slug,

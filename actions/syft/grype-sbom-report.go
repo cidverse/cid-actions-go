@@ -2,7 +2,6 @@ package syft
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -28,7 +27,7 @@ func (a ReportAction) Execute() (err error) {
 
 	// find container images
 	files, err := a.Sdk.FileList(cidsdk.FileRequest{
-		Directory:  path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "sbom"),
+		Directory:  cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "sbom"),
 		Extensions: []string{".syft.json"},
 	})
 	if err != nil {
@@ -37,7 +36,7 @@ func (a ReportAction) Execute() (err error) {
 
 	// run sbom generation for each image
 	for _, file := range files {
-		outputFile := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "sbom-report", file.NameShort+".grype.json")
+		outputFile := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "sbom-report", file.NameShort+".grype.json")
 
 		buildEnv := make(map[string]string)
 		buildEnv["GRYPE_CHECK_FOR_APP_UPDATE"] = "false"

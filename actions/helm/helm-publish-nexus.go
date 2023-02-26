@@ -2,7 +2,6 @@ package helm
 
 import (
 	"fmt"
-	"path"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
@@ -26,7 +25,7 @@ func (a PublishNexusAction) Execute() (err error) {
 	}
 
 	// globals
-	chartArtifactDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "helm-charts")
+	chartArtifactDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "helm-charts")
 
 	// publish
 	files, err := a.Sdk.FileList(cidsdk.FileRequest{Directory: chartArtifactDir, Extensions: []string{".tgz"}})

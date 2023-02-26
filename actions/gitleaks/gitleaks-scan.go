@@ -2,7 +2,6 @@ package gitleaks
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -24,7 +23,7 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// files
-	reportFile := path.Join(ctx.Config.TempDir, "gitleaks.sarif.json")
+	reportFile := cidsdk.JoinPath(ctx.Config.TempDir, "gitleaks.sarif.json")
 
 	// opts
 	var opts = []string{

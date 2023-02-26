@@ -2,7 +2,6 @@ package hugo
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -25,7 +24,7 @@ func (a BuildAction) Execute() (err error) {
 	if ctx.Module.BuildSystem != string(cidsdk.BuildSystemHugo) || ctx.Module.BuildSystemSyntax != string(cidsdk.BuildSystemSyntaxDefault) {
 		return fmt.Errorf("not supported: %s/%s", ctx.Module.BuildSystem, ctx.Module.BuildSystemSyntax)
 	}
-	outputDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "html")
+	outputDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "html")
 
 	var buildArgs []string
 	buildArgs = append(buildArgs, "--source "+ctx.Module.ModuleDir)

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -20,7 +19,7 @@ func (a TestAction) Execute() error {
 		return err
 	}
 
-	coverageDir := path.Join(ctx.Config.TempDir)
+	coverageDir := cidsdk.JoinPath(ctx.Config.TempDir)
 	err = os.MkdirAll(coverageDir, os.ModePerm)
 	if err != nil {
 		return err

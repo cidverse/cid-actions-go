@@ -1,8 +1,6 @@
 package node
 
 import (
-	"path"
-
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -21,7 +19,7 @@ func (a BuildAction) Execute() (err error) {
 	}
 
 	// package.json
-	content, err := a.Sdk.FileRead(path.Join(ctx.Module.ModuleDir, "package.json"))
+	content, err := a.Sdk.FileRead(cidsdk.JoinPath(ctx.Module.ModuleDir, "package.json"))
 	if err != nil {
 		return err
 	}

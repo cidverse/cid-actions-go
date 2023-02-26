@@ -3,7 +3,6 @@ package cosign
 import (
 	"encoding/base64"
 	"fmt"
-	"path"
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/util/container"
@@ -29,7 +28,7 @@ func (a AttachAction) Execute() (err error) {
 	}
 
 	// private key for signing
-	certFile := path.Join(ctx.Config.TempDir, "private.key")
+	certFile := cidsdk.JoinPath(ctx.Config.TempDir, "private.key")
 	if cfg.CosignMode == cosignModePrivateKey {
 		data, err := base64.StdEncoding.DecodeString(cfg.CosignKey)
 		if err != nil {
@@ -103,7 +102,7 @@ func (a AttachAction) Execute() (err error) {
 		})
 
 		// download file
-		targetFile := path.Join(ctx.Config.TempDir, report.Name)
+		targetFile := cidsdk.JoinPath(ctx.Config.TempDir, report.Name)
 		err := a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
 			Module:     report.Module,
 			Type:       string(report.Type),

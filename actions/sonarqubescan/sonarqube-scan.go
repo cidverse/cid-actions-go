@@ -3,7 +3,6 @@ package sonarqubescan
 import (
 	"fmt"
 	"os"
-	"path"
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/pkg/sonarqube"
@@ -69,7 +68,7 @@ func (a ScanAction) Execute() (err error) {
 	files := make(map[string][]string, 0)
 	for _, artifact := range *artifacts {
 		if artifact.Type == "report" && artifact.Format == "sarif" {
-			targetFile := path.Join(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
+			targetFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
 			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
 				Module:     artifact.Module,
 				Type:       string(artifact.Type),
@@ -83,7 +82,7 @@ func (a ScanAction) Execute() (err error) {
 
 			files["sarif"] = append(files["sarif"], targetFile)
 		} else if artifact.Type == "report" && artifact.Format == "go-coverage" {
-			targetFile := path.Join(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
+			targetFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
 			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
 				Module:     artifact.Module,
 				Type:       string(artifact.Type),
@@ -101,7 +100,7 @@ func (a ScanAction) Execute() (err error) {
 				files["go-coverage-json"] = append(files["go-coverage-json"], targetFile)
 			}
 		} else if artifact.Type == "report" && artifact.Format == "jacoco" {
-			targetFile := path.Join(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
+			targetFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
 			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
 				Module:     artifact.Module,
 				Type:       string(artifact.Type),

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -32,7 +31,7 @@ func (a BuildahBuildAction) Execute() error {
 	for _, discovery := range ctx.Module.Discovery {
 		containerFile := discovery.File
 		containerFileContent, _ := a.Sdk.FileRead(containerFile)
-		_ = os.MkdirAll(path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image"), os.ModePerm)
+		_ = os.MkdirAll(cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image"), os.ModePerm)
 
 		if ctx.Module.BuildSystem == string(cidsdk.BuildSystemContainer) && ctx.Module.BuildSystemSyntax == string(cidsdk.ContainerFile) {
 			platforms := getDockerfileTargetPlatforms(containerFileContent)
@@ -40,7 +39,7 @@ func (a BuildahBuildAction) Execute() error {
 
 			// build each image and add to manifest
 			for _, platform := range platforms {
-				containerArchiveFile := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image", platform.Platform("_")+".tar")
+				containerArchiveFile := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image", platform.Platform("_")+".tar")
 				_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "build container image", Context: map[string]interface{}{"module": ctx.Module.Name, "platform": platform.Platform("/"), "tag": imageReference}})
 
 				var buildArgs []string

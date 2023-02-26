@@ -2,7 +2,6 @@ package techdocs
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -33,7 +32,7 @@ func (a PublishAction) Execute() (err error) {
 	if ctx.Module.BuildSystem != string(cidsdk.BuildSystemMkdocs) || ctx.Module.BuildSystemSyntax != string(cidsdk.MkdocsTechdocs) {
 		return fmt.Errorf("not supported: %s/%s", ctx.Module.BuildSystem, ctx.Module.BuildSystemSyntax)
 	}
-	outputDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "html")
+	outputDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "html")
 
 	publishEnv := make(map[string]string)
 	var publishArgs []string

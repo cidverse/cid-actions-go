@@ -3,7 +3,6 @@ package cosign
 import (
 	"encoding/base64"
 	"fmt"
-	"path"
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/util/container"
@@ -73,7 +72,7 @@ func (a SignAction) Execute() (err error) {
 		}
 	} else if cfg.CosignMode == cosignModePrivateKey {
 		// private key
-		certFile := path.Join(ctx.Config.TempDir, "private.key")
+		certFile := cidsdk.JoinPath(ctx.Config.TempDir, "private.key")
 		data, err := base64.StdEncoding.DecodeString(cfg.CosignKey)
 		if err != nil {
 			return fmt.Errorf("failed to decode private key file: %s", err.Error())

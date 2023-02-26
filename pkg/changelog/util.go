@@ -3,15 +3,15 @@ package changelog
 import (
 	"embed"
 	"errors"
-	"path/filepath"
 
+	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cidverseutils/pkg/filesystem"
 )
 
 // GetFileContent returns the file content from either the directory or the embedded filesystem in that order
 func GetFileContent(folder string, fs embed.FS, file string) (string, error) {
-	if filesystem.FileExists(filepath.Join(folder, file)) {
-		content, err := filesystem.GetFileContent(filepath.Join(folder, file))
+	if filesystem.FileExists(cidsdk.JoinPath(folder, file)) {
+		content, err := filesystem.GetFileContent(cidsdk.JoinPath(folder, file))
 		if err != nil {
 			return "", err
 		}

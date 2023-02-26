@@ -1,8 +1,6 @@
 package upx
 
 import (
-	"path"
-
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -27,7 +25,7 @@ func (a OptimizeAction) Execute() (err error) {
 	}
 
 	// files
-	files, err := a.Sdk.FileList(cidsdk.FileRequest{Directory: path.Join(ctx.ProjectDir, "bin")})
+	files, err := a.Sdk.FileList(cidsdk.FileRequest{Directory: cidsdk.JoinPath(ctx.ProjectDir, "bin")})
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,6 @@ package golang
 import (
 	"errors"
 	"fmt"
-	"path"
 	"runtime"
 
 	"github.com/cidverse/cid-actions-go/util/golang"
@@ -55,7 +54,7 @@ func (a BuildAction) Execute() error {
 			}
 
 			err := group.Add(func() error {
-				outputFile := path.Join(ctx.Config.TempDir, fmt.Sprintf("%s_%s", goos, goarch))
+				outputFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s_%s", goos, goarch))
 
 				// build
 				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{

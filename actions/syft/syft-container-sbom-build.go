@@ -2,7 +2,6 @@ package syft
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -28,7 +27,7 @@ func (a ContainerGenerateAction) Execute() (err error) {
 
 	// find container images
 	files, err := a.Sdk.FileList(cidsdk.FileRequest{
-		Directory:  path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image"),
+		Directory:  cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image"),
 		Extensions: []string{"tar"},
 	})
 	if err != nil {
@@ -37,7 +36,7 @@ func (a ContainerGenerateAction) Execute() (err error) {
 
 	// run sbom generation for each image
 	for _, file := range files {
-		baseName := path.Join(ctx.Config.TempDir, ctx.Module.Slug, strings.TrimSuffix(file.Name, ".tar"))
+		baseName := cidsdk.JoinPath(ctx.Config.TempDir, ctx.Module.Slug, strings.TrimSuffix(file.Name, ".tar"))
 		outputFormats := []string{
 			"json=" + baseName + ".syft.json",      // syft-json
 			"text=" + baseName + ".txt",            // human-readable

@@ -2,7 +2,6 @@ package github
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -24,7 +23,7 @@ func (a PublishAction) Execute() (err error) {
 	}
 
 	// changelog
-	changelogFile := path.Join(ctx.Config.TempDir, "github.changelog")
+	changelogFile := cidsdk.JoinPath(ctx.Config.TempDir, "github.changelog")
 	downloadChangelogErr := a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
 		Type:       "changelog",
 		Name:       "github.changelog",

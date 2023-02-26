@@ -1,8 +1,6 @@
 package helm
 
 import (
-	"path"
-
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -21,7 +19,7 @@ func (a BuildAction) Execute() (err error) {
 	}
 
 	// globals
-	chartArtifactDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "helm-charts")
+	chartArtifactDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "helm-charts")
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemHelm) {
 		// restore the charts/ directory based on the Chart.lock file

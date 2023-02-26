@@ -2,7 +2,6 @@ package syft
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -30,7 +29,7 @@ func (a ArtifactGenerateAction) Execute() (err error) {
 
 	// run sbom generation for each image
 	for _, file := range *artifacts {
-		targetFile := path.Join(ctx.Config.TempDir, file.Name)
+		targetFile := cidsdk.JoinPath(ctx.Config.TempDir, file.Name)
 		var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
 			Module:     file.Module,
 			Type:       string(file.Type),

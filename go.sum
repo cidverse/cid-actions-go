@@ -2,8 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/cidverse/cid-sdk-go v0.0.0-20230226204401-9222481159ba h1:xpa97DyTTShOwBt514TfwxCVddS8yk5Hkpkh9JJ+8EI=
-github.com/cidverse/cid-sdk-go v0.0.0-20230226204401-9222481159ba/go.mod h1:qRngxgYfqUrJEZrjKund4CGZwzHtQ1pjhdOJ+is21K4=
+github.com/cidverse/cid-sdk-go v0.0.0-20230226220106-88fa751accc1 h1:eX8bznz51elSHKSBQvj312WvkAUr92VkSO2rT+60R3c=
+github.com/cidverse/cid-sdk-go v0.0.0-20230226220106-88fa751accc1/go.mod h1:qRngxgYfqUrJEZrjKund4CGZwzHtQ1pjhdOJ+is21K4=
 github.com/cidverse/cidverseutils v0.0.0-20230225155835-ba9f1da20381 h1:Ga4oiTtpDmUQmZCV6oGYEuRqC0USSo5WOWMrdRJQgPU=
 github.com/cidverse/cidverseutils v0.0.0-20230225155835-ba9f1da20381/go.mod h1:+Eqg1X8+52OQO7aLBVOUoMVZzFEoGVuy/FFiSf4huBU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=

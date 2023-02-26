@@ -2,7 +2,6 @@ package container
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/util/container"
@@ -25,18 +24,18 @@ func (a BuildahPublishAction) Execute() error {
 	}
 
 	// properties
-	digestFile := path.Join(ctx.Config.TempDir, "digest.txt")
+	digestFile := cidsdk.JoinPath(ctx.Config.TempDir, "digest.txt")
 
 	// target image reference
-	ociDir := path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image")
-	imageRefFile := path.Join(ociDir, "image.txt")
+	ociDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image")
+	imageRefFile := cidsdk.JoinPath(ociDir, "image.txt")
 	imageRef, err := a.Sdk.FileRead(imageRefFile)
 	if err != nil {
 		return fmt.Errorf("failed to parse image reference from %s", err.Error())
 	}
 
 	// for each container archive
-	files, err := a.Sdk.FileList(cidsdk.FileRequest{Directory: path.Join(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image"), Extensions: []string{".tar"}})
+	files, err := a.Sdk.FileList(cidsdk.FileRequest{Directory: cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image"), Extensions: []string{".tar"}})
 	if err != nil {
 		return fmt.Errorf("failed to list oci archive files: %s", err.Error())
 	}
@@ -138,7 +137,7 @@ func (a BuildahPublishAction) Execute() error {
 	}
 
 	// store manifest with correct digests
-	manifestFile := path.Join(ctx.Config.TempDir, "manifest.json")
+	manifestFile := cidsdk.JoinPath(ctx.Config.TempDir, "manifest.json")
 	err = a.Sdk.FileWrite(manifestFile, []byte(manifestResult.Stdout))
 	if err != nil {
 		return err

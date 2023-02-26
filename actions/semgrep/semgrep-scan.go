@@ -1,7 +1,6 @@
 package semgrep
 
 import (
-	"path"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -23,7 +22,7 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// files
-	reportFile := path.Join(ctx.Config.TempDir, "semgrep.sarif.json")
+	reportFile := cidsdk.JoinPath(ctx.Config.TempDir, "semgrep.sarif.json")
 
 	// scan
 	var opts = []string{"semgrep", "scan", "--config p/default", "--sarif", "--quiet", "--metrics=off", "--disable-version-check", "--exclude=.dist", "--exclude=.tmp"}

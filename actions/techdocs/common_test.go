@@ -1,6 +1,17 @@
 package techdocs
 
-import cidsdk "github.com/cidverse/cid-sdk-go"
+import (
+	"os"
+	"testing"
+
+	cidsdk "github.com/cidverse/cid-sdk-go"
+)
+
+func TestMain(m *testing.M) {
+	cidsdk.JoinSeparator = "/"
+	code := m.Run()
+	os.Exit(code)
+}
 
 func TechdocsTestData(debug bool) cidsdk.ModuleActionData {
 	return cidsdk.ModuleActionData{
