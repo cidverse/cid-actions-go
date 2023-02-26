@@ -24,7 +24,6 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/python"
 	"github.com/cidverse/cid-actions-go/actions/qodana"
 	"github.com/cidverse/cid-actions-go/actions/semgrep"
-	"github.com/cidverse/cid-actions-go/actions/slsa"
 	"github.com/cidverse/cid-actions-go/actions/sonarqubescan"
 	"github.com/cidverse/cid-actions-go/actions/syft"
 	"github.com/cidverse/cid-actions-go/actions/techdocs"
@@ -106,8 +105,6 @@ var runCmd = &cobra.Command{
 			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
 			// semgrep
 			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
-			// slsa
-			"slsa-generate": slsa.GenerateAction{Sdk: *sdk},
 			// qodana
 			"qodana-scan": qodana.ScanAction{Sdk: *sdk},
 			// github
