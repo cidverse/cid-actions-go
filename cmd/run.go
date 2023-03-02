@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/cidverse/cid-actions-go/actions/api"
+	"github.com/cidverse/cid-actions-go/actions/applicationinspector"
 	"github.com/cidverse/cid-actions-go/actions/changeloggenerate"
 	"github.com/cidverse/cid-actions-go/actions/container"
 	"github.com/cidverse/cid-actions-go/actions/cosign"
@@ -114,6 +115,8 @@ var runCmd = &cobra.Command{
 			"gitlab-release-publish": gitlab.PublishAction{Sdk: *sdk},
 			// ossf
 			"ossf-scorecard-scan": ossf.ScorecardScanAction{Sdk: *sdk},
+			// applicationinspector
+			"applicationinspector-scan": applicationinspector.ScanAction{Sdk: *sdk},
 		}
 
 		// execute
