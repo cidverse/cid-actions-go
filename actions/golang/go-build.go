@@ -58,7 +58,7 @@ func (a BuildAction) Execute() error {
 
 				// build
 				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-					Command: fmt.Sprintf(`go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" -o %s .`, outputFile),
+					Command: fmt.Sprintf(`go build -buildvcs=false -ldflags "-X main.version={NCI_COMMIT_REF_RELEASE} -X main.commit={NCI_COMMIT_SHA} -X main.date={TIMESTAMP_RFC3339} -X main.status={NCI_REPOSITORY_STATUS}" -o %s .`, outputFile),
 					WorkDir: ctx.Module.ModuleDir,
 					Env:     buildEnv,
 				})

@@ -24,7 +24,7 @@ func TestGoModBuild(t *testing.T) {
 	})
 
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `go build -buildvcs=false -ldflags "-X main.Version={NCI_COMMIT_REF_RELEASE} -X main.RepositoryStatus={NCI_REPOSITORY_STATUS} -X main.CommitHash={NCI_COMMIT_SHA} -X main.BuildAt={TIMESTAMP_RFC3339}" -o /my-project/.tmp/linux_amd64 .`,
+		Command: `go build -buildvcs=false -ldflags "-X main.version={NCI_COMMIT_REF_RELEASE} -X main.commit={NCI_COMMIT_SHA} -X main.date={TIMESTAMP_RFC3339} -X main.status={NCI_REPOSITORY_STATUS}" -o /my-project/.tmp/linux_amd64 .`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"CGO_ENABLED": "false",
