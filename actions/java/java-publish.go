@@ -59,7 +59,19 @@ func (a PublishAction) Execute() (err error) {
 			return fmt.Errorf("gradle publish failed, exit code %d", publishResult.Code)
 		}
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
-
+		buildArgs := []string{
+			`deploy`,
+			`--batch-mode`,
+		}
+		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command: fmt.Sprintf("java-exec %s/mvnw %s", ctx.Module.ModuleDir, strings.Join(buildArgs, " ")),
+			WorkDir: ctx.Module.ModuleDir,
+		})
+		if err != nil {
+			return err
+		} else if buildResult.Code != 0 {
+			return fmt.Errorf("maven publish failed, exit code %d", buildResult.Code)
+		}
 	}
 
 	return nil
