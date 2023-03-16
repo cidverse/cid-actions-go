@@ -24,24 +24,37 @@ func (a PublishNexusAction) Execute() (err error) {
 		return err
 	}
 
-	// globals
-	chartArtifactDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "helm-charts")
+	// find charts
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
+		ArtifactType: "helm-chart",
+		Format:       "tgz",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to query artifacts: %s", err.Error())
+	}
 
 	// publish
-	files, err := a.Sdk.FileList(cidsdk.FileRequest{Directory: chartArtifactDir, Extensions: []string{".tgz"}})
-	if err != nil {
-		return fmt.Errorf("failed to find any charts in artifact directory: %s", err.Error())
-	}
-	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading charts to nexus", Context: map[string]interface{}{"count": len(files), "nexus": cfg.NexusURL, "nexus_repo": cfg.NexusRepository}})
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading charts to nexus", Context: map[string]interface{}{"count": len(*artifacts), "nexus": cfg.NexusURL, "nexus_repo": cfg.NexusRepository}})
+	for _, artifact := range *artifacts {
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading chart", Context: map[string]interface{}{"chart": artifact.Name}})
 
-	for _, file := range files {
+		// download
+		chartArchive := cidsdk.JoinPath(ctx.Config.TempDir, artifact.Name)
+		err = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
+			ID:         artifact.ID,
+			TargetFile: chartArchive,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to load artifact with id %s: %s", artifact.ID, err.Error())
+		}
+
+		// upload
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading chart to nexus", Context: map[string]interface{}{"chart": artifact.Name}})
 		endpoint := cfg.NexusURL + "/service/rest/v1/components?repository=" + cfg.NexusRepository
-		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading chart", Context: map[string]interface{}{"chart": file.Name}})
-
-		status, response := UploadChart(endpoint, cfg.NexusUsername, cfg.NexusPassword, file.Path)
+		status, response := UploadChart(endpoint, cfg.NexusUsername, cfg.NexusPassword, chartArchive)
 		if status < 200 || status >= 300 {
-			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "warn", Message: "failed to upload chart", Context: map[string]interface{}{"chart": file.Name, "status": status, "response": string(response)}})
-			return fmt.Errorf("failed to publish chart %s: status: %d, response: %s", file.Name, status, string(response))
+			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "warn", Message: "failed to upload chart", Context: map[string]interface{}{"chart": artifact.Name, "status": status, "response": string(response)}})
+			return fmt.Errorf("failed to publish chart %s: status: %d, response: %s", artifact.Name, status, string(response))
 		}
 	}
 

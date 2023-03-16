@@ -70,9 +70,10 @@ var runCmd = &cobra.Command{
 			// gosec
 			"gosec-scan": gosec.ScanAction{Sdk: *sdk},
 			// helm
-			"helm-build":         helm.BuildAction{Sdk: *sdk},
-			"helm-lint":          helm.LintAction{Sdk: *sdk},
-			"helm-publish-nexus": helm.PublishNexusAction{Sdk: *sdk},
+			"helm-build":            helm.BuildAction{Sdk: *sdk},
+			"helm-lint":             helm.LintAction{Sdk: *sdk},
+			"helm-publish-nexus":    helm.PublishNexusAction{Sdk: *sdk},
+			"helm-publish-registry": helm.PublishRegistryAction{Sdk: *sdk},
 			// java
 			"java-build":   java.BuildAction{Sdk: *sdk},
 			"java-test":    java.TestAction{Sdk: *sdk},

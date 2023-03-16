@@ -2,6 +2,7 @@ package helm
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -75,21 +76,14 @@ func UploadChart(url string, username string, password string, file string) (res
 	return responseCodeInt, content
 }
 
-func ParseChart(file string) *ChartConfig {
-	content, contentErr := os.ReadFile(file)
-	if contentErr != nil {
-		//log.Err(contentErr).Str("file", file).Msg("failed to get file content")
-		return nil
-	}
-
+func ParseChart(content []byte) (ChartConfig, error) {
 	var chart ChartConfig
-	parseErr := yaml.Unmarshal(content, &chart)
-	if parseErr != nil {
-		//log.Err(parseErr).Str("file", file).Msg("failed to parse Chart.yaml")
-		return nil
+	err := yaml.Unmarshal(content, &chart)
+	if err != nil {
+		return ChartConfig{}, fmt.Errorf("failed to parse chart file: %s", err.Error())
 	}
 
-	return &chart
+	return chart, nil
 }
 
 func createForm(form map[string]string) (string, io.Reader, error) {

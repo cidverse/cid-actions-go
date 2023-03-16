@@ -5,19 +5,15 @@ import (
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cid-sdk-go/mocks"
-	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHelmPublishNexus(t *testing.T) {
+func TestHelmPublishRegistry(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
-	sdk.On("ModuleAction", &PublishNexusConfig{}).Return(GetHelmTestData(false), nil).Run(func(args mock.Arguments) {
-		arg := args.Get(0).(*PublishNexusConfig)
-		arg.NexusURL = "https://localhost:9999"
-		arg.NexusRepository = "dummy"
-		arg.NexusUsername = "admin"
-		arg.NexusPassword = "admin"
+	sdk.On("ModuleAction", &PublishRegistryConfig{}).Return(GetHelmTestData(false), nil).Run(func(args mock.Arguments) {
+		arg := args.Get(0).(*PublishRegistryConfig)
+		arg.OCIRepository = "localhost:5000/helm-charts"
 	})
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "helm-chart", Format: "tgz"}).Return(&[]cidsdk.ActionArtifact{
 		{
@@ -32,12 +28,12 @@ func TestHelmPublishNexus(t *testing.T) {
 		ID:         "root/helm-chart/mychart.tgz",
 		TargetFile: ".tmp/mychart.tgz",
 	}).Return(nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: `helm push .tmp/mychart.tgz oci://localhost:5000/helm-charts`,
+		WorkDir: "/my-project",
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("POST", "https://localhost:9999/service/rest/v1/components?repository=dummy", httpmock.NewStringResponder(200, ``))
-
-	action := PublishNexusAction{Sdk: sdk}
+	action := PublishRegistryAction{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
