@@ -1,7 +1,9 @@
 package java
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -28,6 +30,11 @@ func (a PublishAction) Execute() (err error) {
 	}
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
+		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
+		if _, err := os.Stat(gradleWrapper); errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
+		}
+
 		// TODO: run "gradle tasks --all" and check if the "publish" task is available?
 		publishEnv := make(map[string]string)
 		if cfg.GPGSignKeyId != "" {
@@ -49,7 +56,7 @@ func (a PublishAction) Execute() (err error) {
 			`--stacktrace`,
 		}
 		publishResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("%s %s", javaGradleCmd, strings.Join(publishArgs, " ")),
+			Command: fmt.Sprintf("java-exec %s %s", gradleWrapper, strings.Join(publishArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 			Env:     publishEnv,
 		})
@@ -59,12 +66,17 @@ func (a PublishAction) Execute() (err error) {
 			return fmt.Errorf("gradle publish failed, exit code %d", publishResult.Code)
 		}
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
+		mavenWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "mvnw")
+		if _, err := os.Stat(mavenWrapper); errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("maven wrapper not found at %s", mavenWrapper)
+		}
+
 		buildArgs := []string{
 			`deploy`,
 			`--batch-mode`,
 		}
 		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("java-exec %s/mvnw %s", ctx.Module.ModuleDir, strings.Join(buildArgs, " ")),
+			Command: fmt.Sprintf("java-exec %s %s", mavenWrapper, strings.Join(buildArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 		})
 		if err != nil {

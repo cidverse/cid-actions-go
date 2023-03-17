@@ -1,7 +1,9 @@
 package java
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -22,6 +24,11 @@ func (a TestAction) Execute() (err error) {
 	}
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
+		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
+		if _, err := os.Stat(gradleWrapper); errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
+		}
+
 		testArgs := []string{
 			fmt.Sprintf(`-Pversion=%q`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])),
 			`check`,
@@ -31,7 +38,7 @@ func (a TestAction) Execute() (err error) {
 			`--stacktrace`,
 		}
 		testResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("%s %s", javaGradleCmd, strings.Join(testArgs, " ")),
+			Command: fmt.Sprintf("java-exec %s %s", gradleWrapper, strings.Join(testArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 		})
 		if err != nil {
@@ -60,12 +67,17 @@ func (a TestAction) Execute() (err error) {
 		}
 
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
+		mavenWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "mvnw")
+		if _, err := os.Stat(mavenWrapper); errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("maven wrapper not found at %s", mavenWrapper)
+		}
+
 		buildArgs := []string{
 			`test`,
 			`--batch-mode`,
 		}
 		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("java-exec %s/mvnw %s", ctx.Module.ModuleDir, strings.Join(buildArgs, " ")),
+			Command: fmt.Sprintf("java-exec %s %s", mavenWrapper, strings.Join(buildArgs, " ")),
 			WorkDir: ctx.Module.ModuleDir,
 		})
 		if err != nil {
