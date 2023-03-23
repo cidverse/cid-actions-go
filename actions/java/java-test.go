@@ -1,9 +1,7 @@
 package java
 
 import (
-	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -25,7 +23,7 @@ func (a TestAction) Execute() (err error) {
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
 		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
-		if _, err := os.Stat(gradleWrapper); errors.Is(err, os.ErrNotExist) {
+		if !a.Sdk.FileExists(gradleWrapper) {
 			return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
 		}
 
@@ -68,7 +66,7 @@ func (a TestAction) Execute() (err error) {
 
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
 		mavenWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "mvnw")
-		if _, err := os.Stat(mavenWrapper); errors.Is(err, os.ErrNotExist) {
+		if !a.Sdk.FileExists(mavenWrapper) {
 			return fmt.Errorf("maven wrapper not found at %s", mavenWrapper)
 		}
 
