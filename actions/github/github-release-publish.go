@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/cidverse/cidverseutils/pkg/version"
 )
 
 type PublishAction struct {
@@ -36,6 +37,11 @@ func (a PublishAction) Execute() (err error) {
 		releaseOpts = append(releaseOpts, fmt.Sprintf("-F %q", changelogFile))
 	} else {
 		releaseOpts = append(releaseOpts, "--generate-notes")
+	}
+
+	// prerelease
+	if !version.IsStable(ctx.Env["NCI_COMMIT_REF_NAME"]) {
+		releaseOpts = append(releaseOpts, "--prerelease")
 	}
 
 	// create release
