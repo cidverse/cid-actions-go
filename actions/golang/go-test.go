@@ -29,17 +29,18 @@ func (a TestAction) Execute() error {
 		return errors.New("build system " + ctx.Module.BuildSystem + " is not supported")
 	}
 
+	// run tests
 	testArgs := []string{
 		"-vet off",
 		"-cover",
 		"-covermode=count",
 		fmt.Sprintf(`-coverprofile %s/cover.out`, coverageDir),
+		"-parallel=4",
+		"-timeout 10s",
 	}
 	if ctx.Config.Debug || ctx.Config.Log["bin-go"] == "debug" {
 		testArgs = append(testArgs, `-v`)
 	}
-
-	// run tests
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "running tests"})
 	testResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf("go test %s ./...", strings.Join(testArgs, " ")),
@@ -65,7 +66,7 @@ func (a TestAction) Execute() error {
 	// json report
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "generating json coverage report"})
 	coverageJsonResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command:       fmt.Sprintf("go test -coverprofile %s/cover.out -json -covermode=count ./...", coverageDir),
+		Command:       fmt.Sprintf("go test -coverprofile %s/cover.out -json -covermode=count -parallel=4 -timeout 10s ./...", coverageDir),
 		WorkDir:       ctx.Module.ModuleDir,
 		CaptureOutput: true,
 	})

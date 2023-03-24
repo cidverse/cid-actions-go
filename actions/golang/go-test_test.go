@@ -15,7 +15,7 @@ func TestGoModTest(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out ./...",
+		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -parallel=4 -timeout 10s ./...",
 		WorkDir: "/my-project",
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
@@ -27,7 +27,7 @@ func TestGoModTest(t *testing.T) {
 	}).Return(nil)
 
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command:       "go test -coverprofile /my-project/.tmp/cover.out -json -covermode=count ./...",
+		Command:       "go test -coverprofile /my-project/.tmp/cover.out -json -covermode=count -parallel=4 -timeout 10s ./...",
 		WorkDir:       "/my-project",
 		CaptureOutput: true,
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0, Stdout: "{}"}, nil)
@@ -61,7 +61,7 @@ func TestDebugTest(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ModuleAction", mock.Anything).Return(GoModTestData(true), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -v ./...",
+		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -parallel=4 -timeout 10s -v ./...",
 		WorkDir: "/my-project",
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
@@ -73,7 +73,7 @@ func TestDebugTest(t *testing.T) {
 	}).Return(nil)
 
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command:       "go test -coverprofile /my-project/.tmp/cover.out -json -covermode=count ./...",
+		Command:       "go test -coverprofile /my-project/.tmp/cover.out -json -covermode=count -parallel=4 -timeout 10s ./...",
 		WorkDir:       "/my-project",
 		CaptureOutput: true,
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0, Stdout: "{}"}, nil)
