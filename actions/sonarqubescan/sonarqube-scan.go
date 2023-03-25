@@ -140,7 +140,7 @@ func (a ScanAction) Execute() (err error) {
 			scanArgs = append(scanArgs, `-D sonar.java.binaries=.`)
 			scanArgs = append(scanArgs, `-D sonar.java.test.binaries=.`)
 		} else if module.BuildSystem == string(cidsdk.BuildSystemGoMod) {
-			sourceExclusions = append(sourceExclusions, "**/*_test.go", "**/vendor/**", "**/testdata/*")
+			sourceExclusions = append(sourceExclusions, "**/*_test.go", "**/vendor/**", "**/mocks/**", "**/testdata/*")
 			testInclusion = append(testInclusion, "**/*_test.go")
 			testExclusions = append(testExclusions, "**/vendor/**")
 		}
