@@ -8,7 +8,7 @@ import (
 	"github.com/cidverse/cid-actions-go/pkg/githubapi"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cidverseutils/pkg/encoding"
-	"github.com/google/go-github/v50/github"
+	"github.com/google/go-github/v52/github"
 	"golang.org/x/oauth2"
 )
 
