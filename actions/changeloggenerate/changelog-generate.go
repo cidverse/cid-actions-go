@@ -70,6 +70,17 @@ func (a GenerateAction) Execute() error {
 	if err != nil {
 		return err
 	}
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{
+		Level:   "debug",
+		Message: "fetch commits",
+		Context: map[string]interface{}{
+			"release_current":  currentRelease,
+			"release_previous": previousRelease.Version,
+			"from":             ctx.Env["NCI_COMMIT_SHA"],
+			"to":               previousReleaseVCSRef,
+			"count":            len(*c),
+		},
+	})
 
 	// preprocess
 	commits := changelog.PreprocessCommits(&cfg, *c)
