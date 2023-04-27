@@ -2,6 +2,7 @@ package techdocs
 
 import (
 	"fmt"
+	"os"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
@@ -23,11 +24,30 @@ func (a BuildAction) Execute() (err error) {
 	if ctx.Module.BuildSystem != string(cidsdk.BuildSystemMkdocs) || ctx.Module.BuildSystemSyntax != string(cidsdk.MkdocsTechdocs) {
 		return fmt.Errorf("not supported: %s/%s", ctx.Module.BuildSystem, ctx.Module.BuildSystemSyntax)
 	}
-	outputDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "html")
+	outputDir := cidsdk.JoinPath(ctx.Config.TempDir, "html")
+	outputFile := cidsdk.JoinPath(ctx.Config.TempDir, "html.zip")
+	_ = os.MkdirAll(outputDir, os.ModePerm)
 
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `techdocs-cli generate --source-dir ` + ctx.Module.ModuleDir + ` --output-dir ` + outputDir + ` --no-docker --etag ${NCI_COMMIT_SHA}`,
 		WorkDir: ctx.ProjectDir,
+	})
+	if err != nil {
+		return err
+	}
+
+	// create zip
+	err = a.Sdk.ZIPCreate(outputDir, outputFile)
+	if err != nil {
+		return err
+	}
+
+	// store result
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		File:   outputFile,
+		Module: ctx.Module.Slug,
+		Type:   "html",
+		Format: "zip",
 	})
 	if err != nil {
 		return err

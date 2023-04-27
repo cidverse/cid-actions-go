@@ -17,9 +17,17 @@ func TestMkdocsBuild(t *testing.T) {
 		WorkDir: `/my-project/docs`,
 	}).Return(nil, nil)
 	sdk.On(`ExecuteCommand`, cidsdk.ExecuteCommandRequest{
-		Command: `pipenv run mkdocs build --site-dir /my-project/.dist/my-module/html`,
+		Command: `pipenv run mkdocs build --site-dir /my-project/.tmp/html`,
 		WorkDir: `/my-project/docs`,
 	}).Return(nil, nil)
+	sdk.On("ZIPCreate", "/my-project/.tmp/html", "/my-project/.tmp/html.zip").Return(nil)
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+		Module:        "my-module",
+		File:          "/my-project/.tmp/html.zip",
+		Type:          "html",
+		Format:        "zip",
+		FormatVersion: "",
+	}).Return(nil)
 
 	action := BuildAction{Sdk: sdk}
 	err := action.Execute()

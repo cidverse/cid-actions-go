@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.20
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20230420161655-d4b284727054
+	github.com/cidverse/cid-sdk-go v0.0.0-20230427215318-bd55b47c9ea0
 	github.com/cidverse/cidverseutils v0.0.0-20230322232014-2758105886d6
 	github.com/containers/image/v5 v5.25.0
 	github.com/go-resty/resty/v2 v2.7.0

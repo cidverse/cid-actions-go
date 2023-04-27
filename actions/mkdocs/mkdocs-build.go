@@ -2,6 +2,7 @@ package mkdocs
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -24,11 +25,13 @@ func (a BuildAction) Execute() (err error) {
 	if ctx.Module.BuildSystem != string(cidsdk.BuildSystemMkdocs) || ctx.Module.BuildSystemSyntax != string(cidsdk.BuildSystemSyntaxDefault) {
 		return fmt.Errorf("not supported: %s/%s", ctx.Module.BuildSystem, ctx.Module.BuildSystemSyntax)
 	}
-	outputDir := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "html")
+	outputDir := cidsdk.JoinPath(ctx.Config.TempDir, "html")
+	outputFile := cidsdk.JoinPath(ctx.Config.TempDir, "html.zip")
+	_ = os.MkdirAll(outputDir, os.ModePerm)
 
 	// install
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: `pipenv sync` + ctx.Config.DebugFlag("bin-pipenv", " --verbose"),
+		Command: `pipenv sync`,
 		WorkDir: ctx.Module.ModuleDir,
 	})
 	if err != nil {
@@ -38,12 +41,26 @@ func (a BuildAction) Execute() (err error) {
 	// mkdocs
 	var mkdocsArgs []string
 	mkdocsArgs = append(mkdocsArgs, "--site-dir "+outputDir)
-	if ctx.Config.Debug || ctx.Config.Log["bin-mkdocs"] == "debug" {
-		mkdocsArgs = append(mkdocsArgs, "-v")
-	}
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `pipenv run mkdocs build ` + strings.Join(mkdocsArgs, " "),
 		WorkDir: ctx.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	}
+
+	// create zip
+	err = a.Sdk.ZIPCreate(outputDir, outputFile)
+	if err != nil {
+		return err
+	}
+
+	// store result
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		File:   outputFile,
+		Module: ctx.Module.Slug,
+		Type:   "html",
+		Format: "zip",
 	})
 	if err != nil {
 		return err
