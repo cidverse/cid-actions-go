@@ -25,7 +25,7 @@ func (a BuildAction) Execute() (err error) {
 		return fmt.Errorf("not supported: %s/%s", ctx.Module.BuildSystem, ctx.Module.BuildSystemSyntax)
 	}
 	outputDir := cidsdk.JoinPath(ctx.Config.TempDir, "html")
-	outputFile := cidsdk.JoinPath(ctx.Config.TempDir, "html.zip")
+	outputFile := cidsdk.JoinPath(ctx.Config.TempDir, "docs.tar")
 	_ = os.MkdirAll(outputDir, os.ModePerm)
 
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
@@ -37,17 +37,18 @@ func (a BuildAction) Execute() (err error) {
 	}
 
 	// create zip
-	err = a.Sdk.ZIPCreate(outputDir, outputFile)
+	err = a.Sdk.TARCreate(outputDir, outputFile)
 	if err != nil {
 		return err
 	}
 
 	// store result
 	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
-		File:   outputFile,
-		Module: ctx.Module.Slug,
-		Type:   "html",
-		Format: "zip",
+		File:        outputFile,
+		Module:      ctx.Module.Slug,
+		Type:        "html",
+		Format:      "tar",
+		ExtractFile: true,
 	})
 	if err != nil {
 		return err
