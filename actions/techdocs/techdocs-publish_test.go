@@ -21,14 +21,23 @@ func TestTechdocsS3Publish(t *testing.T) {
 		arg.S3SecretKey = `123456abcdef`
 		arg.S3ForcePathStyle = true
 	})
+	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
+		Module:     "my-module",
+		Type:       "html",
+		Name:       "docs.tar",
+		TargetFile: "/my-project/.tmp/docs.tar",
+	}).Return(nil)
+	sdk.On("TARExtract", "/my-project/.tmp/docs.tar", "/my-project/.tmp/public").Return(nil)
 	sdk.On(`ExecuteCommand`, cidsdk.ExecuteCommandRequest{
-		Command: `techdocs-cli publish --entity default/component/my-entity --directory /my-project/.dist/my-module/html --publisher-type awsS3 --awsEndpoint minio.local --storage-name techdocs --awsS3ForcePathStyle`,
+		Command: `techdocs-cli publish --entity default/component/my-entity --directory /my-project/.tmp/public --publisher-type awsS3 --awsEndpoint minio.local --storage-name techdocs --awsS3ForcePathStyle`,
 		WorkDir: `/my-project`,
 		Env: map[string]string{
+			`AWS_ENDPOINT`:          `minio.local`,
 			`AWS_ACCESS_KEY_ID`:     `123456`,
 			`AWS_SECRET_ACCESS_KEY`: `123456abcdef`,
+			`AWS_REGION`:            ``,
 		},
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := PublishAction{Sdk: sdk}
 	err := action.Execute()

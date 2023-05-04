@@ -15,7 +15,7 @@ func TestTechdocsBuild(t *testing.T) {
 	sdk.On(`ExecuteCommand`, cidsdk.ExecuteCommandRequest{
 		Command: `techdocs-cli generate --source-dir /my-project/docs --output-dir /my-project/.tmp/html --no-docker --etag ${NCI_COMMIT_SHA}`,
 		WorkDir: `/my-project`,
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("TARCreate", "/my-project/.tmp/html", "/my-project/.tmp/docs.tar").Return(nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		Module:        "my-module",

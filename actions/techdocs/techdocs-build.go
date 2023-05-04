@@ -28,12 +28,14 @@ func (a BuildAction) Execute() (err error) {
 	outputFile := cidsdk.JoinPath(ctx.Config.TempDir, "docs.tar")
 	_ = os.MkdirAll(outputDir, os.ModePerm)
 
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `techdocs-cli generate --source-dir ` + ctx.Module.ModuleDir + ` --output-dir ` + outputDir + ` --no-docker --etag ${NCI_COMMIT_SHA}`,
 		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {
 		return err
+	} else if buildResult.Code != 0 {
+		return fmt.Errorf("techdocs-cli generate failed, exit code %d", buildResult.Code)
 	}
 
 	// create zip
