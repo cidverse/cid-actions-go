@@ -62,8 +62,8 @@ func (a SarifUploadAction) Execute() (err error) {
 
 		// git reference (sarif upload with pull request ref will result in pull request comments)
 		ref := ctx.Env["NCI_COMMIT_REF_VCS"]
-		if ctx.Env["NCI_PIPELINE_TRIGGER"] == "pull_request" && len(ctx.Env["NCI_PIPELINE_PULL_REQUEST_ID"]) > 0 {
-			ref = fmt.Sprintf("refs/pull/%s/merge", ctx.Env["NCI_PIPELINE_PULL_REQUEST_ID"])
+		if ctx.Env["NCI_PIPELINE_TRIGGER"] == "merge_request" && len(ctx.Env["NCI_MERGE_REQUEST_ID"]) > 0 {
+			ref = fmt.Sprintf("refs/pull/%s/merge", ctx.Env["NCI_MERGE_REQUEST_ID"])
 		}
 
 		// upload
