@@ -12,7 +12,7 @@ import (
 func TestSyftArtifactSBOMGenerate(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On(`ModuleAction`, mock.Anything).Return(ContainerTestData(false), nil)
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "binary", Module: "my-module"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-module" && artifact_type == "binary"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID: "0",
 			JobID:   "0",

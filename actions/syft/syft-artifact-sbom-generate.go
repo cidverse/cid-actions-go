@@ -22,7 +22,7 @@ func (a ArtifactGenerateAction) Execute() (err error) {
 	}
 
 	// find artifacts
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{ArtifactType: "binary", Module: ctx.Module.Slug})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: fmt.Sprintf(`module == "%s" && artifact_type == "binary"`, ctx.Module.Slug)})
 	if err != nil {
 		return err
 	}

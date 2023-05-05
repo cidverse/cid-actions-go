@@ -61,11 +61,7 @@ func (a AttachAction) Execute() (err error) {
 	}
 
 	// get manifests
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
-		Module:       ctx.Module.Slug,
-		ArtifactType: "oci-image",
-		Format:       "manifest",
-	})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: fmt.Sprintf(`module == "%s" && artifact_type == "oci-image" && format == "manifest"`, ctx.Module.Slug)})
 	if err != nil {
 		return fmt.Errorf("failed to query manifest artifact list: %s", err.Error())
 	}
@@ -75,10 +71,7 @@ func (a AttachAction) Execute() (err error) {
 	}
 
 	// query reports
-	reportList, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
-		Module:       ctx.Module.Slug,
-		ArtifactType: "report",
-	})
+	reportList, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: fmt.Sprintf(`module == "%s" && artifact_type == "report"`, ctx.Module.Slug)})
 	if err != nil {
 		return fmt.Errorf("failed to query sbom artifact list: %s", err.Error())
 	}

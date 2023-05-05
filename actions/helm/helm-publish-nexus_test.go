@@ -19,7 +19,7 @@ func TestHelmPublishNexus(t *testing.T) {
 		arg.NexusUsername = "admin"
 		arg.NexusPassword = "admin"
 	})
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "helm-chart", Format: "tgz"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "helm-chart" && format == "tgz"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			ID:     "root/helm-chart/mychart.tgz",
 			Module: "root",

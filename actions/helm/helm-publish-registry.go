@@ -22,10 +22,7 @@ func (a PublishRegistryAction) Execute() (err error) {
 	}
 
 	// find charts
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
-		ArtifactType: "helm-chart",
-		Format:       "tgz",
-	})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "helm-chart" && format == "tgz"`})
 	if err != nil {
 		return err
 	}

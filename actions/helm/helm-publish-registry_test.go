@@ -15,7 +15,7 @@ func TestHelmPublishRegistry(t *testing.T) {
 		arg := args.Get(0).(*PublishRegistryConfig)
 		arg.OCIRepository = "localhost:5000/helm-charts"
 	})
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "helm-chart", Format: "tgz"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "helm-chart" && format == "tgz"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			ID:     "root/helm-chart/mychart.tgz",
 			Module: "root",

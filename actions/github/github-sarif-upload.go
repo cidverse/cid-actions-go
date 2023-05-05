@@ -39,7 +39,7 @@ func (a SarifUploadAction) Execute() (err error) {
 	client := github.NewClient(tc)
 
 	// iterate over all sarif reports
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{ArtifactType: "report", Format: "sarif", FormatVersion: "2.1.0"})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "report" && format == "sarif" && format_version == "2.1.0"`})
 	if err != nil {
 		return err
 	}

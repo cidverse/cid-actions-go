@@ -21,10 +21,11 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		arg.SonarProjectKey = "my-project-key"
 		arg.SonarToken = "my-token"
 	})
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "report"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "report"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "root|report|test.sarif.json",
 			Module:        "root",
 			Type:          "report",
 			Name:          "test.sarif.json",
@@ -34,6 +35,7 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "root|report|coverage.out",
 			Module:        "root",
 			Type:          "report",
 			Name:          "coverage.out",
@@ -43,6 +45,7 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "root|report|coverage.json",
 			Module:        "root",
 			Type:          "report",
 			Name:          "coverage.json",
@@ -51,21 +54,15 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		},
 	}, nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "root",
-		Type:       "report",
-		Name:       "test.sarif.json",
+		ID:         "root|report|test.sarif.json",
 		TargetFile: "/my-project/.tmp/root-test.sarif.json",
 	}).Return(nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "root",
-		Type:       "report",
-		Name:       "coverage.out",
+		ID:         "root|report|coverage.out",
 		TargetFile: "/my-project/.tmp/root-coverage.out",
 	}).Return(nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "root",
-		Type:       "report",
-		Name:       "coverage.json",
+		ID:         "root|report|coverage.json",
 		TargetFile: "/my-project/.tmp/root-coverage.json",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{

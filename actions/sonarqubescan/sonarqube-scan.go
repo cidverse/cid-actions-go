@@ -61,18 +61,18 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// publish sarif reports to sonarqube
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{ArtifactType: "report"})
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "debug", Message: fmt.Sprintf("query artifacts with %s", "type == \"report\"")})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "report"`})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list report artifacts: %w", err)
 	}
 	files := make(map[string][]string, 0)
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "debug", Message: fmt.Sprintf("found %d reports", len(*artifacts))})
 	for _, artifact := range *artifacts {
-		if artifact.Type == "report" && artifact.Format == "sarif" {
+		if artifact.Format == "sarif" {
 			targetFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
 			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-				Module:     artifact.Module,
-				Type:       string(artifact.Type),
-				Name:       artifact.Name,
+				ID:         artifact.ID,
 				TargetFile: targetFile,
 			})
 			if dlErr != nil {
@@ -81,12 +81,10 @@ func (a ScanAction) Execute() (err error) {
 			}
 
 			files["sarif"] = append(files["sarif"], targetFile)
-		} else if artifact.Type == "report" && artifact.Format == "go-coverage" {
+		} else if artifact.Format == "go-coverage" {
 			targetFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
 			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-				Module:     artifact.Module,
-				Type:       string(artifact.Type),
-				Name:       artifact.Name,
+				ID:         artifact.ID,
 				TargetFile: targetFile,
 			})
 			if dlErr != nil {
@@ -99,12 +97,10 @@ func (a ScanAction) Execute() (err error) {
 			} else if artifact.FormatVersion == "json" {
 				files["go-coverage-json"] = append(files["go-coverage-json"], targetFile)
 			}
-		} else if artifact.Type == "report" && artifact.Format == "jacoco" {
+		} else if artifact.Format == "jacoco" {
 			targetFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s-%s", artifact.Module, artifact.Name))
 			var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-				Module:     artifact.Module,
-				Type:       string(artifact.Type),
-				Name:       artifact.Name,
+				ID:         artifact.ID,
 				TargetFile: targetFile,
 			})
 			if dlErr != nil {

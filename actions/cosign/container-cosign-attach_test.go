@@ -25,7 +25,7 @@ func TestCosignAttachManifest(t *testing.T) {
 		Type:   "oci-image",
 		Name:   "digest.txt",
 	}).Return([]byte(`sha256:c38b49430bfe198766f03d135e58af0803588f89a26759d0c90d00f3a2aafde0`), nil)
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Module: "my-project", ArtifactType: "oci-image", Format: "manifest"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-project" && artifact_type == "oci-image" && format == "manifest"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",
 			JobID:         "0",
@@ -58,8 +58,8 @@ func TestCosignAttach(t *testing.T) {
 		Type:   "oci-image",
 		Name:   "digest.txt",
 	}).Return([]byte(`sha256:c38b49430bfe198766f03d135e58af0803588f89a26759d0c90d00f3a2aafde0`), nil)
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Module: "my-project", ArtifactType: "oci-image", Format: "manifest"}).Return(&[]cidsdk.ActionArtifact{}, nil)
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Module: "my-project", ArtifactType: "report"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-project" && artifact_type == "oci-image" && format == "manifest"`}).Return(&[]cidsdk.ActionArtifact{}, nil)
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-project" && artifact_type == "report"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",
 			JobID:         "0",

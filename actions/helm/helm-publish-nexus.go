@@ -25,10 +25,7 @@ func (a PublishNexusAction) Execute() (err error) {
 	}
 
 	// find charts
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{
-		ArtifactType: "helm-chart",
-		Format:       "tgz",
-	})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "helm-chart" && format == "tgz"`})
 	if err != nil {
 		return fmt.Errorf("failed to query artifacts: %s", err.Error())
 	}

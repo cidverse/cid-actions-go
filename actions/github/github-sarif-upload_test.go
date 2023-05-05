@@ -15,7 +15,7 @@ import (
 func TestGithubSarifUpload(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
-	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{ArtifactType: "report", Format: "sarif", FormatVersion: "2.1.0"}).Return(&[]cidsdk.ActionArtifact{
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "report" && format == "sarif" && format_version == "2.1.0"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",
 			JobID:         "0",
