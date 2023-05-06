@@ -31,9 +31,7 @@ func (a ArtifactGenerateAction) Execute() (err error) {
 	for _, file := range *artifacts {
 		targetFile := cidsdk.JoinPath(ctx.Config.TempDir, file.Name)
 		var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-			Module:     file.Module,
-			Type:       string(file.Type),
-			Name:       file.Name,
+			ID:         file.ID,
 			TargetFile: targetFile,
 		})
 		if dlErr != nil {

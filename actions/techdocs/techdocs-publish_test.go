@@ -22,9 +22,7 @@ func TestTechdocsS3Publish(t *testing.T) {
 		arg.S3ForcePathStyle = true
 	})
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "my-module",
-		Type:       "html",
-		Name:       "docs.tar",
+		ID:         "my-module|html|docs.tar",
 		TargetFile: "/my-project/.tmp/docs.tar",
 	}).Return(nil)
 	sdk.On("TARExtract", "/my-project/.tmp/docs.tar", "/my-project/.tmp/public").Return(nil)

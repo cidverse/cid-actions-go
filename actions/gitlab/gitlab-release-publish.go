@@ -26,8 +26,7 @@ func (a PublishAction) Execute() (err error) {
 	// changelog
 	changelogFile := cidsdk.JoinPath(ctx.Config.TempDir, "github.changelog")
 	downloadChangelogErr := a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-		Type:       "changelog",
-		Name:       "github.changelog",
+		ID:         "root|changelog|github.changelog",
 		TargetFile: changelogFile,
 	})
 

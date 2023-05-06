@@ -42,9 +42,7 @@ func (a AttachAction) Execute() (err error) {
 
 	// target image reference
 	imageRef, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: ctx.Module.Slug,
-		Type:   "oci-image",
-		Name:   "image.txt",
+		ID: fmt.Sprintf("%s|oci-image|image.txt", ctx.Module.Slug),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to parse image reference from %s", err.Error())
@@ -52,9 +50,7 @@ func (a AttachAction) Execute() (err error) {
 
 	// digest
 	digest, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: ctx.Module.Slug,
-		Type:   "oci-image",
-		Name:   "digest.txt",
+		ID: fmt.Sprintf("%s|oci-image|digest.txt", ctx.Module.Slug),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to read image digest: %s", err.Error())
@@ -97,9 +93,7 @@ func (a AttachAction) Execute() (err error) {
 		// download file
 		targetFile := cidsdk.JoinPath(ctx.Config.TempDir, report.Name)
 		err := a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-			Module:     report.Module,
-			Type:       string(report.Type),
-			Name:       report.Name,
+			ID:         report.ID,
 			TargetFile: targetFile,
 		})
 		if err != nil {

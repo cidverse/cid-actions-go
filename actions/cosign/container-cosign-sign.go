@@ -29,9 +29,7 @@ func (a SignAction) Execute() (err error) {
 
 	// target image reference
 	imageRef, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: ctx.Module.Slug,
-		Type:   "oci-image",
-		Name:   "image.txt",
+		ID: fmt.Sprintf("%s|oci-image|image.txt", ctx.Module.Slug),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to parse image reference from %s", err.Error())
@@ -39,9 +37,7 @@ func (a SignAction) Execute() (err error) {
 
 	// digest
 	digest, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: ctx.Module.Slug,
-		Type:   "oci-image",
-		Name:   "digest.txt",
+		ID: fmt.Sprintf("%s|oci-image|digest.txt", ctx.Module.Slug),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to read image digest: %s", err.Error())

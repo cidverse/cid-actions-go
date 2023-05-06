@@ -16,15 +16,14 @@ func TestSyftArtifactSBOMGenerate(t *testing.T) {
 		{
 			BuildID: "0",
 			JobID:   "0",
+			ID:      "my-module|binary|linux_amd64",
 			Module:  "my-module",
 			Type:    "binary",
 			Name:    "linux_amd64",
 		},
 	}, nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "my-module",
-		Type:       "binary",
-		Name:       "linux_amd64",
+		ID:         "my-module|binary|linux_amd64",
 		TargetFile: "/my-project/.tmp/linux_amd64",
 	}).Return(nil)
 	sdk.On(`ExecuteCommand`, cidsdk.ExecuteCommandRequest{

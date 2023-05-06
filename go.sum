@@ -5,8 +5,8 @@ github.com/ProtonMail/go-crypto v0.0.0-20230426101702-58e86b294756/go.mod h1:8TI
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
 github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/cidverse/cid-sdk-go v0.0.0-20230505235248-6b90e33037cd h1:J37qTvxshbNwyHVyMxseo+nLWv0a2luQLAY9Yefth8Y=
-github.com/cidverse/cid-sdk-go v0.0.0-20230505235248-6b90e33037cd/go.mod h1:sAY1MbCTN328MaCKJzBX08ZM0FKPs90AT8nWANvA8b4=
+github.com/cidverse/cid-sdk-go v0.0.0-20230506200453-11931db2dcf7 h1:SnRmN03JWfXe3kQ+hfGVEIlnLKgDYarggZykBbArBsM=
+github.com/cidverse/cid-sdk-go v0.0.0-20230506200453-11931db2dcf7/go.mod h1:sAY1MbCTN328MaCKJzBX08ZM0FKPs90AT8nWANvA8b4=
 github.com/cidverse/cidverseutils v0.0.0-20230502162205-0dc75f0de724 h1:gs7j1sdbJiYhoH94iPUvi6uGsT2ckXxx9/sUI2qx2Z8=
 github.com/cidverse/cidverseutils v0.0.0-20230502162205-0dc75f0de724/go.mod h1:U0fETHkZhDcPfUSArfxwYQiw7SisClXg+A6clzCtAPk=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=

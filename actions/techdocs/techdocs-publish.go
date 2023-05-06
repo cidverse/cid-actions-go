@@ -37,9 +37,7 @@ func (a PublishAction) Execute() (err error) {
 	// fetch artifact
 	docsArchive := cidsdk.JoinPath(ctx.Config.TempDir, "docs.tar")
 	err = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
-		Module:     ctx.Module.Slug,
-		Type:       "html",
-		Name:       "docs.tar",
+		ID:         fmt.Sprintf("%s|html|docs.tar", ctx.Module.Slug),
 		TargetFile: docsArchive,
 	})
 	if err != nil {

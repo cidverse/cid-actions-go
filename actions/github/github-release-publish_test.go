@@ -16,8 +16,7 @@ func TestGithubReleasePublishWithChangelog(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Type:       "changelog",
-		Name:       "github.changelog",
+		ID:         "root|changelog|github.changelog",
 		TargetFile: "/my-project/.tmp/github.changelog",
 	}).Return(nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "binary"`}).Return(&[]cidsdk.ActionArtifact{
@@ -51,8 +50,7 @@ func TestGithubReleasePublishAutoChangelog(t *testing.T) {
 	sdk := mocks.NewSDKClient(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Type:       "changelog",
-		Name:       "github.changelog",
+		ID:         "root|changelog|github.changelog",
 		TargetFile: "/my-project/.tmp/github.changelog",
 	}).Return(fmt.Errorf("a error of some kind"))
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "binary"`}).Return(&[]cidsdk.ActionArtifact{

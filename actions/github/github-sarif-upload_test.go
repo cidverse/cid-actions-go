@@ -19,6 +19,7 @@ func TestGithubSarifUpload(t *testing.T) {
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "root|report|report.sarif",
 			Module:        "root",
 			Name:          "report.sarif",
 			Type:          "report",
@@ -27,9 +28,7 @@ func TestGithubSarifUpload(t *testing.T) {
 		},
 	}, nil)
 	sdk.On("ArtifactDownloadByteArray", cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: "root",
-		Type:   "report",
-		Name:   "report.sarif",
+		ID: "root|report|report.sarif",
 	}).Return([]byte("content"), nil)
 
 	// http mock

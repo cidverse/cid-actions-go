@@ -16,14 +16,10 @@ func TestCosignAttachManifest(t *testing.T) {
 		arg.CosignMode = "KEYLESS"
 	})
 	sdk.On("ArtifactDownloadByteArray", cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: "my-project",
-		Type:   "oci-image",
-		Name:   "image.txt",
+		ID: "my-project|oci-image|image.txt",
 	}).Return([]byte(`docker.io/hello-world`), nil)
 	sdk.On("ArtifactDownloadByteArray", cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: "my-project",
-		Type:   "oci-image",
-		Name:   "digest.txt",
+		ID: "my-project|oci-image|digest.txt",
 	}).Return([]byte(`sha256:c38b49430bfe198766f03d135e58af0803588f89a26759d0c90d00f3a2aafde0`), nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-project" && artifact_type == "oci-image" && format == "manifest"`}).Return(&[]cidsdk.ActionArtifact{
 		{
@@ -49,20 +45,17 @@ func TestCosignAttach(t *testing.T) {
 		arg.CosignMode = "KEYLESS"
 	})
 	sdk.On("ArtifactDownloadByteArray", cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: "my-project",
-		Type:   "oci-image",
-		Name:   "image.txt",
+		ID: "my-project|oci-image|image.txt",
 	}).Return([]byte(`docker.io/hello-world`), nil)
 	sdk.On("ArtifactDownloadByteArray", cidsdk.ArtifactDownloadByteArrayRequest{
-		Module: "my-project",
-		Type:   "oci-image",
-		Name:   "digest.txt",
+		ID: "my-project|oci-image|digest.txt",
 	}).Return([]byte(`sha256:c38b49430bfe198766f03d135e58af0803588f89a26759d0c90d00f3a2aafde0`), nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-project" && artifact_type == "oci-image" && format == "manifest"`}).Return(&[]cidsdk.ActionArtifact{}, nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `module == "my-project" && artifact_type == "report"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "my-module|report|linux_amd64.syft.json",
 			Module:        "my-module",
 			Name:          "linux_amd64.syft.json",
 			Type:          "report",
@@ -72,6 +65,7 @@ func TestCosignAttach(t *testing.T) {
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "my-module|report|linux_amd64.spdx.json",
 			Module:        "my-module",
 			Name:          "linux_amd64.spdx.json",
 			Type:          "report",
@@ -81,6 +75,7 @@ func TestCosignAttach(t *testing.T) {
 		{
 			BuildID:       "0",
 			JobID:         "0",
+			ID:            "my-module|report|slsaprovenance.json",
 			Module:        "my-module",
 			Name:          "slsaprovenance.json",
 			Type:          "report",
@@ -91,9 +86,7 @@ func TestCosignAttach(t *testing.T) {
 
 	// syft
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "my-module",
-		Type:       "report",
-		Name:       "linux_amd64.syft.json",
+		ID:         "my-module|report|linux_amd64.syft.json",
 		TargetFile: "/my-project/.tmp/linux_amd64.syft.json",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
@@ -106,9 +99,7 @@ func TestCosignAttach(t *testing.T) {
 
 	// spdx
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "my-module",
-		Type:       "report",
-		Name:       "linux_amd64.spdx.json",
+		ID:         "my-module|report|linux_amd64.spdx.json",
 		TargetFile: "/my-project/.tmp/linux_amd64.spdx.json",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
@@ -121,9 +112,7 @@ func TestCosignAttach(t *testing.T) {
 
 	// slsaprovenance
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		Module:     "my-module",
-		Type:       "report",
-		Name:       "slsaprovenance.json",
+		ID:         "my-module|report|slsaprovenance.json",
 		TargetFile: "/my-project/.tmp/slsaprovenance.json",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{

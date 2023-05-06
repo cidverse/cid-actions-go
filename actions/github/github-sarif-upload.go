@@ -46,9 +46,7 @@ func (a SarifUploadAction) Execute() (err error) {
 	for _, report := range *artifacts {
 		// get report content
 		sarif, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
-			Module: report.Module,
-			Type:   string(report.Type),
-			Name:   report.Name,
+			ID: report.ID,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to load report %s", report.Name)
