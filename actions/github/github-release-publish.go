@@ -49,6 +49,7 @@ func (a PublishAction) Execute() (err error) {
 	if err != nil {
 		return err
 	}
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "searching for artifacts to include in the release", Context: map[string]interface{}{"artifact_count": len(*artifacts)}})
 	for _, artifact := range *artifacts {
 		targetFile := cidsdk.JoinPath(ctx.Config.TempDir, artifact.Name)
 		var dlErr = a.Sdk.ArtifactDownload(cidsdk.ArtifactDownloadRequest{
