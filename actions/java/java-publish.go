@@ -27,6 +27,16 @@ func (a PublishAction) Execute() (err error) {
 		return err
 	}
 
+	// github packages
+	if strings.HasPrefix(cfg.MavenRepositoryUrl, "https://maven.pkg.github.com/") {
+		if cfg.MavenRepositoryUsername == "" {
+			cfg.MavenRepositoryUsername = ctx.Env["GITHUB_ACTOR"]
+		}
+		if cfg.MavenRepositoryPassword == "" {
+			cfg.MavenRepositoryPassword = ctx.Env["GITHUB_TOKEN"]
+		}
+	}
+
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
 		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
 		if !a.Sdk.FileExists(gradleWrapper) {
