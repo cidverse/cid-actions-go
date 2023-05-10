@@ -12,12 +12,12 @@ type PublishAction struct {
 }
 
 type PublishConfig struct {
-	GPGSignKeyId            string `json:"gpg_sign_key_id"  env:"GPG_SIGN_KEYID"`
-	GPGSignPrivateKey       string `json:"gpg_sign_private_key" env:"GPG_SIGN_PRIVATEKEY"`
-	GPGSignPassword         string `json:"gpg_sign_password"  env:"GPG_SIGN_PASSWORD"`
-	MavenRepositoryUrl      string `json:"maven_repo_url"  env:"MAVEN_REPO_URL"`
+	MavenRepositoryUrl      string `json:"maven_repo_url"       env:"MAVEN_REPO_URL"`
 	MavenRepositoryUsername string `json:"maven_repo_username"  env:"MAVEN_REPO_USERNAME"`
 	MavenRepositoryPassword string `json:"maven_repo_password"  env:"MAVEN_REPO_PASSWORD"`
+	GPGSignPrivateKey       string `json:"gpg_sign_private_key" env:"MAVEN_GPG_SIGN_PRIVATEKEY"`
+	GPGSignPassword         string `json:"gpg_sign_password"    env:"MAVEN_GPG_SIGN_PASSWORD"`
+	GPGSignKeyId            string `json:"gpg_sign_key_id"      env:"MAVEN_GPG_SIGN_KEYID"`
 }
 
 func (a PublishAction) Execute() (err error) {
@@ -47,7 +47,11 @@ func (a PublishAction) Execute() (err error) {
 		publishEnv := make(map[string]string)
 		if cfg.GPGSignKeyId != "" {
 			publishEnv["ORG_GRADLE_PROJECT_signingKeyId"] = cfg.GPGSignKeyId
+		}
+		if cfg.GPGSignPrivateKey != "" {
 			publishEnv["ORG_GRADLE_PROJECT_signingKey"] = cfg.GPGSignPrivateKey
+		}
+		if cfg.GPGSignPassword != "" {
 			publishEnv["ORG_GRADLE_PROJECT_signingPassword"] = cfg.GPGSignPassword
 		}
 		publishEnv["MAVEN_REPO_URL"] = cfg.MavenRepositoryUrl
