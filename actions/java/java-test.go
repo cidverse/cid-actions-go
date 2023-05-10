@@ -12,6 +12,7 @@ type TestAction struct {
 }
 
 type TestConfig struct {
+	MavenVersion string `json:"maven_version"        env:"MAVEN_VERSION"`
 }
 
 func (a TestAction) Execute() (err error) {
@@ -21,6 +22,12 @@ func (a TestAction) Execute() (err error) {
 		return err
 	}
 
+	// version
+	if cfg.MavenVersion == "" {
+		cfg.MavenVersion = GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"], ctx.Env["NCI_COMMIT_SHA_SHORT"])
+	}
+
+	// test
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
 		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
 		if !a.Sdk.FileExists(gradleWrapper) {
@@ -28,7 +35,7 @@ func (a TestAction) Execute() (err error) {
 		}
 
 		testArgs := []string{
-			fmt.Sprintf(`-Pversion=%q`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])),
+			fmt.Sprintf(`-Pversion=%q`, cfg.MavenVersion),
 			`check`,
 			`--no-daemon`,
 			`--warning-mode=all`,

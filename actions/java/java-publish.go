@@ -12,6 +12,7 @@ type PublishAction struct {
 }
 
 type PublishConfig struct {
+	MavenVersion            string `json:"maven_version"        env:"MAVEN_VERSION"`
 	MavenRepositoryUrl      string `json:"maven_repo_url"       env:"MAVEN_REPO_URL"`
 	MavenRepositoryUsername string `json:"maven_repo_username"  env:"MAVEN_REPO_USERNAME"`
 	MavenRepositoryPassword string `json:"maven_repo_password"  env:"MAVEN_REPO_PASSWORD"`
@@ -37,6 +38,12 @@ func (a PublishAction) Execute() (err error) {
 		}
 	}
 
+	// version
+	if cfg.MavenVersion == "" {
+		cfg.MavenVersion = GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"], ctx.Env["NCI_COMMIT_SHA_SHORT"])
+	}
+
+	// publish
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
 		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
 		if !a.Sdk.FileExists(gradleWrapper) {
@@ -60,7 +67,7 @@ func (a PublishAction) Execute() (err error) {
 
 		// args
 		publishArgs := []string{
-			fmt.Sprintf(`-Pversion=%q`, GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"])),
+			fmt.Sprintf(`-Pversion=%q`, cfg.MavenVersion),
 			`publish`,
 			`--no-daemon`,
 			`--warning-mode=all`,
