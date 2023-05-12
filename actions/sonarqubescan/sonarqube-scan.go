@@ -42,9 +42,10 @@ func (a ScanAction) Execute() (err error) {
 	}
 
 	// ensure that the default branch is configured correctly
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "creating project and setting default branch if missing", Context: map[string]interface{}{"default-branch": cfg.SonarDefaultBranch, "host": cfg.SonarHostURL, "project-key": cfg.SonarProjectKey, "organization": cfg.SonarOrganization}})
 	err = sonarqube.PrepareProject(cfg.SonarHostURL, cfg.SonarToken, cfg.SonarOrganization, cfg.SonarProjectKey, ctx.Env["NCI_PROJECT_NAME"], ctx.Env["NCI_PROJECT_DESCRIPTION"], cfg.SonarDefaultBranch)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to prepare sonarqube project: %w", err)
 	}
 
 	// run scan
@@ -54,7 +55,6 @@ func (a ScanAction) Execute() (err error) {
 		`-D sonar.projectKey=` + cfg.SonarProjectKey,
 		`-D sonar.projectName=` + ctx.Env["NCI_PROJECT_NAME"],
 		`-D sonar.sources=.`,
-		//`-D sonar.tests=.`,
 	}
 	if cfg.SonarOrganization != "" {
 		scanArgs = append(scanArgs, `-D sonar.organization=`+cfg.SonarOrganization)
@@ -126,7 +126,7 @@ func (a ScanAction) Execute() (err error) {
 
 	// module specific parameters
 	var sourceInclusion []string
-	var sourceExclusions []string
+	var sourceExclusions []string = []string{"**/.git/**"}
 	var testInclusion []string
 	var testExclusions []string
 	for _, module := range ctx.Modules {
