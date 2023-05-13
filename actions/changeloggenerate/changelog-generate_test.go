@@ -6,6 +6,7 @@ import (
 
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/pkg/changelog"
+	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cid-sdk-go/mocks"
 	"github.com/stretchr/testify/assert"
@@ -45,7 +46,7 @@ var NoteKeywords = []changelog.NoteKeyword{
 }
 
 func TestChangelogGenerateWithPreviousRelease(t *testing.T) {
-	sdk := mocks.NewSDKClient(t)
+	sdk := test.Setup(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil).Run(func(args mock.Arguments) {
 		arg := args.Get(0).(*changelog.Config)
 		arg.Templates = Templates
@@ -86,13 +87,13 @@ func TestChangelogGenerateWithPreviousRelease(t *testing.T) {
 			Context:     nil,
 		},
 	}, nil)
-	sdk.On("ArtifactUploadByteArray", cidsdk.ArtifactUploadByteArrayRequest{
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		File:    "github.changelog",
-		Content: []byte("## Features\n- add cool new feature\n\n"),
+		Content: "## Features\n- add cool new feature\n\n",
 		Type:    "changelog",
 	}).Return(nil)
 
-	action := GenerateAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -126,13 +127,13 @@ func TestChangelogGenerateFirstRelease(t *testing.T) {
 			Context:     nil,
 		},
 	}, nil)
-	sdk.On("ArtifactUploadByteArray", cidsdk.ArtifactUploadByteArrayRequest{
+	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		File:    "github.changelog",
-		Content: []byte("## Features\n- add cool new feature\n\n"),
+		Content: "## Features\n- add cool new feature\n\n",
 		Type:    "changelog",
 	}).Return(nil)
 
-	action := GenerateAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

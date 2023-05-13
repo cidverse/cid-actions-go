@@ -3,8 +3,8 @@ module github.com/cidverse/cid-actions-go
 go 1.20
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20230506200453-11931db2dcf7
-	github.com/cidverse/cidverseutils v0.0.0-20230502162205-0dc75f0de724
+	github.com/cidverse/cid-sdk-go v0.0.0-20230513220047-ae3acd75f058
+	github.com/cidverse/cidverseutils v0.0.0-20230506223042-28865938a3a5
 	github.com/containers/image/v5 v5.25.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v52 v52.0.0
@@ -27,7 +27,7 @@ require (
 	github.com/containers/ocicrypt v1.1.7 // indirect
 	github.com/containers/storage v1.46.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v23.0.5+incompatible // indirect
+	github.com/docker/docker v23.0.6+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -44,8 +44,8 @@ require (
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
-	golang.org/x/crypto v0.8.0 // indirect
-	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
+	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect

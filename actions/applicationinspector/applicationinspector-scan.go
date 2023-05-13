@@ -7,15 +7,15 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type ScanAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
-type ScanConfig struct {
+type Config struct {
 }
 
-func (a ScanAction) Execute() (err error) {
-	cfg := ScanConfig{}
+func (a Action) Execute() (err error) {
+	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)
 	if err != nil {
 		return err

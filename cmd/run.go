@@ -7,28 +7,47 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/actions/applicationinspector"
 	"github.com/cidverse/cid-actions-go/actions/changeloggenerate"
-	"github.com/cidverse/cid-actions-go/actions/container"
-	"github.com/cidverse/cid-actions-go/actions/cosign"
-	"github.com/cidverse/cid-actions-go/actions/fossa"
+	"github.com/cidverse/cid-actions-go/actions/container/containerbuild"
+	"github.com/cidverse/cid-actions-go/actions/container/containerpublish"
+	"github.com/cidverse/cid-actions-go/actions/cosign/cosignattach"
+	"github.com/cidverse/cid-actions-go/actions/cosign/cosignsign"
+	"github.com/cidverse/cid-actions-go/actions/fossa/fossasourcescan"
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
-	"github.com/cidverse/cid-actions-go/actions/github"
-	"github.com/cidverse/cid-actions-go/actions/gitlab"
-	"github.com/cidverse/cid-actions-go/actions/gitleaks"
-	"github.com/cidverse/cid-actions-go/actions/golang"
-	"github.com/cidverse/cid-actions-go/actions/gosec"
-	"github.com/cidverse/cid-actions-go/actions/helm"
-	"github.com/cidverse/cid-actions-go/actions/hugo"
-	"github.com/cidverse/cid-actions-go/actions/java"
-	"github.com/cidverse/cid-actions-go/actions/mkdocs"
-	"github.com/cidverse/cid-actions-go/actions/node"
-	"github.com/cidverse/cid-actions-go/actions/ossf"
-	"github.com/cidverse/cid-actions-go/actions/python"
-	"github.com/cidverse/cid-actions-go/actions/qodana"
-	"github.com/cidverse/cid-actions-go/actions/semgrep"
-	"github.com/cidverse/cid-actions-go/actions/sonarqubescan"
-	"github.com/cidverse/cid-actions-go/actions/syft"
-	"github.com/cidverse/cid-actions-go/actions/techdocs"
-	"github.com/cidverse/cid-actions-go/actions/upx"
+	"github.com/cidverse/cid-actions-go/actions/github/githubpublishrelease"
+	"github.com/cidverse/cid-actions-go/actions/github/githubpublishsarif"
+	"github.com/cidverse/cid-actions-go/actions/gitlab/gitlabreleasepublish"
+	"github.com/cidverse/cid-actions-go/actions/gitleaks/gitleaksscan"
+	"github.com/cidverse/cid-actions-go/actions/golang/golangbuild"
+	"github.com/cidverse/cid-actions-go/actions/golang/golanglint"
+	"github.com/cidverse/cid-actions-go/actions/golang/golangtest"
+	"github.com/cidverse/cid-actions-go/actions/gosec/gosecscan"
+	"github.com/cidverse/cid-actions-go/actions/helm/helmbuild"
+	"github.com/cidverse/cid-actions-go/actions/helm/helmlint"
+	"github.com/cidverse/cid-actions-go/actions/helm/helmpublishnexus"
+	"github.com/cidverse/cid-actions-go/actions/helm/helmpublishregistry"
+	"github.com/cidverse/cid-actions-go/actions/hugo/hugobuild"
+	"github.com/cidverse/cid-actions-go/actions/hugo/hugostart"
+	"github.com/cidverse/cid-actions-go/actions/java/javabuild"
+	"github.com/cidverse/cid-actions-go/actions/java/javapublish"
+	"github.com/cidverse/cid-actions-go/actions/java/javatest"
+	"github.com/cidverse/cid-actions-go/actions/mkdocs/mkdocsbuild"
+	"github.com/cidverse/cid-actions-go/actions/mkdocs/mkdocsstart"
+	"github.com/cidverse/cid-actions-go/actions/node/nodebuild"
+	"github.com/cidverse/cid-actions-go/actions/node/nodetest"
+	"github.com/cidverse/cid-actions-go/actions/ossf/scorecardscan"
+	"github.com/cidverse/cid-actions-go/actions/python/pythonbuild"
+	"github.com/cidverse/cid-actions-go/actions/python/pythonlint"
+	"github.com/cidverse/cid-actions-go/actions/python/pythontest"
+	"github.com/cidverse/cid-actions-go/actions/qodana/qodanascan"
+	"github.com/cidverse/cid-actions-go/actions/semgrep/semgrepscan"
+	"github.com/cidverse/cid-actions-go/actions/sonarqube/sonarqubescan"
+	"github.com/cidverse/cid-actions-go/actions/syft/grypesbomreport"
+	"github.com/cidverse/cid-actions-go/actions/syft/syftartifactsbomgenerate"
+	"github.com/cidverse/cid-actions-go/actions/syft/syftcontainersbombuild"
+	"github.com/cidverse/cid-actions-go/actions/techdocs/techdocsbuild"
+	"github.com/cidverse/cid-actions-go/actions/techdocs/techdocspublish"
+	"github.com/cidverse/cid-actions-go/actions/techdocs/techdocsstart"
+	"github.com/cidverse/cid-actions-go/actions/upx/upxoptimize"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/spf13/cobra"
 )
@@ -50,74 +69,74 @@ var runCmd = &cobra.Command{
 		// actions
 		actions := map[string]api.Action{
 			// changeloggenerate
-			"changelog-generate": changeloggenerate.GenerateAction{Sdk: *sdk},
+			"changelog-generate": changeloggenerate.Action{Sdk: *sdk},
 			// container
-			"buildah-build":   container.BuildahBuildAction{Sdk: *sdk},
-			"buildah-publish": container.BuildahPublishAction{Sdk: *sdk},
+			"buildah-build":   containerbuild.Action{Sdk: *sdk},
+			"buildah-publish": containerpublish.Action{Sdk: *sdk},
 			// cosign
-			"cosign-container-sign":   cosign.SignAction{Sdk: *sdk},
-			"cosign-container-attach": cosign.AttachAction{Sdk: *sdk},
+			"cosign-container-sign":   cosignsign.SignAction{Sdk: *sdk},
+			"cosign-container-attach": cosignattach.AttachAction{Sdk: *sdk},
 			// fossa
-			"fossa-scan": fossa.SourceScanAction{Sdk: *sdk},
+			"fossa-scan": fossasourcescan.Action{Sdk: *sdk},
 			// ggshield
-			"ggshield-scan": ggshield.ScanAction{Sdk: *sdk},
+			"ggshield-scan": ggshield.Action{Sdk: *sdk},
 			// gitleaks
-			"gitleaks-scan": gitleaks.ScanAction{Sdk: *sdk},
+			"gitleaks-scan": gitleaksscan.Action{Sdk: *sdk},
 			// golang
-			"go-build": golang.BuildAction{Sdk: *sdk},
-			"go-test":  golang.TestAction{Sdk: *sdk},
-			"go-lint":  golang.LintAction{Sdk: *sdk},
+			"go-build": golangbuild.BuildAction{Sdk: *sdk},
+			"go-test":  golangtest.TestAction{Sdk: *sdk},
+			"go-lint":  golanglint.Action{Sdk: *sdk},
 			// gosec
-			"gosec-scan": gosec.ScanAction{Sdk: *sdk},
+			"gosec-scan": gosecscan.ScanAction{Sdk: *sdk},
 			// helm
-			"helm-build":            helm.BuildAction{Sdk: *sdk},
-			"helm-lint":             helm.LintAction{Sdk: *sdk},
-			"helm-publish-nexus":    helm.PublishNexusAction{Sdk: *sdk},
-			"helm-publish-registry": helm.PublishRegistryAction{Sdk: *sdk},
+			"helm-build":            helmbuild.BuildAction{Sdk: *sdk},
+			"helm-lint":             helmlint.LintAction{Sdk: *sdk},
+			"helm-publish-nexus":    helmpublishnexus.PublishNexusAction{Sdk: *sdk},
+			"helm-publish-registry": helmpublishregistry.PublishRegistryAction{Sdk: *sdk},
 			// java
-			"java-build":   java.BuildAction{Sdk: *sdk},
-			"java-test":    java.TestAction{Sdk: *sdk},
-			"java-publish": java.PublishAction{Sdk: *sdk},
+			"java-build":   javabuild.Action{Sdk: *sdk},
+			"java-test":    javatest.Action{Sdk: *sdk},
+			"java-publish": javapublish.Action{Sdk: *sdk},
 			// node
-			"node-build": node.BuildAction{Sdk: *sdk},
-			"node-test":  node.TestAction{Sdk: *sdk},
+			"node-build": nodebuild.Action{Sdk: *sdk},
+			"node-test":  nodetest.Action{Sdk: *sdk},
 			// python
-			"python-build": python.BuildAction{Sdk: *sdk},
-			"python-test":  python.TestAction{Sdk: *sdk},
-			"python-lint":  python.LintAction{Sdk: *sdk},
+			"python-build": pythonbuild.BuildAction{Sdk: *sdk},
+			"python-test":  pythontest.TestAction{Sdk: *sdk},
+			"python-lint":  pythonlint.LintAction{Sdk: *sdk},
 			// sonarqube
-			"sonarqube-scan": sonarqubescan.ScanAction{Sdk: *sdk},
+			"sonarqube-scan": sonarqubescan.Action{Sdk: *sdk},
 			// syft
-			"syft-container-sbom-generate": syft.ContainerGenerateAction{Sdk: *sdk},
-			"syft-artifact-sbom-generate":  syft.ArtifactGenerateAction{Sdk: *sdk},
-			"grype-container-sbom-report":  syft.ReportAction{Sdk: *sdk},
+			"syft-container-sbom-generate": syftcontainersbombuild.Action{Sdk: *sdk},
+			"syft-artifact-sbom-generate":  syftartifactsbomgenerate.Action{Sdk: *sdk},
+			"grype-container-sbom-report":  grypesbomreport.Action{Sdk: *sdk},
 			// mkdocs
-			"mkdocs-start": mkdocs.StartAction{Sdk: *sdk},
-			"mkdocs-build": mkdocs.BuildAction{Sdk: *sdk},
+			"mkdocs-start": mkdocsstart.StartAction{Sdk: *sdk},
+			"mkdocs-build": mkdocsbuild.BuildAction{Sdk: *sdk},
 			// hugo
-			"hugo-start": hugo.StartAction{Sdk: *sdk},
-			"hugo-build": hugo.BuildAction{Sdk: *sdk},
+			"hugo-start": hugostart.Action{Sdk: *sdk},
+			"hugo-build": hugobuild.Action{Sdk: *sdk},
 			// techdocs
-			"techdocs-start":   techdocs.StartAction{Sdk: *sdk},
-			"techdocs-build":   techdocs.BuildAction{Sdk: *sdk},
-			"techdocs-publish": techdocs.PublishAction{Sdk: *sdk},
+			"techdocs-start":   techdocsstart.Action{Sdk: *sdk},
+			"techdocs-build":   techdocsbuild.Action{Sdk: *sdk},
+			"techdocs-publish": techdocspublish.Action{Sdk: *sdk},
 			// trivy
-			// TODO: "trivy-scan": trivy.ScanAction{Sdk: *sdk},
+			// TODO: "trivy-scan": trivy.Action{Sdk: *sdk},
 			// upx-optimize
-			"opx-optimize": upx.OptimizeAction{Sdk: *sdk},
+			"opx-optimize": upxoptimize.OptimizeAction{Sdk: *sdk},
 			// semgrep
-			"semgrep-scan": semgrep.ScanAction{Sdk: *sdk},
+			"semgrep-scan": semgrepscan.ScanAction{Sdk: *sdk},
 			// qodana
-			"qodana-scan": qodana.ScanAction{Sdk: *sdk},
+			"qodana-scan": qodanascan.ScanAction{Sdk: *sdk},
 			// github
-			"github-sarif-upload":    github.SarifUploadAction{Sdk: *sdk},
-			"github-release-publish": github.PublishAction{Sdk: *sdk},
+			"github-sarif-upload":    githubpublishsarif.Action{Sdk: *sdk},
+			"github-release-publish": githubpublishrelease.Action{Sdk: *sdk},
 			// gitlab
-			"gitlab-release-publish": gitlab.PublishAction{Sdk: *sdk},
+			"gitlab-release-publish": gitlabreleasepublish.PublishAction{Sdk: *sdk},
 			// ossf
-			"ossf-scorecard-scan": ossf.ScorecardScanAction{Sdk: *sdk},
+			"ossf-scorecard-scan": scorecardscan.Action{Sdk: *sdk},
 			// applicationinspector
-			"applicationinspector-scan": applicationinspector.ScanAction{Sdk: *sdk},
+			"applicationinspector-scan": applicationinspector.Action{Sdk: *sdk},
 		}
 
 		// execute

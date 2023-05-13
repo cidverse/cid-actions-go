@@ -9,11 +9,11 @@ import (
 	"github.com/cidverse/cidverseutils/pkg/version"
 )
 
-type GenerateAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
-func (a GenerateAction) Execute() error {
+func (a Action) Execute() error {
 	// default configuration
 	cfg := changelog.Config{
 		Templates: []string{
@@ -106,9 +106,9 @@ func (a GenerateAction) Execute() error {
 		}
 
 		// store
-		err := a.Sdk.ArtifactUploadByteArray(cidsdk.ArtifactUploadByteArrayRequest{
+		err := a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
 			File:    templateFile,
-			Content: []byte(output),
+			Content: output,
 			Type:    "changelog",
 		})
 		if err != nil {
