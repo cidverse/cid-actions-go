@@ -28,6 +28,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugobuild"
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugostart"
 	"github.com/cidverse/cid-actions-go/actions/java/javabuild"
+	"github.com/cidverse/cid-actions-go/actions/java/javagradlewrapperscan"
 	"github.com/cidverse/cid-actions-go/actions/java/javapublish"
 	"github.com/cidverse/cid-actions-go/actions/java/javatest"
 	"github.com/cidverse/cid-actions-go/actions/mkdocs/mkdocsbuild"
@@ -94,9 +95,10 @@ var runCmd = &cobra.Command{
 			"helm-publish-nexus":    helmpublishnexus.PublishNexusAction{Sdk: *sdk},
 			"helm-publish-registry": helmpublishregistry.PublishRegistryAction{Sdk: *sdk},
 			// java
-			"java-build":   javabuild.Action{Sdk: *sdk},
-			"java-test":    javatest.Action{Sdk: *sdk},
-			"java-publish": javapublish.Action{Sdk: *sdk},
+			"java-build":               javabuild.Action{Sdk: *sdk},
+			"java-test":                javatest.Action{Sdk: *sdk},
+			"java-publish":             javapublish.Action{Sdk: *sdk},
+			"java-gradle-wrapper-scan": javagradlewrapperscan.Action{Sdk: *sdk},
 			// node
 			"node-build": nodebuild.Action{Sdk: *sdk},
 			"node-test":  nodetest.Action{Sdk: *sdk},
