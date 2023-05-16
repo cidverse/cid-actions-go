@@ -30,6 +30,8 @@ func SonarqubeGoModTestData(debug bool) cidsdk.ProjectActionData {
 		Env: map[string]string{
 			"NCI_PROJECT_NAME":        "my-project-name",
 			"NCI_PROJECT_DESCRIPTION": "my-project-description",
+			"NCI_COMMIT_REF_TYPE":     "branch",
+			"NCI_COMMIT_REF_NAME":     "main",
 		},
 	}
 }

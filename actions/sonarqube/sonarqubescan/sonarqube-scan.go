@@ -60,6 +60,11 @@ func (a Action) Execute() (err error) {
 		scanArgs = append(scanArgs, `-D sonar.organization=`+cfg.SonarOrganization)
 	}
 
+	// set version
+	if ctx.Env["NCI_COMMIT_REF_TYPE"] == "tag" {
+		scanArgs = append(scanArgs, `-D sonar.projectVersion=`+ctx.Env["NCI_COMMIT_REF_NAME"])
+	}
+
 	// publish sarif reports to sonarqube
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "debug", Message: fmt.Sprintf("query artifacts with %s", "type == \"report\"")})
 	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "report"`})
