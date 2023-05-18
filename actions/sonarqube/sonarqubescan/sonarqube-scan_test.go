@@ -4,9 +4,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/actions/sonarqube/sonarqubecommon"
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
-	"github.com/cidverse/cid-actions-go/pkg/sonarqube"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +15,7 @@ import (
 
 func TestSonarqubeScanGoMod(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", &Config{}).Return(sonarqubecommon.SonarqubeGoModTestData(false), nil).Run(func(args mock.Arguments) {
+	sdk.On("ProjectAction", &Config{}).Return(api.SonarqubeGoModTestData(false), nil).Run(func(args mock.Arguments) {
 		arg := args.Get(0).(*Config)
 		arg.SonarHostURL = "https://sonarcloud.local"
 		arg.SonarOrganization = "my-org"
@@ -74,7 +74,7 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	httpmock.ActivateNonDefault(sonarqube.ApiClient.GetClient())
+	httpmock.ActivateNonDefault(sonarqubecommon.ApiClient.GetClient())
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder("POST", "https://sonarcloud.local/api/projects/create?name=my-project-name&organization=my-org&project=my-project-key", httpmock.NewStringResponder(200, ``))
 	httpmock.RegisterResponder("POST", "https://sonarcloud.local/api/project_branches/rename?name=main&project=my-project-key", httpmock.NewStringResponder(200, ``))

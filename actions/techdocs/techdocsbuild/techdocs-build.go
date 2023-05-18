@@ -29,7 +29,7 @@ func (a Action) Execute() (err error) {
 	_ = os.MkdirAll(outputDir, os.ModePerm)
 
 	buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: `techdocs-cli generate --source-dir ` + ctx.Module.ModuleDir + ` --output-dir ` + outputDir + ` --no-docker --etag ${NCI_COMMIT_SHA}`,
+		Command: `techdocs-cli generate --source-dir ` + ctx.Module.ModuleDir + ` --output-dir ` + outputDir + ` --no-docker --etag ${NCI_COMMIT_HASH}`,
 		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {

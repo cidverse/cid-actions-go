@@ -47,7 +47,7 @@ func (a SignAction) Execute() (err error) {
 	opts := []string{
 		"--recursive",
 		fmt.Sprintf(`-a "repo=%s"`, ctx.Env["NCI_REPOSITORY_REMOTE"]),
-		fmt.Sprintf(`-a "commit_hash=%s"`, ctx.Env["NCI_COMMIT_SHA"]),
+		fmt.Sprintf(`-a "commit_hash=%s"`, ctx.Env["NCI_COMMIT_HASH"]),
 	}
 	if cfg.CosignTransparencyLogDisable == true {
 		opts = append(opts, "--no-tlog-upload=true")

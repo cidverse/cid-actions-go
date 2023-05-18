@@ -60,13 +60,13 @@ func (a Action) Execute() (err error) {
 
 		// git reference (sarif upload with pull request ref will result in pull request comments)
 		ref := ctx.Env["NCI_COMMIT_REF_VCS"]
-		if ctx.Env["NCI_PIPELINE_TRIGGER"] == "merge_request" && len(ctx.Env["NCI_MERGE_REQUEST_ID"]) > 0 {
+		if ctx.Env["NCI_PIPELINE_TRIGGER"] == "merge_request" && ctx.Env["NCI_MERGE_REQUEST_ID"] != "" {
 			ref = fmt.Sprintf("refs/pull/%s/merge", ctx.Env["NCI_MERGE_REQUEST_ID"])
 		}
 
 		// upload
-		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading sarif report to github code scanning api", Context: map[string]interface{}{"report": report.Name, "ref": ref, "commit_hash": ctx.Env["NCI_COMMIT_SHA"]}})
-		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.String(ctx.Env["NCI_COMMIT_SHA"]), Ref: github.String(ref), Sarif: github.String(sarifEncoded), CheckoutURI: github.String(ctx.Config.ProjectDir)}
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading sarif report to github code scanning api", Context: map[string]interface{}{"report": report.Name, "ref": ref, "commit_hash": ctx.Env["NCI_COMMIT_HASH"]}})
+		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.String(ctx.Env["NCI_COMMIT_HASH"]), Ref: github.String(ref), Sarif: github.String(sarifEncoded), CheckoutURI: github.String(ctx.Config.ProjectDir)}
 		sarifId, _, err := client.CodeScanning.UploadSarif(context.Background(), organization, repository, sarifAnalysis)
 		if err != nil {
 			// "job scheduled on GitHub side" is not a error, job just isn't completed yet

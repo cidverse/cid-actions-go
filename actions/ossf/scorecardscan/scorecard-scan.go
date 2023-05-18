@@ -31,7 +31,7 @@ func (a Action) Execute() (err error) {
 	var scanOpts = []string{
 		fmt.Sprintf(`--repo %q`, ctx.Env["NCI_REPOSITORY_URL"]),
 		`--format json`,
-		fmt.Sprintf(`--commit %q`, ctx.Env["NCI_COMMIT_SHA"]),
+		fmt.Sprintf(`--commit %q`, ctx.Env["NCI_COMMIT_HASH"]),
 		`--checks "Contributors,Dependency-Update-Tool,Maintained,Security-Policy,Fuzzing,Branch-Protection,CI-Tests,Signed-Releases,Binary-Artifacts,SAST,License,Pinned-Dependencies,CII-Best-Practices,Code-Review,Dangerous-Workflow,Packaging,Token-Permissions,Vulnerabilities"`,
 	}
 	scanEnv := map[string]string{}

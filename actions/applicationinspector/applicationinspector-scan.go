@@ -30,7 +30,7 @@ func (a Action) Execute() (err error) {
 		fmt.Sprintf("-s %q", ctx.ProjectDir),
 		fmt.Sprintf("--base-path %q", ctx.ProjectDir),
 		fmt.Sprintf("--repository-uri %q", ctx.Env["NCI_REPOSITORY_REMOTE"]),
-		fmt.Sprintf("--commit-hash %q", ctx.Env["NCI_COMMIT_SHA"]),
+		fmt.Sprintf("--commit-hash %q", ctx.Env["NCI_COMMIT_HASH"]),
 		"-f json",
 		fmt.Sprintf("-o %q", reportFile),
 		"-g **/tests/**,**/.git/**,**/.dist/**,**/.tmp/**",

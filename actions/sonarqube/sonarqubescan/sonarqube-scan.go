@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cidverse/cid-actions-go/pkg/sonarqube"
+	"github.com/cidverse/cid-actions-go/actions/sonarqube/sonarqubecommon"
 	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/gosimple/slug"
@@ -43,7 +43,7 @@ func (a Action) Execute() (err error) {
 
 	// ensure that the default branch is configured correctly
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "creating project and setting default branch if missing", Context: map[string]interface{}{"default-branch": cfg.SonarDefaultBranch, "host": cfg.SonarHostURL, "project-key": cfg.SonarProjectKey, "organization": cfg.SonarOrganization}})
-	err = sonarqube.PrepareProject(cfg.SonarHostURL, cfg.SonarToken, cfg.SonarOrganization, cfg.SonarProjectKey, ctx.Env["NCI_PROJECT_NAME"], ctx.Env["NCI_PROJECT_DESCRIPTION"], cfg.SonarDefaultBranch)
+	err = sonarqubecommon.PrepareProject(cfg.SonarHostURL, cfg.SonarToken, cfg.SonarOrganization, cfg.SonarProjectKey, ctx.Env["NCI_PROJECT_NAME"], ctx.Env["NCI_PROJECT_DESCRIPTION"], cfg.SonarDefaultBranch)
 	if err != nil {
 		return fmt.Errorf("failed to prepare sonarqube project: %w", err)
 	}
@@ -131,7 +131,7 @@ func (a Action) Execute() (err error) {
 
 	// module specific parameters
 	var sourceInclusion []string
-	var sourceExclusions []string = []string{"**/.git/**"}
+	var sourceExclusions = []string{"**/.git/**"}
 	var testInclusion []string
 	var testExclusions []string
 	for _, module := range ctx.Modules {

@@ -31,7 +31,7 @@ func ModuleDockerfile() cidsdk.ModuleActionData {
 			"NCI_CONTAINERREGISTRY_TAG":        "latest",
 			"NCI_REPOSITORY_KIND":              "git",
 			"NCI_REPOSITORY_REMOTE":            "https://github.com/cidverse/normalizeci.git",
-			"NCI_COMMIT_SHA":                   "abcdef123456",
+			"NCI_COMMIT_HASH":                  "abcdef123456",
 		},
 	}
 }

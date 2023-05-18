@@ -20,7 +20,7 @@ func GetProjectActionData(debug bool) cidsdk.ProjectActionData {
 			"NCI_REPOSITORY_REMOTE": "https://github.com/cidverse/normalizeci.git",
 			"NCI_REPOSITORY_URL":    "https://github.com/cidverse/normalizeci",
 			"NCI_COMMIT_REF_NAME":   "v1.2.0",
-			"NCI_COMMIT_SHA":        "abcdef123456",
+			"NCI_COMMIT_HASH":       "abcdef123456",
 			"NCI_COMMIT_REF_VCS":    "refs/tags/v1.2.0",
 		},
 	}
@@ -66,6 +66,38 @@ func GetNodeTestData(debug bool) cidsdk.ModuleActionData {
 			Log:         map[string]string{},
 			ArtifactDir: ".dist",
 			TempDir:     ".tmp",
+		},
+	}
+}
+
+func SonarqubeGoModTestData(debug bool) cidsdk.ProjectActionData {
+	return cidsdk.ProjectActionData{
+		ProjectDir: "/my-project",
+		Config: cidsdk.CurrentConfig{
+			Debug:       debug,
+			Log:         map[string]string{},
+			ProjectDir:  "/my-project",
+			ArtifactDir: "/my-project/.dist",
+			TempDir:     "/my-project/.tmp",
+		},
+		Modules: []cidsdk.ProjectModule{
+			{
+				ProjectDir:        "/my-project",
+				ModuleDir:         "/my-project",
+				Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/go.mod"}},
+				Name:              "github.com/cidverse/my-project",
+				Slug:              "github-com-cidverse-my-project",
+				BuildSystem:       "gomod",
+				BuildSystemSyntax: "default",
+				Language:          &map[string]string{"go": "1.19.0"},
+				Submodules:        nil,
+			},
+		},
+		Env: map[string]string{
+			"NCI_PROJECT_NAME":        "my-project-name",
+			"NCI_PROJECT_DESCRIPTION": "my-project-description",
+			"NCI_COMMIT_REF_TYPE":     "branch",
+			"NCI_COMMIT_REF_NAME":     "main",
 		},
 	}
 }

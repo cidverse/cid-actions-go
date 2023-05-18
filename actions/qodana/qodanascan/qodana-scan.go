@@ -62,7 +62,7 @@ func (a ScanAction) Execute() (err error) {
 			"QODANA_TOKEN":      ctx.Env["QODANA_TOKEN"],
 			"QODANA_REMOTE_URL": ctx.Env["NCI_REPOSITORY_REMOTE"],
 			"QODANA_BRANCH":     ctx.Env["NCI_COMMIT_REF_NAME"],
-			"QODANA_REVISION":   ctx.Env["NCI_COMMIT_SHA"],
+			"QODANA_REVISION":   ctx.Env["NCI_COMMIT_HASH"],
 			//"QODANA_JOB_URL":    ...,
 		},
 	})

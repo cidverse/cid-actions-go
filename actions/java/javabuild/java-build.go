@@ -25,7 +25,7 @@ func (a Action) Execute() (err error) {
 
 	// version
 	if cfg.MavenVersion == "" {
-		cfg.MavenVersion = javacommon.GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"], ctx.Env["NCI_COMMIT_SHA_SHORT"])
+		cfg.MavenVersion = javacommon.GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"], ctx.Env["NCI_COMMIT_HASH_SHORT"])
 	}
 
 	// build

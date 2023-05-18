@@ -63,7 +63,7 @@ func (a Action) Execute() error {
 		previousReleaseVCSRef = ""
 	}
 	c, err := a.Sdk.VCSCommits(cidsdk.VCSCommitsRequest{
-		FromHash: fmt.Sprintf("hash/%s", ctx.Env["NCI_COMMIT_SHA"]),
+		FromHash: fmt.Sprintf("hash/%s", ctx.Env["NCI_COMMIT_HASH"]),
 		ToHash:   previousReleaseVCSRef,
 		Limit:    1000,
 	})
@@ -76,7 +76,7 @@ func (a Action) Execute() error {
 		Context: map[string]interface{}{
 			"release_current":  currentRelease,
 			"release_previous": previousRelease.Version,
-			"from":             ctx.Env["NCI_COMMIT_SHA"],
+			"from":             ctx.Env["NCI_COMMIT_HASH"],
 			"to":               previousReleaseVCSRef,
 			"count":            len(*c),
 		},

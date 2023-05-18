@@ -14,7 +14,7 @@ func TestTechdocsBuild(t *testing.T) {
 	sdk := test.Setup(t)
 	sdk.On(`ModuleAction`, mock.Anything).Return(techdocscommon.TechdocsTestData(false), nil)
 	sdk.On(`ExecuteCommand`, cidsdk.ExecuteCommandRequest{
-		Command: `techdocs-cli generate --source-dir /my-project/docs --output-dir /my-project/.tmp/html --no-docker --etag ${NCI_COMMIT_SHA}`,
+		Command: `techdocs-cli generate --source-dir /my-project/docs --output-dir /my-project/.tmp/html --no-docker --etag ${NCI_COMMIT_HASH}`,
 		WorkDir: `/my-project`,
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("TARCreate", "/my-project/.tmp/html", "/my-project/.tmp/docs.tar").Return(nil)

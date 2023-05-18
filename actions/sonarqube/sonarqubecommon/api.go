@@ -1,4 +1,4 @@
-package sonarqube
+package sonarqubecommon
 
 import (
 	"encoding/json"
