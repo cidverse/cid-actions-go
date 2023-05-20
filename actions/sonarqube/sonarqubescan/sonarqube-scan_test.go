@@ -76,7 +76,7 @@ func TestSonarqubeScanGoMod(t *testing.T) {
 
 	httpmock.ActivateNonDefault(sonarqubecommon.ApiClient.GetClient())
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("POST", "https://sonarcloud.local/api/projects/create?name=my-project-name&organization=my-org&project=my-project-key", httpmock.NewStringResponder(200, ``))
+	httpmock.RegisterResponder("POST", "https://sonarcloud.local/api/projects/create?mainBranch=main&name=my-project-name&organization=my-org&project=my-project-key&visibility=public", httpmock.NewStringResponder(200, ``))
 	httpmock.RegisterResponder("POST", "https://sonarcloud.local/api/project_branches/rename?name=main&project=my-project-key", httpmock.NewStringResponder(200, ``))
 
 	action := Action{Sdk: sdk}

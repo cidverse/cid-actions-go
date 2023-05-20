@@ -33,12 +33,14 @@ type Status struct {
 	Vulnerabilities   int64  `json:"vulnerabilities,omitempty"`
 }
 
-func CreateProject(server string, accessToken string, organization string, projectKey string, projectName string) error {
+func CreateProject(server string, accessToken string, organization string, projectKey string, projectName string, mainBranch string) error {
 	resp, err := ApiClient.R().
 		SetQueryParams(map[string]string{
 			"organization": organization,
 			"project":      projectKey,
 			"name":         projectName,
+			"mainBranch":   mainBranch,
+			"visibility":   "public",
 		}).
 		SetHeader("Accept", "application/json").
 		SetBasicAuth(accessToken, "").

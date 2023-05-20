@@ -8,25 +8,21 @@ func PrepareProject(server string, accessToken string, organization string, proj
 	// query branches
 	branchList, branchListErr := GetDefaultBranch(server, accessToken, projectKey)
 	if branchListErr != nil {
-		// no access or project doesn't exist - create
-		createErr := CreateProject(server, accessToken, organization, projectKey, projectName)
+		// no access or project doesn't exist, create it
+		createErr := CreateProject(server, accessToken, organization, projectKey, projectName, mainBranch)
 		if createErr != nil {
 			return fmt.Errorf("failed to create sonarqube project: %s", createErr.Error())
-		}
-
-		// rename main branch
-		renameErr := RenameMainBranch(server, accessToken, projectKey, mainBranch)
-		if renameErr != nil {
-			return fmt.Errorf("failed to rename sonarqube main branch: %s", renameErr.Error())
 		}
 
 		return nil
 	}
 
+	// find current main branch
 	currentMainBranch := ""
 	for _, branch := range branchList.Branches {
 		if branch.IsMain {
 			currentMainBranch = branch.Name
+			break
 		}
 	}
 
