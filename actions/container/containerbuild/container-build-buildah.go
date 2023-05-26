@@ -41,6 +41,7 @@ func (a Action) Execute() error {
 			// build each image and add to manifest
 			for _, platform := range platforms {
 				containerArchiveFile := cidsdk.JoinPath(ctx.Config.ArtifactDir, ctx.Module.Slug, "oci-image", platform.Platform("_")+".tar")
+				// containerArchiveFile := cidsdk.JoinPath(ctx.Config.TempDir, platform.Platform("_")+".tar")
 				_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "build container image", Context: map[string]interface{}{"module": ctx.Module.Name, "platform": platform.Platform("/"), "tag": imageReference}})
 
 				var buildArgs []string
@@ -78,6 +79,7 @@ func (a Action) Execute() error {
 					buildArgs = append(buildArgs, `--build-arg TARGETVARIANT=`+platform.Variant)
 				}
 
+				// build
 				buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 					Command: fmt.Sprintf("buildah build %s %s", strings.Join(buildArgs, " "), ctx.Module.ModuleDir),
 					WorkDir: ctx.ProjectDir,
@@ -87,6 +89,19 @@ func (a Action) Execute() error {
 				} else if buildResult.Code != 0 {
 					return fmt.Errorf("buildah build failed, exit code %d", buildResult.Code)
 				}
+
+				// store container archive
+				/*
+					err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+						File:   containerArchiveFile,
+						Module: ctx.Module.Slug,
+						Type:   "oci-image",
+						Format: "tar",
+					})
+					if err != nil {
+						return errors.New("failed to store container archive: " + err.Error())
+					}
+				*/
 			}
 		} else {
 			return fmt.Errorf("not supported: %s/%s", ctx.Module.BuildSystem, ctx.Module.BuildSystemSyntax)

@@ -20,13 +20,20 @@ func TestContainerBuildDockerfile(t *testing.T) {
 		Command: "buildah build --platform linux/amd64 -f Dockerfile -t oci-archive:.dist/my-project/oci-image/linux_amd64.tar --layers --squash --annotation \"org.opencontainers.image.source={NCI_REPOSITORY_REMOTE}\" --annotation \"org.opencontainers.image.created={TIMESTAMP_RFC3339}\" --annotation \"org.opencontainers.image.authors=\" --annotation \"org.opencontainers.image.title=my-project\" --annotation \"org.opencontainers.image.description=\" /my-project",
 		WorkDir: "/my-project",
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	/*
+		sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
+			Module: "my-project",
+			File:   "/my-project/.tmp/linux_amd64.tar",
+			Type:   "oci-image",
+			Format: "tar",
+		}).Return(nil)
+	*/
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
-		File:          "image.txt",
-		Content:       "ghcr.io/cidverse/dummy:latest",
-		Module:        "my-project",
-		Type:          "oci-image",
-		Format:        "container-ref",
-		FormatVersion: "",
+		File:    "image.txt",
+		Content: "ghcr.io/cidverse/dummy:latest",
+		Module:  "my-project",
+		Type:    "oci-image",
+		Format:  "container-ref",
 	}).Return(nil)
 
 	action := Action{Sdk: sdk}

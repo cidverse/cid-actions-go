@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"runtime"
 
-	golang2 "github.com/cidverse/cid-actions-go/actions/golang/golangcommon"
+	"github.com/cidverse/cid-actions-go/actions/golang/golangcommon"
 	"github.com/cidverse/cid-actions-go/util/golang"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/shomali11/parallelizer"
@@ -16,7 +16,7 @@ type BuildAction struct {
 }
 
 type BuildConfig struct {
-	Platform []golang2.Platform `json:"platform"`
+	Platform []golangcommon.Platform `json:"platform"`
 }
 
 func (a BuildAction) Execute() error {
@@ -28,7 +28,7 @@ func (a BuildAction) Execute() error {
 
 	// default to current platform
 	if len(cfg.Platform) == 0 {
-		cfg.Platform = append(cfg.Platform, golang2.Platform{Goos: runtime.GOOS, Goarch: runtime.GOARCH})
+		cfg.Platform = append(cfg.Platform, golangcommon.Platform{Goos: runtime.GOOS, Goarch: runtime.GOARCH})
 	}
 
 	// don't build libraries
