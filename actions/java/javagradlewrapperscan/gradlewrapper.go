@@ -21,6 +21,10 @@ func ParseGradleWrapperProperties(filePath string) (map[string]string, error) {
 		if len(line) > 0 && line[0] != '#' {
 			fields := strings.SplitN(line, "=", 2)
 			if len(fields) == 2 {
+				// unescape values
+				fields[1] = strings.ReplaceAll(fields[1], "\\:", ":")
+
+				// trim spaces from the key and value
 				props[strings.TrimSpace(fields[0])] = strings.TrimSpace(fields[1])
 			}
 		}
@@ -34,7 +38,7 @@ func ParseGradleWrapperProperties(filePath string) (map[string]string, error) {
 }
 
 func ParseVersionInDistributionURL(url string) string {
-	re := regexp.MustCompile(`gradle-(\d+\.\d+\.\d+)[^/]*$`)
+	re := regexp.MustCompile(`^https://services\.gradle\.org/distributions/gradle-(\d+(\.\d+)*)-(bin|all)\.[a-z]{3}$`)
 	matches := re.FindStringSubmatch(url)
 	if len(matches) < 2 {
 		return ""

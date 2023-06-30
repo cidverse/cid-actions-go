@@ -2,6 +2,8 @@ package javagradlewrapperscan
 
 import (
 	"testing"
+
+	"github.com/jarcoal/httpmock"
 )
 
 func TestFindGradleRelease(t *testing.T) {
@@ -23,6 +25,11 @@ func TestFindGradleRelease(t *testing.T) {
 }
 
 func TestResolveGradleRelease(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("GET", "https://services.gradle.org/distributions/gradle-8.1.1-bin.zip.sha256", httpmock.NewStringResponder(200, `e111cb9948407e26351227dabce49822fb88c37ee72f1d1582a69c68af2e702f`))
+	httpmock.RegisterResponder("GET", "https://services.gradle.org/distributions/gradle-8.1.1-wrapper.jar.sha256", httpmock.NewStringResponder(200, `ed2c26eba7cfb93cc2b7785d05e534f07b5b48b5e7fc941921cd098628abca58`))
+
 	// create a release
 	release := GradleRelease{
 		Version:            "8.1.1",

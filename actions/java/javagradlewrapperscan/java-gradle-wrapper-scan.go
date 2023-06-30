@@ -30,6 +30,9 @@ func (a Action) Execute() (err error) {
 
 		// find release
 		version := ParseVersionInDistributionURL(props["distributionUrl"])
+		if version == "" {
+			return fmt.Errorf("failed to parse gradle version from distributionUrl: %s", props["distributionUrl"])
+		}
 		release, err := FindGradleRelease(version, true)
 		if err != nil {
 			return fmt.Errorf("failed to find gradle release for version %s: %w", version, err)

@@ -39,7 +39,7 @@ zipStorePath=wrapper/dists`
 		"distributionBase":      "GRADLE_USER_HOME",
 		"distributionPath":      "wrapper/dists",
 		"distributionSha256Sum": "e111cb9948407e26351227dabce49822fb88c37ee72f1d1582a69c68af2e702f",
-		"distributionUrl":       "https\\://services.gradle.org/distributions/gradle-8.1.1-bin.zip",
+		"distributionUrl":       "https://services.gradle.org/distributions/gradle-8.1.1-bin.zip",
 		"networkTimeout":        "10000",
 		"zipStoreBase":          "GRADLE_USER_HOME",
 		"zipStorePath":          "wrapper/dists",
@@ -52,10 +52,28 @@ zipStorePath=wrapper/dists`
 }
 
 func TestParseVersionInDistributionURL(t *testing.T) {
-	url := "https://services.gradle.org/distributions/gradle-8.1.1-bin.zip"
-	version := ParseVersionInDistributionURL(url)
-	expectedVersion := "8.1.1"
-	if version != expectedVersion {
-		t.Errorf("Unexpected version: got %s, want %s", version, expectedVersion)
+	testCases := []struct {
+		url             string
+		expectedVersion string
+	}{
+		{
+			url:             "https://services.gradle.org/distributions/gradle-8.1.1-bin.zip",
+			expectedVersion: "8.1.1",
+		},
+		{
+			url:             "https://services.gradle.org/distributions/gradle-8.2-bin.zip",
+			expectedVersion: "8.2",
+		},
+		{
+			url:             "https://services.gradle.org/distributions/gradle-8.0-all.zip",
+			expectedVersion: "8.0",
+		},
+	}
+
+	for _, testCase := range testCases {
+		version := ParseVersionInDistributionURL(testCase.url)
+		if version != testCase.expectedVersion {
+			t.Errorf("Unexpected version for URL '%s': got %s, want %s", testCase.url, version, testCase.expectedVersion)
+		}
 	}
 }
