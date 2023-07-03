@@ -18,7 +18,7 @@ func TestSemgrepScan(t *testing.T) {
 	sdk := test.Setup(t)
 	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command:       "semgrep scan --config p/default --sarif --quiet --metrics=off --disable-version-check --exclude=.dist --exclude=.tmp",
+		Command:       "semgrep scan --config p/ci --sarif --quiet --metrics=off --disable-version-check --exclude=.dist --exclude=.tmp",
 		WorkDir:       "/my-project",
 		CaptureOutput: true,
 	}).Return(&cidsdk.ExecuteCommandResponse{
