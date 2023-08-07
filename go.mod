@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230531223444-cb59556cf639
 	github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d
-	github.com/containers/image/v5 v5.26.1
+	github.com/containers/image/v5 v5.27.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/gosimple/slug v1.13.1
