@@ -8,6 +8,7 @@ require (
 	github.com/containers/image/v5 v5.27.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v53 v53.2.0
+	github.com/google/go-github/v54 v54.0.0
 	github.com/gosimple/slug v1.13.1
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/oriser/regroup v0.0.0-20230527212431-1b00c9bdbc5b
