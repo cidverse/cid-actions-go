@@ -3,11 +3,11 @@ module github.com/cidverse/cid-actions-go
 go 1.20
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20230531223444-cb59556cf639
+	github.com/cidverse/cid-sdk-go v0.0.0-20230821195606-3d9a702e1fd2
 	github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d
 	github.com/containers/image/v5 v5.27.0
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/google/go-github/v54 v54.0.0
+	github.com/google/go-github/v55 v55.0.0
 	github.com/gosimple/slug v1.13.1
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/oriser/regroup v0.0.0-20230527212431-1b00c9bdbc5b
@@ -21,31 +21,31 @@ require (
 )
 
 require (
-	github.com/ProtonMail/go-crypto v0.0.0-20230528122434-6f98819771a1 // indirect
+	github.com/ProtonMail/go-crypto v0.0.0-20230828082145-3c4c8a2d2371 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
-	github.com/containers/ocicrypt v1.1.7 // indirect
-	github.com/containers/storage v1.48.0 // indirect
+	github.com/containers/ocicrypt v1.1.8 // indirect
+	github.com/containers/storage v1.49.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v24.0.2+incompatible // indirect
+	github.com/docker/docker v24.0.5+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.1.0-rc3 // indirect
-	github.com/otiai10/copy v1.11.0 // indirect
+	github.com/opencontainers/image-spec v1.1.0-rc4 // indirect
+	github.com/otiai10/copy v1.12.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/stretchr/objx v0.5.1 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
+	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
 	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
