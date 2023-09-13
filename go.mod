@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230821195606-3d9a702e1fd2
 	github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d
-	github.com/containers/image/v5 v5.27.0
+	github.com/containers/image/v5 v5.28.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/go-github/v55 v55.0.0
 	github.com/gosimple/slug v1.13.1
@@ -25,9 +25,9 @@ require (
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.1.8 // indirect
-	github.com/containers/storage v1.49.0 // indirect
+	github.com/containers/storage v1.50.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v24.0.5+incompatible // indirect
+	github.com/docker/docker v24.0.6+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.1 // indirect
