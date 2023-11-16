@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230821195606-3d9a702e1fd2
 	github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d
-	github.com/containers/image/v5 v5.28.0
+	github.com/containers/image/v5 v5.29.0
 	github.com/go-resty/resty/v2 v2.10.0
 	github.com/google/go-github/v56 v56.0.0
 	github.com/gosimple/slug v1.13.1
@@ -22,10 +22,10 @@ require (
 
 require (
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
-	github.com/containers/ocicrypt v1.1.8 // indirect
-	github.com/containers/storage v1.50.2 // indirect
+	github.com/containers/ocicrypt v1.1.9 // indirect
+	github.com/containers/storage v1.51.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v24.0.6+incompatible // indirect
+	github.com/docker/docker v24.0.7+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.1 // indirect
@@ -36,13 +36,14 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc5 // indirect
-	github.com/otiai10/copy v1.12.0 // indirect
+	github.com/otiai10/copy v1.14.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
