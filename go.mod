@@ -6,7 +6,7 @@ require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20230821195606-3d9a702e1fd2
 	github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d
 	github.com/containers/image/v5 v5.29.0
-	github.com/go-resty/resty/v2 v2.10.0
+	github.com/go-resty/resty/v2 v2.11.0
 	github.com/google/go-github/v57 v57.0.0
 	github.com/gosimple/slug v1.13.1
 	github.com/jarcoal/httpmock v1.3.1
