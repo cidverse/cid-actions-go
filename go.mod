@@ -7,7 +7,7 @@ require (
 	github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d
 	github.com/containers/image/v5 v5.29.0
 	github.com/go-resty/resty/v2 v2.11.0
-	github.com/google/go-github/v57 v57.0.0
+	github.com/google/go-github/v58 v58.0.0
 	github.com/gosimple/slug v1.13.1
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/oriser/regroup v0.0.0-20230527212431-1b00c9bdbc5b
