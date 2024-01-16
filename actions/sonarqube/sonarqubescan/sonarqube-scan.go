@@ -51,7 +51,7 @@ func (a Action) Execute() (err error) {
 	// run scan
 	scanArgs := []string{
 		`-D sonar.host.url=` + cfg.SonarHostURL,
-		`-D sonar.login=` + cfg.SonarToken,
+		`-D sonar.token=` + cfg.SonarToken,
 		`-D sonar.projectKey=` + cfg.SonarProjectKey,
 		`-D sonar.projectName=` + ctx.Env["NCI_PROJECT_NAME"],
 		`-D sonar.sources=.`,
