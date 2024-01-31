@@ -3,8 +3,8 @@ github.com/cidverse/cid-sdk-go v0.0.0-20230821195606-3d9a702e1fd2 h1:jkr8iXUCR5P
 github.com/cidverse/cid-sdk-go v0.0.0-20230821195606-3d9a702e1fd2/go.mod h1:/5j/67a4wgluh2r4WAaFySLDMAsoY6B6iZDKB1PriVU=
 github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d h1:ECn0z4DqmKHmAOa4ObQqYJ37HxoNdOSPeZp3LZux3ys=
 github.com/cidverse/cidverseutils v0.0.0-20230530185328-43ac5bcdda7d/go.mod h1:Trc0Lu2f08PZq5bwpyI+c/YKerUEts1sBgZy/ZPbbYw=
-github.com/containers/image/v5 v5.29.1 h1:9COTXQpl3FgrW/jw/roLAWlW4TN9ly7/bCAKY76wYl8=
-github.com/containers/image/v5 v5.29.1/go.mod h1:kQ7qcDsps424ZAz24thD+x7+dJw1vgur3A9tTDsj97E=
+github.com/containers/image/v5 v5.29.2 h1:b8U0XYWhaQbKucK73IbmSm8WQyKAhKDbAHQc45XlsOw=
+github.com/containers/image/v5 v5.29.2/go.mod h1:kQ7qcDsps424ZAz24thD+x7+dJw1vgur3A9tTDsj97E=
 github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 h1:Qzk5C6cYglewc+UyGf6lc8Mj2UaPTHy/iF2De0/77CA=
 github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01/go.mod h1:9rfv8iPl1ZP7aqh9YA68wnZv2NUDbXdcdPHVz0pFbPY=
 github.com/containers/ocicrypt v1.1.9 h1:2Csfba4jse85Raxk5HIyEk8OwZNjRvfkhEGijOjIdEM=
