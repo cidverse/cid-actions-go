@@ -1,6 +1,6 @@
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
-github.com/cidverse/cid-sdk-go v0.0.0-20240124231955-7b17b93dc1ad h1:tZ7I237wrrwBUrs5m4Qi+QmbgnQARqKXivhaCypTu8Q=
-github.com/cidverse/cid-sdk-go v0.0.0-20240124231955-7b17b93dc1ad/go.mod h1:/f6cjIHiEfOHjpRtz7VYkf0gcoixKuHB4rdiKihZk4A=
+github.com/cidverse/cid-sdk-go v0.0.0-20240131220110-b3125876215a h1:nc33GexEn7OD9nIZdtQ8WZzPjzm/ozWfRA/ch1PZ92w=
+github.com/cidverse/cid-sdk-go v0.0.0-20240131220110-b3125876215a/go.mod h1:qDlFs3yZMg06T3j/xyFnAjIF8ZSCALpChf6ZfbYFTqA=
 github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba h1:7z1+V18zViJmUovZ3P8nIbRdegA5viST6BsBUBNfrMw=
 github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba/go.mod h1:VRpKsgkaw9kS2Ya7/Hzd2gnbYqiMSSPR9L9ZLaymG04=
 github.com/containers/image/v5 v5.29.2 h1:b8U0XYWhaQbKucK73IbmSm8WQyKAhKDbAHQc45XlsOw=
@@ -16,8 +16,8 @@ github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ3
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/docker/docker v25.0.1+incompatible h1:k5TYd5rIVQRSqcTwCID+cyVA0yRg86+Pcrz1ls0/frA=
-github.com/docker/docker v25.0.1+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
+github.com/docker/docker v25.0.2+incompatible h1:/OaKeauroa10K4Nqavw4zlhcDq/WBcPMc5DbjOGgozY=
+github.com/docker/docker v25.0.2+incompatible/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
 github.com/go-resty/resty/v2 v2.11.0 h1:i7jMfNOJYMp69lq7qozJP+bjgzfAzeOhuGlyDrqxT/8=
 github.com/go-resty/resty/v2 v2.11.0/go.mod h1:iiP/OpA0CkcL3IGt1O0+/SIItFUbkkyw5BGXiVdTu+A=
 github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=

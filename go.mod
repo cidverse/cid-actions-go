@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.21
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20240124231955-7b17b93dc1ad
+	github.com/cidverse/cid-sdk-go v0.0.0-20240131220110-b3125876215a
 	github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba
 	github.com/containers/image/v5 v5.29.2
 	github.com/go-resty/resty/v2 v2.11.0
@@ -25,7 +25,7 @@ require (
 	github.com/containers/ocicrypt v1.1.9 // indirect
 	github.com/containers/storage v1.52.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v25.0.1+incompatible // indirect
+	github.com/docker/docker v25.0.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect

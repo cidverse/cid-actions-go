@@ -16,12 +16,14 @@ func GetProjectActionData(debug bool) cidsdk.ProjectActionData {
 		},
 		Modules: nil,
 		Env: map[string]string{
-			"NCI_REPOSITORY_KIND":   "git",
-			"NCI_REPOSITORY_REMOTE": "https://github.com/cidverse/normalizeci.git",
-			"NCI_REPOSITORY_URL":    "https://github.com/cidverse/normalizeci",
-			"NCI_COMMIT_REF_NAME":   "v1.2.0",
-			"NCI_COMMIT_HASH":       "abcdef123456",
-			"NCI_COMMIT_REF_VCS":    "refs/tags/v1.2.0",
+			"NCI_REPOSITORY_KIND":        "git",
+			"NCI_REPOSITORY_REMOTE":      "https://github.com/cidverse/normalizeci.git",
+			"NCI_REPOSITORY_URL":         "https://github.com/cidverse/normalizeci",
+			"NCI_REPOSITORY_HOST_SERVER": "github.com",
+			"NCI_COMMIT_REF_NAME":        "v1.2.0",
+			"NCI_COMMIT_HASH":            "abcdef123456",
+			"NCI_COMMIT_REF_VCS":         "refs/tags/v1.2.0",
+			"NCI_PROJECT_URL":            "https://github.com/cidverse/normalizeci",
 		},
 	}
 }

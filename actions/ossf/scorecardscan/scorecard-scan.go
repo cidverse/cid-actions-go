@@ -22,14 +22,9 @@ func (a Action) Execute() (err error) {
 		return err
 	}
 
-	// TODO: remove
-	if _, ok := ctx.Env["NCI_REPOSITORY_URL"]; !ok {
-		ctx.Env["NCI_REPOSITORY_URL"] = strings.TrimSuffix(ctx.Env["NCI_REPOSITORY_REMOTE"], ".git")
-	}
-
 	// scorecard scan
 	var scanOpts = []string{
-		fmt.Sprintf(`--repo %q`, ctx.Env["NCI_REPOSITORY_URL"]),
+		fmt.Sprintf(`--repo %q`, ctx.Env["NCI_PROJECT_URL"]),
 		`--format json`,
 		fmt.Sprintf(`--commit %q`, ctx.Env["NCI_COMMIT_HASH"]),
 		`--checks "Contributors,Dependency-Update-Tool,Maintained,Security-Policy,Fuzzing,Branch-Protection,CI-Tests,Signed-Releases,Binary-Artifacts,SAST,License,Pinned-Dependencies,CII-Best-Practices,Code-Review,Dangerous-Workflow,Packaging,Token-Permissions,Vulnerabilities"`,
@@ -38,6 +33,7 @@ func (a Action) Execute() (err error) {
 	if ctx.Env["NCI_REPOSITORY_HOST_TYPE"] == "github" {
 		scanEnv["GITHUB_AUTH_TOKEN"] = ctx.Env["GITHUB_TOKEN"]
 	} else if ctx.Env["NCI_REPOSITORY_HOST_TYPE"] == "gitlab" {
+		scanEnv["GL_HOST"] = ctx.Env["NCI_REPOSITORY_HOST_SERVER"]
 		scanEnv["GITLAB_AUTH_TOKEN"] = ctx.Env["GITLAB_TOKEN"]
 	}
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
@@ -49,7 +45,7 @@ func (a Action) Execute() (err error) {
 	if err != nil {
 		return err
 	} else if scanResult.Code != 0 {
-		return fmt.Errorf("qodana scan failed, exit code %d", scanResult.Code)
+		return fmt.Errorf("scorecard scan failed, exit code %d", scanResult.Code)
 	}
 
 	// parse / validate report
