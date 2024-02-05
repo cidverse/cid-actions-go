@@ -3,7 +3,6 @@ package golangtest
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -19,15 +18,12 @@ func (a TestAction) Execute() error {
 		return err
 	}
 
-	coverageDir := cidsdk.JoinPath(ctx.Config.TempDir)
-	err = os.MkdirAll(coverageDir, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
 	if ctx.Module.BuildSystem != "gomod" {
 		return errors.New("build system " + ctx.Module.BuildSystem + " is not supported")
 	}
+
+	// paths
+	coverageDir := ctx.Config.TempDir
 
 	// run tests
 	testArgs := []string{

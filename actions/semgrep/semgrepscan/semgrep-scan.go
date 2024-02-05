@@ -13,6 +13,7 @@ type ScanAction struct {
 }
 
 type ScanConfig struct {
+	RuleSets []string
 }
 
 func (a ScanAction) Execute() (err error) {
@@ -25,8 +26,23 @@ func (a ScanAction) Execute() (err error) {
 	// files
 	reportFile := cidsdk.JoinPath(ctx.Config.TempDir, "semgrep.sarif.json")
 
+	// defaults
+	if len(cfg.RuleSets) == 0 {
+		cfg.RuleSets = []string{"p/ci"}
+	}
+
 	// scan
-	var opts = []string{"semgrep", "scan", "--config p/ci", "--sarif", "--quiet", "--metrics=off", "--disable-version-check", "--exclude=.dist", "--exclude=.tmp"}
+	var opts = []string{"semgrep", "ci", "--sarif", "--quiet", "--metrics=off", "--disable-version-check", "--exclude=.dist", "--exclude=.tmp"}
+	if val, ok := ctx.Env["NCI_MERGE_REQUEST_SOURCE_HASH"]; ok && len(val) > 0 {
+		opts = append(opts, "--baseline", val)
+	}
+
+	// ruleSets
+	for _, config := range cfg.RuleSets {
+		opts = append(opts, fmt.Sprintf("--config %q", config))
+	}
+
+	// scan
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command:       strings.Join(opts, " "),
 		WorkDir:       ctx.ProjectDir,
