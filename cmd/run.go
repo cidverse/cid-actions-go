@@ -40,6 +40,8 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/python/pythonlint"
 	"github.com/cidverse/cid-actions-go/actions/python/pythontest"
 	"github.com/cidverse/cid-actions-go/actions/qodana/qodanascan"
+	"github.com/cidverse/cid-actions-go/actions/rust/rustbuild"
+	"github.com/cidverse/cid-actions-go/actions/rust/rusttest"
 	"github.com/cidverse/cid-actions-go/actions/semgrep/semgrepscan"
 	"github.com/cidverse/cid-actions-go/actions/sonarqube/sonarqubescan"
 	"github.com/cidverse/cid-actions-go/actions/syft/grypesbomreport"
@@ -106,6 +108,9 @@ var runCmd = &cobra.Command{
 			"python-build": pythonbuild.BuildAction{Sdk: *sdk},
 			"python-test":  pythontest.TestAction{Sdk: *sdk},
 			"python-lint":  pythonlint.LintAction{Sdk: *sdk},
+			// rust
+			"rust-build": rustbuild.BuildAction{Sdk: *sdk},
+			"rust-test":  rusttest.TestAction{Sdk: *sdk},
 			// sonarqube
 			"sonarqube-scan": sonarqubescan.Action{Sdk: *sdk},
 			// syft

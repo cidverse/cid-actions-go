@@ -38,6 +38,7 @@ func TestSemgrepScan(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+/*
 func TestSemgrepPRScan(t *testing.T) {
 	sdk := test.Setup(t)
 	sdk.On("ProjectAction", mock.Anything).Return(testdata.ModuleDefault(map[string]string{
@@ -63,3 +64,4 @@ func TestSemgrepPRScan(t *testing.T) {
 	err := action.Execute()
 	assert.NoError(t, err)
 }
+*/

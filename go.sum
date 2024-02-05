@@ -1,6 +1,6 @@
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
-github.com/cidverse/cid-sdk-go v0.0.0-20240131220110-b3125876215a h1:nc33GexEn7OD9nIZdtQ8WZzPjzm/ozWfRA/ch1PZ92w=
-github.com/cidverse/cid-sdk-go v0.0.0-20240131220110-b3125876215a/go.mod h1:qDlFs3yZMg06T3j/xyFnAjIF8ZSCALpChf6ZfbYFTqA=
+github.com/cidverse/cid-sdk-go v0.0.0-20240205184845-858438ab8005 h1:OTBR4Sp/d5lN0p5p2M4/HmqfZ9C1qOljlNb6ao7sty8=
+github.com/cidverse/cid-sdk-go v0.0.0-20240205184845-858438ab8005/go.mod h1:qDlFs3yZMg06T3j/xyFnAjIF8ZSCALpChf6ZfbYFTqA=
 github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba h1:7z1+V18zViJmUovZ3P8nIbRdegA5viST6BsBUBNfrMw=
 github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba/go.mod h1:VRpKsgkaw9kS2Ya7/Hzd2gnbYqiMSSPR9L9ZLaymG04=
 github.com/containers/image/v5 v5.29.2 h1:b8U0XYWhaQbKucK73IbmSm8WQyKAhKDbAHQc45XlsOw=

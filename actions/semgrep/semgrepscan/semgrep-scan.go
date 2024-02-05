@@ -33,9 +33,11 @@ func (a ScanAction) Execute() (err error) {
 
 	// scan
 	var opts = []string{"semgrep", "ci", "--sarif", "--quiet", "--metrics=off", "--disable-version-check", "--exclude=.dist", "--exclude=.tmp"}
-	if val, ok := ctx.Env["NCI_MERGE_REQUEST_SOURCE_HASH"]; ok && len(val) > 0 {
-		opts = append(opts, "--baseline", val)
-	}
+	/*
+		if val, ok := ctx.Env["NCI_MERGE_REQUEST_SOURCE_HASH"]; ok && len(val) > 0 {
+			opts = append(opts, "--baseline", val)
+		}
+	*/
 
 	// ruleSets
 	for _, config := range cfg.RuleSets {
