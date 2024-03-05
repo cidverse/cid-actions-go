@@ -45,17 +45,17 @@ func (a Action) Execute() (err error) {
 	}
 	for _, report := range *artifacts {
 		// get report content
-		sarif, err := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
+		sarif, reportErr := a.Sdk.ArtifactDownloadByteArray(cidsdk.ArtifactDownloadByteArrayRequest{
 			ID: report.ID,
 		})
-		if err != nil {
-			return fmt.Errorf("failed to load report %s", report.Name)
+		if reportErr != nil {
+			return fmt.Errorf("failed to load report %s: %w", report.Name, reportErr)
 		}
 
 		// encoding
-		sarifEncoded, err := encoding.GZIPBase64EncodeBytes(sarif)
-		if err != nil {
-			return fmt.Errorf("failed to encode sarif report (gzip/base64)")
+		sarifEncoded, reportErr := encoding.GZIPBase64EncodeBytes(sarif)
+		if reportErr != nil {
+			return fmt.Errorf("failed to encode sarif report (gzip/base64): %w", err)
 		}
 
 		// git reference (sarif upload with pull request ref will result in pull request comments)
@@ -67,15 +67,16 @@ func (a Action) Execute() (err error) {
 		// upload
 		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading sarif report to github code scanning api", Context: map[string]interface{}{"report": report.Name, "ref": ref, "commit_hash": ctx.Env["NCI_COMMIT_HASH"]}})
 		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.String(ctx.Env["NCI_COMMIT_HASH"]), Ref: github.String(ref), Sarif: github.String(sarifEncoded), CheckoutURI: github.String(ctx.Config.ProjectDir)}
-		sarifId, _, err := client.CodeScanning.UploadSarif(context.Background(), organization, repository, sarifAnalysis)
-		if err != nil {
-			// "job scheduled on GitHub side" is not a error, job just isn't completed yet
-			if strings.Contains(err.Error(), "job scheduled on GitHub side") {
+		sarifId, _, reportErr := client.CodeScanning.UploadSarif(context.Background(), organization, repository, sarifAnalysis)
+
+		if reportErr != nil {
+			// "job scheduled on GitHub side" is not an error, job just isn't completed yet
+			if strings.Contains(reportErr.Error(), "job scheduled on GitHub side") {
 				_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "sarif upload successful", Context: map[string]interface{}{"report": report.Name, "state": "github_job_pending"}})
 			} else {
 				return fmt.Errorf("failed to upload sarif to github code-scanning api: %s", err.Error())
 			}
-		} else {
+		} else if sarifId != nil {
 			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "sarif upload successful", Context: map[string]interface{}{"report": report.Name, "state": "ok", "id": *sarifId.ID, "url": *sarifId.URL}})
 		}
 	}

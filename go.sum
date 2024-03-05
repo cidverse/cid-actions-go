@@ -1,8 +1,8 @@
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
-github.com/cidverse/cid-sdk-go v0.0.0-20240205184845-858438ab8005 h1:OTBR4Sp/d5lN0p5p2M4/HmqfZ9C1qOljlNb6ao7sty8=
-github.com/cidverse/cid-sdk-go v0.0.0-20240205184845-858438ab8005/go.mod h1:qDlFs3yZMg06T3j/xyFnAjIF8ZSCALpChf6ZfbYFTqA=
-github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba h1:7z1+V18zViJmUovZ3P8nIbRdegA5viST6BsBUBNfrMw=
-github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba/go.mod h1:VRpKsgkaw9kS2Ya7/Hzd2gnbYqiMSSPR9L9ZLaymG04=
+github.com/cidverse/cid-sdk-go v0.0.0-20240302200041-f4b4b4ae14d0 h1:3orjoFtmNgoABSoei3xYyz0erpXuGSot4Fp06d2xz64=
+github.com/cidverse/cid-sdk-go v0.0.0-20240302200041-f4b4b4ae14d0/go.mod h1:9T5DHVcr3sEOQ9N2ZJwIofeA2mp+j+n/50cQNJFQLtM=
+github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a h1:bnLhBQh+pGkf5lMfkC5nVVvooMFeWhrn3nlYbZ2UZ+s=
+github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a/go.mod h1:m71LmY0gEvKZ2jxFboMdGCcN9DgFlOmwNGH2TjM2nS4=
 github.com/containers/image/v5 v5.30.0 h1:CmHeSwI6W2kTRWnUsxATDFY5TEX4b58gPkaQcEyrLIA=
 github.com/containers/image/v5 v5.30.0/go.mod h1:gSD8MVOyqBspc0ynLsuiMR9qmt8UQ4jpVImjmK0uXfk=
 github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 h1:Qzk5C6cYglewc+UyGf6lc8Mj2UaPTHy/iF2De0/77CA=
@@ -173,8 +173,8 @@ google.golang.org/appengine v1.6.8 h1:IhEN5q69dyKagZPYMSdIjS2HqprW324FRQZJcGqPAs
 google.golang.org/appengine v1.6.8/go.mod h1:1jJ3jBArFh5pcgW8gCtRJnepW8FzD1V44FJffLiz/Ds=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
 google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
-google.golang.org/protobuf v1.32.0 h1:pPC6BG5ex8PDFnkbrGU3EixyhKcQ2aDuBS36lqK/C7I=
-google.golang.org/protobuf v1.32.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
+google.golang.org/protobuf v1.33.0 h1:uNO2rsAINq/JlFpSdYEKIZ0uKD/R9cpdv0T+yoGwGmI=
+google.golang.org/protobuf v1.33.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=

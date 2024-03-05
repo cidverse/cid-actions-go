@@ -3,8 +3,8 @@ module github.com/cidverse/cid-actions-go
 go 1.21
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20240205184845-858438ab8005
-	github.com/cidverse/cidverseutils v0.0.0-20231103225801-e7f71d0c6aba
+	github.com/cidverse/cid-sdk-go v0.0.0-20240302200041-f4b4b4ae14d0
+	github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a
 	github.com/containers/image/v5 v5.30.0
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/google/go-github/v60 v60.0.0
@@ -46,6 +46,6 @@ require (
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.32.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
