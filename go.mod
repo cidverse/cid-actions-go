@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20240302200041-f4b4b4ae14d0
-	github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a
+	github.com/cidverse/cidverseutils v0.0.0-20240501195623-588d642a5813
 	github.com/containers/image/v5 v5.30.0
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/google/go-github/v61 v61.0.0
