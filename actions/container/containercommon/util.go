@@ -3,7 +3,7 @@ package containercommon
 import (
 	"strings"
 
-	"github.com/cidverse/cidverseutils/pkg/filesystem"
+	"github.com/cidverse/cidverseutils/filesystem"
 	"github.com/oriser/regroup"
 )
 

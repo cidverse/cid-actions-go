@@ -6,7 +6,7 @@ import (
 
 	"github.com/cidverse/cid-actions-go/pkg/changelog"
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/cidverse/cidverseutils/pkg/version"
+	"github.com/cidverse/cidverseutils/version"
 )
 
 type Action struct {

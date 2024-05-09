@@ -7,7 +7,7 @@ import (
 
 	"github.com/cidverse/cid-actions-go/pkg/githubapi"
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/cidverse/cidverseutils/pkg/encoding"
+	"github.com/cidverse/cidverseutils/compress"
 	"github.com/google/go-github/v61/github"
 	"golang.org/x/oauth2"
 )
@@ -53,7 +53,7 @@ func (a Action) Execute() (err error) {
 		}
 
 		// encoding
-		sarifEncoded, reportErr := encoding.GZIPBase64EncodeBytes(sarif)
+		sarifEncoded, reportErr := compress.GZIPBase64EncodeBytes(sarif)
 		if reportErr != nil {
 			return fmt.Errorf("failed to encode sarif report (gzip/base64): %w", err)
 		}

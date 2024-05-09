@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/cidverse/cidverseutils/pkg/filesystem"
+	"github.com/cidverse/cidverseutils/filesystem"
 )
 
 // GetFileContent returns the file content from either the directory or the embedded filesystem in that order
