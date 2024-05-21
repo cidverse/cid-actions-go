@@ -8,7 +8,7 @@ require (
 	github.com/cidverse/cidverseutils/compress v0.1.0
 	github.com/cidverse/cidverseutils/filesystem v0.1.0
 	github.com/cidverse/cidverseutils/version v0.1.0
-	github.com/containers/image/v5 v5.30.1
+	github.com/containers/image/v5 v5.31.0
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/google/go-github/v62 v62.0.0
 	github.com/gosimple/slug v1.14.0
@@ -27,9 +27,9 @@ require (
 	github.com/charlievieth/fastwalk v1.0.3 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.1.10 // indirect
-	github.com/containers/storage v1.53.0 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docker/docker v26.1.2+incompatible // indirect
+	github.com/containers/storage v1.54.0 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/docker/docker v26.1.3+incompatible // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
@@ -40,7 +40,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/otiai10/copy v1.14.0 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
