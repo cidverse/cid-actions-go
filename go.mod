@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.21
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20240511083401-824b66fec8ae
+	github.com/cidverse/cid-sdk-go v0.0.0-20240522191950-489c2ef22b48
 	github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a
 	github.com/cidverse/cidverseutils/compress v0.1.0
 	github.com/cidverse/cidverseutils/filesystem v0.1.0

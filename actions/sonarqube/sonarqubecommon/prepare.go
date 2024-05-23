@@ -29,9 +29,11 @@ func PrepareProject(server string, accessToken string, organization string, proj
 	// rename main branch if needed
 	if mainBranch != currentMainBranch {
 		// delete possible conflicts
-		deleteErr := DeleteBranch(server, accessToken, projectKey, mainBranch)
-		if deleteErr != nil {
-			return fmt.Errorf("failed to delete branch %s: %s", mainBranch, deleteErr.Error())
+		if containsBranch(branchList.Branches, mainBranch) {
+			deleteErr := DeleteBranch(server, accessToken, projectKey, mainBranch)
+			if deleteErr != nil {
+				return fmt.Errorf("failed to delete branch %s: %s", mainBranch, deleteErr.Error())
+			}
 		}
 
 		// rename main branch
@@ -42,4 +44,18 @@ func PrepareProject(server string, accessToken string, organization string, proj
 	}
 
 	return nil
+}
+
+func containsBranch(branches []*Branch, name string) bool {
+	for _, branch := range branches {
+		if branch == nil {
+			continue
+		}
+
+		if branch.Name == name {
+			return true
+		}
+	}
+
+	return false
 }
