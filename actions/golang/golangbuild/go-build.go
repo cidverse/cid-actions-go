@@ -28,7 +28,19 @@ func (a BuildAction) Execute() error {
 
 	// default to current platform
 	if len(cfg.Platform) == 0 {
-		cfg.Platform = append(cfg.Platform, golangcommon.Platform{Goos: runtime.GOOS, Goarch: runtime.GOARCH})
+		// parse platform comment from go.mod
+		if len(ctx.Module.Discovery) > 0 && ctx.Module.Discovery[0].File != "" {
+			platforms, err := golangcommon.DiscoverPlatformsFromGoMod(ctx.Module.Discovery[0].File)
+			if err != nil {
+				return err
+			}
+			cfg.Platform = platforms
+		}
+
+		// default to current platform
+		if len(cfg.Platform) == 0 {
+			cfg.Platform = append(cfg.Platform, golangcommon.Platform{Goos: runtime.GOOS, Goarch: runtime.GOARCH})
+		}
 	}
 
 	// don't build libraries
