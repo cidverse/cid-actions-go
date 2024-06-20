@@ -8,7 +8,7 @@ require (
 	github.com/cidverse/cidverseutils/compress v0.1.0
 	github.com/cidverse/cidverseutils/filesystem v0.1.0
 	github.com/cidverse/cidverseutils/version v0.1.0
-	github.com/containers/image/v5 v5.31.0
+	github.com/containers/image/v5 v5.31.1
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/google/go-github/v62 v62.0.0
 	github.com/gosimple/slug v1.14.0
