@@ -3,7 +3,7 @@ module github.com/cidverse/cid-actions-go
 go 1.21
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20240612200120-361dd310046e
+	github.com/cidverse/cid-sdk-go v0.0.0-20240723195715-4c8a505dbb70
 	github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a
 	github.com/cidverse/cidverseutils/compress v0.1.0
 	github.com/cidverse/cidverseutils/filesystem v0.1.0
@@ -24,12 +24,12 @@ require (
 )
 
 require (
-	github.com/charlievieth/fastwalk v1.0.4 // indirect
+	github.com/charlievieth/fastwalk v1.0.8 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
-	github.com/containers/ocicrypt v1.1.10 // indirect
+	github.com/containers/ocicrypt v1.2.0 // indirect
 	github.com/containers/storage v1.54.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/docker/docker v27.0.0+incompatible // indirect
+	github.com/docker/docker v27.1.0+incompatible // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
@@ -44,9 +44,9 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
-	golang.org/x/net v0.26.0 // indirect
+	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
+	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
