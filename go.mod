@@ -1,6 +1,8 @@
 module github.com/cidverse/cid-actions-go
 
-go 1.21
+go 1.21.0
+
+toolchain go1.22.5
 
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20240723195715-4c8a505dbb70
@@ -8,7 +10,7 @@ require (
 	github.com/cidverse/cidverseutils/compress v0.1.0
 	github.com/cidverse/cidverseutils/filesystem v0.1.0
 	github.com/cidverse/cidverseutils/version v0.1.0
-	github.com/containers/image/v5 v5.31.1
+	github.com/containers/image/v5 v5.32.0
 	github.com/go-resty/resty/v2 v2.14.0
 	github.com/google/go-github/v63 v63.0.0
 	github.com/gosimple/slug v1.14.0
@@ -27,9 +29,9 @@ require (
 	github.com/charlievieth/fastwalk v1.0.8 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.2.0 // indirect
-	github.com/containers/storage v1.54.0 // indirect
+	github.com/containers/storage v1.55.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/docker/docker v27.1.0+incompatible // indirect
+	github.com/docker/docker v27.1.1+incompatible // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
