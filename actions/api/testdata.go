@@ -103,3 +103,25 @@ func SonarqubeGoModTestData(debug bool) cidsdk.ProjectActionData {
 		},
 	}
 }
+
+func GetAnsibleTestData(debug bool) cidsdk.ModuleActionData {
+	return cidsdk.ModuleActionData{
+		Module: cidsdk.ProjectModule{
+			ProjectDir:        "/my-project",
+			ModuleDir:         "/my-project/playbook-a",
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/playbook-a/playbook.yml"}},
+			Name:              "playbook-a",
+			Slug:              "playbook-a",
+			BuildSystem:       "ansible",
+			BuildSystemSyntax: "default",
+			Language:          nil,
+			Submodules:        nil,
+		},
+		Config: cidsdk.CurrentConfig{
+			Debug:       debug,
+			Log:         map[string]string{},
+			ArtifactDir: ".dist",
+			TempDir:     ".tmp",
+		},
+	}
+}

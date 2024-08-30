@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cidverse/cid-actions-go/actions/ansible/ansiblelint"
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/actions/applicationinspector"
 	"github.com/cidverse/cid-actions-go/actions/changeloggenerate"
@@ -71,6 +72,8 @@ var runCmd = &cobra.Command{
 		}
 		// actions
 		actions := map[string]api.Action{
+			// ansible
+			"ansible-lint": ansiblelint.Action{Sdk: *sdk},
 			// changeloggenerate
 			"changelog-generate": changeloggenerate.Action{Sdk: *sdk},
 			// container
