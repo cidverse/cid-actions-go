@@ -19,28 +19,28 @@ func (a BuildAction) Execute() (err error) {
 	}
 
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemRequirementsTXT) {
-		_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		_, installErr := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: `pip install -r requirements.txt`,
 			WorkDir: ctx.Module.ModuleDir,
 		})
-		if err != nil {
-			return err
+		if installErr != nil {
+			return installErr
 		}
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemPipfile) {
-		_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		_, installErr := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: `pipenv install`,
 			WorkDir: ctx.Module.ModuleDir,
 		})
-		if err != nil {
-			return err
+		if installErr != nil {
+			return installErr
 		}
 	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemSetupPy) {
-		_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		_, installErr := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: `pip install .`,
 			WorkDir: ctx.Module.ModuleDir,
 		})
-		if err != nil {
-			return err
+		if installErr != nil {
+			return installErr
 		}
 	}
 

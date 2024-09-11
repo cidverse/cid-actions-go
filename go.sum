@@ -1,12 +1,12 @@
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
 github.com/charlievieth/fastwalk v1.0.8 h1:uaoH6cAKSk73aK7aKXqs0+bL+J3Txzd3NGH8tRXgHko=
 github.com/charlievieth/fastwalk v1.0.8/go.mod h1:yGy1zbxog41ZVMcKA/i8ojXLFsuayX5VvwhQVoj9PBI=
-github.com/cidverse/cid-sdk-go v0.0.0-20240814125306-31a5f9171f9f h1:NJX6R9rNTnsC5RDACgVu2i/xHIpJOdH1Ont46Lidk/4=
-github.com/cidverse/cid-sdk-go v0.0.0-20240814125306-31a5f9171f9f/go.mod h1:piUS8vh4OcxoWQZK+FJavIk8X64mzb8CDPNXTP/gSHo=
+github.com/cidverse/cid-sdk-go v0.0.0-20240911215632-016328730fb6 h1:flbl+W0YyapPTaCsCgMvu8Lh0AnuG/eH/ezgBSmAwuQ=
+github.com/cidverse/cid-sdk-go v0.0.0-20240911215632-016328730fb6/go.mod h1:c09o+Dur6ugSpj5ChHtTV1oCfJsyVoKypYZgxTSE/Rc=
 github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a h1:bnLhBQh+pGkf5lMfkC5nVVvooMFeWhrn3nlYbZ2UZ+s=
 github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a/go.mod h1:m71LmY0gEvKZ2jxFboMdGCcN9DgFlOmwNGH2TjM2nS4=
-github.com/cidverse/cidverseutils/compress v0.1.0 h1:GrCp/50/Ltl3rn/WctHxY6lN+wgoms0qBqYpEbWmiZw=
-github.com/cidverse/cidverseutils/compress v0.1.0/go.mod h1:Xga0FDD+hHizd9zH99+DrbqXTAsblYQVEolYiOCN/Ug=
+github.com/cidverse/cidverseutils/compress v0.1.1 h1:VKmDRRGc5rQlzhnJy+ul1yS7OgqfRlVYcZVgidxyKYg=
+github.com/cidverse/cidverseutils/compress v0.1.1/go.mod h1:Xga0FDD+hHizd9zH99+DrbqXTAsblYQVEolYiOCN/Ug=
 github.com/cidverse/cidverseutils/filesystem v0.1.1 h1:xKGk+QhoywNKUp0artHkRPPOl+C3aa6wujkHhjTB6sI=
 github.com/cidverse/cidverseutils/filesystem v0.1.1/go.mod h1:cpAd2RNrNiBRtDJS8S/VRiTD88kU9pxV1i5aA+AqUso=
 github.com/cidverse/cidverseutils/version v0.1.0 h1:+t9AaSW+++38SnlzF4x12E7oAdvXFw6HY7ujwBN7HCA=
