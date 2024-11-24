@@ -74,7 +74,7 @@ func (a Action) Execute() (err error) {
 			if strings.Contains(reportErr.Error(), "job scheduled on GitHub side") {
 				_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "sarif upload successful", Context: map[string]interface{}{"report": report.Name, "state": "github_job_pending"}})
 			} else {
-				return fmt.Errorf("failed to upload sarif to github code-scanning api: %s", err.Error())
+				return fmt.Errorf("failed to upload sarif to github code-scanning api: %s", reportErr.Error())
 			}
 		} else if sarifId != nil {
 			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "sarif upload successful", Context: map[string]interface{}{"report": report.Name, "state": "ok", "id": *sarifId.ID, "url": *sarifId.URL}})

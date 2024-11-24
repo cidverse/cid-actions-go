@@ -5,7 +5,7 @@ go 1.22.6
 toolchain go1.23.3
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20240911215632-016328730fb6
+	github.com/cidverse/cid-sdk-go v0.0.0-20241124173542-d8d3874a598f
 	github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a
 	github.com/cidverse/cidverseutils/compress v0.1.1
 	github.com/cidverse/cidverseutils/filesystem v0.1.1
@@ -15,7 +15,7 @@ require (
 	github.com/google/go-github/v66 v66.0.0
 	github.com/gosimple/slug v1.14.0
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/oriser/regroup v0.0.0-20230527212431-1b00c9bdbc5b
+	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/owenrumney/go-sarif/v2 v2.3.3
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.8.1
@@ -26,7 +26,7 @@ require (
 )
 
 require (
-	github.com/charlievieth/fastwalk v1.0.8 // indirect
+	github.com/charlievieth/fastwalk v1.0.9 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.2.0 // indirect
 	github.com/containers/storage v1.56.0 // indirect
@@ -46,9 +46,9 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
-	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
+	golang.org/x/net v0.31.0 // indirect
+	golang.org/x/sync v0.9.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

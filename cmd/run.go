@@ -41,6 +41,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/python/pythonlint"
 	"github.com/cidverse/cid-actions-go/actions/python/pythontest"
 	"github.com/cidverse/cid-actions-go/actions/qodana/qodanascan"
+	"github.com/cidverse/cid-actions-go/actions/renovate/renovatelint"
 	"github.com/cidverse/cid-actions-go/actions/rust/rustbuild"
 	"github.com/cidverse/cid-actions-go/actions/rust/rusttest"
 	"github.com/cidverse/cid-actions-go/actions/semgrep/semgrepscan"
@@ -111,6 +112,8 @@ var runCmd = &cobra.Command{
 			"python-build": pythonbuild.BuildAction{Sdk: *sdk},
 			"python-test":  pythontest.TestAction{Sdk: *sdk},
 			"python-lint":  pythonlint.LintAction{Sdk: *sdk},
+			// renovate
+			"renovate-lint": renovatelint.Action{Sdk: *sdk},
 			// rust
 			"rust-build": rustbuild.BuildAction{Sdk: *sdk},
 			"rust-test":  rusttest.TestAction{Sdk: *sdk},
