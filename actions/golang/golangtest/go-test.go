@@ -40,6 +40,9 @@ func (a TestAction) Execute() error {
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "running tests"})
 	testResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf("go test %s ./...", strings.Join(testArgs, " ")),
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
 		WorkDir: ctx.Module.ModuleDir,
 	})
 	if err != nil {
@@ -61,18 +64,18 @@ func (a TestAction) Execute() error {
 
 	// json report
 	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "generating json coverage report"})
-	coverageJsonResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	coverageJSONResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command:       fmt.Sprintf("go test -coverprofile %s/cover.out -json -covermode=count -parallel=4 -timeout 10s ./...", coverageDir),
 		WorkDir:       ctx.Module.ModuleDir,
 		CaptureOutput: true,
 	})
 	if err != nil {
 		return errors.New("failed to generate json test coverage report: " + err.Error())
-	} else if coverageJsonResult.Code != 0 {
-		return fmt.Errorf("go test report generation failed, exit code %d", coverageJsonResult.Code)
+	} else if coverageJSONResult.Code != 0 {
+		return fmt.Errorf("go test report generation failed, exit code %d", coverageJSONResult.Code)
 	}
 
-	err = a.Sdk.FileWrite(coverageDir+"/cover.json", []byte(coverageJsonResult.Stdout))
+	err = a.Sdk.FileWrite(coverageDir+"/cover.json", []byte(coverageJSONResult.Stdout))
 	if err != nil {
 		return errors.New("failed to store json test coverage report on filesystem: " + err.Error())
 	}

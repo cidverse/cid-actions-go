@@ -61,12 +61,11 @@ func (a BuildAction) Execute() error {
 
 			buildEnv := map[string]string{
 				"CGO_ENABLED": "false",
-				//"GOPROXY":     "https://goproxy.io,direct",
-				"GOOS":   goos,
-				"GOARCH": goarch,
+				"GOOS":        goos,
+				"GOARCH":      goarch,
+				"GOTOOLCHAIN": "local",
 			}
-
-			err := group.Add(func() error {
+			err = group.Add(func() error {
 				outputFile := cidsdk.JoinPath(ctx.Config.TempDir, fmt.Sprintf("%s_%s", goos, goarch))
 
 				// build

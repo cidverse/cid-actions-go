@@ -18,6 +18,9 @@ func TestGoModTest(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -parallel=4 -timeout 10s ./...",
 		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		File:          "/my-project/.tmp/cover.out",
@@ -64,6 +67,9 @@ func TestDebugTest(t *testing.T) {
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -parallel=4 -timeout 10s -v ./...",
 		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		File:          "/my-project/.tmp/cover.out",

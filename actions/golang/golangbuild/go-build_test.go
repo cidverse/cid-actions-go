@@ -29,9 +29,9 @@ func TestGoModBuild(t *testing.T) {
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"CGO_ENABLED": "false",
-			//"GOPROXY":     "https://goproxy.io,direct",
-			"GOOS":   "linux",
-			"GOARCH": "amd64",
+			"GOOS":        "linux",
+			"GOARCH":      "amd64",
+			"GOTOOLCHAIN": "local",
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
