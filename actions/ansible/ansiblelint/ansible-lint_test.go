@@ -19,7 +19,7 @@ func TestAnsibleLint(t *testing.T) {
 	sdk.On("ModuleAction", mock.Anything).Return(api.GetAnsibleTestData(false), nil)
 	sdk.On("FileExists", "/my-project/playbook-a/requirements.yml").Return(false)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "ansible-lint --project . --sarif-file /my-project/.tmp/ansiblelint.sarif.json",
+		Command: `ansible-lint --project . --profile "production" --sarif-file "/my-project/.tmp/ansiblelint.sarif.json"`,
 		WorkDir: "/my-project/playbook-a",
 	}).Return(nil, nil)
 	sdk.On("FileRead", "/my-project/.tmp/ansiblelint.sarif.json").Return(reportJson, nil)
@@ -44,7 +44,7 @@ func TestAnsibleLintWithDependencies(t *testing.T) {
 		WorkDir: "/my-project/playbook-a",
 	}).Return(nil, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "ansible-lint --project . --sarif-file /my-project/.tmp/ansiblelint.sarif.json",
+		Command: `ansible-lint --project . --profile "production" --sarif-file "/my-project/.tmp/ansiblelint.sarif.json"`,
 		WorkDir: "/my-project/playbook-a",
 	}).Return(nil, nil)
 	sdk.On("FileRead", "/my-project/.tmp/ansiblelint.sarif.json").Return(reportJson, nil)

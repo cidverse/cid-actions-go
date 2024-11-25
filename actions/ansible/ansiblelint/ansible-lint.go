@@ -13,6 +13,7 @@ type Action struct {
 }
 
 type ScanConfig struct {
+	LintProfile string `json:"ansible_lint_profile"  env:"ANSIBLE_LINT_PROFILE"`
 }
 
 func (a Action) Execute() (err error) {
@@ -20,6 +21,12 @@ func (a Action) Execute() (err error) {
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {
 		return err
+	}
+
+	// config
+	lintProfile := cfg.LintProfile
+	if lintProfile == "" {
+		lintProfile = "production"
 	}
 
 	// files
@@ -39,7 +46,7 @@ func (a Action) Execute() (err error) {
 	// lint
 	// config lookup: https://ansible.readthedocs.io/projects/lint/configuring/#using-local-configuration-files
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: fmt.Sprintf(`ansible-lint --project . --sarif-file %s`, reportFile),
+		Command: fmt.Sprintf(`ansible-lint --project . --profile %q --sarif-file %q`, lintProfile, reportFile),
 		WorkDir: ctx.Module.ModuleDir,
 	})
 	if err != nil {
