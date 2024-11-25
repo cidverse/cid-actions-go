@@ -120,8 +120,9 @@ func GetAnsibleTestData(debug bool) cidsdk.ModuleActionData {
 		Config: cidsdk.CurrentConfig{
 			Debug:       debug,
 			Log:         map[string]string{},
-			ArtifactDir: ".dist",
-			TempDir:     ".tmp",
+			ProjectDir:  "/my-project",
+			ArtifactDir: "/my-project/.dist",
+			TempDir:     "/my-project/.tmp",
 		},
 	}
 }
