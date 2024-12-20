@@ -14,7 +14,7 @@ func GradleTestData(debug bool) cidsdk.ModuleActionData {
 			Name:              "my-module",
 			Slug:              "my-module",
 			BuildSystem:       string(cidsdk.BuildSystemGradle),
-			BuildSystemSyntax: string(cidsdk.GradleKotlinDSL),
+			BuildSystemSyntax: string(cidsdk.BuildSystemSyntaxGradleKotlinDSL),
 			Language:          &map[string]string{},
 			Submodules:        nil,
 		},

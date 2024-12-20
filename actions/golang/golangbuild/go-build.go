@@ -49,6 +49,20 @@ func (a BuildAction) Execute() error {
 		return nil
 	}
 
+	// pull dependencies
+	pullResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: `go get -v -t ./...`,
+		WorkDir: ctx.Module.ModuleDir,
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
+	})
+	if err != nil {
+		return err
+	} else if pullResult.Code != 0 {
+		return fmt.Errorf("go get failed, exit code %d", pullResult.Code)
+	}
+
 	// build
 	if ctx.Module.BuildSystem == "gomod" {
 		group := parallelizer.NewGroup()

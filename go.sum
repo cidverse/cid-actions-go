@@ -1,8 +1,8 @@
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
 github.com/charlievieth/fastwalk v1.0.9 h1:Odb92AfoReO3oFBfDGT5J+nwgzQPF/gWAw6E6/lkor0=
 github.com/charlievieth/fastwalk v1.0.9/go.mod h1:yGy1zbxog41ZVMcKA/i8ojXLFsuayX5VvwhQVoj9PBI=
-github.com/cidverse/cid-sdk-go v0.0.0-20241124173542-d8d3874a598f h1:6QX7wu0uhMGWOHXCtSh55XmjFTdubkLBDPsF4HgANwc=
-github.com/cidverse/cid-sdk-go v0.0.0-20241124173542-d8d3874a598f/go.mod h1:y0K8xYuRANTIPGdEq9YuvNra+eh8PkE+WXmRkOASls0=
+github.com/cidverse/cid-sdk-go v0.0.0-20241219232850-efb010995d2e h1:FBs0vSoqA7mhnDrUYo7VyH2ytCBJrabU79v3rMP/LZw=
+github.com/cidverse/cid-sdk-go v0.0.0-20241219232850-efb010995d2e/go.mod h1:LrBionxyyIusSSNQYOyzTU6+dm6kn2CFuLfn3gbnTHI=
 github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a h1:bnLhBQh+pGkf5lMfkC5nVVvooMFeWhrn3nlYbZ2UZ+s=
 github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a/go.mod h1:m71LmY0gEvKZ2jxFboMdGCcN9DgFlOmwNGH2TjM2nS4=
 github.com/cidverse/cidverseutils/compress v0.1.1 h1:VKmDRRGc5rQlzhnJy+ul1yS7OgqfRlVYcZVgidxyKYg=

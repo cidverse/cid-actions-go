@@ -14,7 +14,7 @@ func ModuleDockerfile() cidsdk.ModuleActionData {
 			Name:              "my-project",
 			Slug:              "my-project",
 			BuildSystem:       string(cidsdk.BuildSystemContainer),
-			BuildSystemSyntax: string(cidsdk.ContainerFile),
+			BuildSystemSyntax: string(cidsdk.BuildSystemSyntaxContainerFile),
 			Language:          &map[string]string{},
 			Submodules:        nil,
 		},

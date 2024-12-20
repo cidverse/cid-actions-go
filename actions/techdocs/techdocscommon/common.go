@@ -14,7 +14,7 @@ func TechdocsTestData(debug bool) cidsdk.ModuleActionData {
 			Name:              "my-module",
 			Slug:              "my-module",
 			BuildSystem:       string(cidsdk.BuildSystemMkdocs),
-			BuildSystemSyntax: string(cidsdk.MkdocsTechdocs),
+			BuildSystemSyntax: string(cidsdk.BuildSystemSyntaxMkdocsTechdocs),
 			Language:          &map[string]string{},
 			Submodules:        nil,
 		},

@@ -13,6 +13,8 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/container/containerpublish"
 	"github.com/cidverse/cid-actions-go/actions/cosign/cosignattach"
 	"github.com/cidverse/cid-actions-go/actions/cosign/cosignsign"
+	"github.com/cidverse/cid-actions-go/actions/donet/dotnetbuild"
+	"github.com/cidverse/cid-actions-go/actions/donet/dotnettest"
 	"github.com/cidverse/cid-actions-go/actions/fossa/fossasourcescan"
 	"github.com/cidverse/cid-actions-go/actions/ggshield"
 	"github.com/cidverse/cid-actions-go/actions/github/githubpublishrelease"
@@ -85,6 +87,9 @@ var runCmd = &cobra.Command{
 			// cosign
 			"cosign-container-sign":   cosignsign.SignAction{Sdk: *sdk},
 			"cosign-container-attach": cosignattach.AttachAction{Sdk: *sdk},
+			// dotnet
+			"dotnet-build": dotnetbuild.Action{Sdk: *sdk},
+			"dotnet-test":  dotnettest.Action{Sdk: *sdk},
 			// fossa
 			"fossa-scan": fossasourcescan.Action{Sdk: *sdk},
 			// ggshield

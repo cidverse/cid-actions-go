@@ -25,6 +25,13 @@ func TestGoModBuild(t *testing.T) {
 	})
 
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: `go get -v -t ./...`,
+		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: `go build -buildvcs=false -ldflags "-s -w -X main.version={NCI_COMMIT_REF_RELEASE} -X main.commit={NCI_COMMIT_HASH} -X main.date={TIMESTAMP_RFC3339} -X main.status={NCI_REPOSITORY_STATUS}" -o /my-project/.tmp/linux_amd64 .`,
 		WorkDir: "/my-project",
 		Env: map[string]string{

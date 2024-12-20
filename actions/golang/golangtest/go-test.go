@@ -25,6 +25,20 @@ func (a TestAction) Execute() error {
 	// paths
 	coverageDir := ctx.Config.TempDir
 
+	// pull dependencies
+	pullResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: `go get -v -t ./...`,
+		WorkDir: ctx.Module.ModuleDir,
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
+	})
+	if err != nil {
+		return err
+	} else if pullResult.Code != 0 {
+		return fmt.Errorf("go get failed, exit code %d", pullResult.Code)
+	}
+
 	// run tests
 	testArgs := []string{
 		"-vet off",

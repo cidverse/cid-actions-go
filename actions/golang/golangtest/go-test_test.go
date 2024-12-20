@@ -15,6 +15,14 @@ import (
 func TestGoModTest(t *testing.T) {
 	sdk := test.Setup(t)
 	sdk.On("ModuleAction", mock.Anything).Return(golangcommon.GoModTestData(false), nil)
+
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: `go get -v -t ./...`,
+		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -parallel=4 -timeout 10s ./...",
 		WorkDir: "/my-project",
@@ -64,6 +72,14 @@ func TestGoModTest(t *testing.T) {
 func TestDebugTest(t *testing.T) {
 	sdk := test.Setup(t)
 	sdk.On("ModuleAction", mock.Anything).Return(golangcommon.GoModTestData(true), nil)
+
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: `go get -v -t ./...`,
+		WorkDir: "/my-project",
+		Env: map[string]string{
+			"GOTOOLCHAIN": "local",
+		},
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "go test -vet off -cover -covermode=count -coverprofile /my-project/.tmp/cover.out -parallel=4 -timeout 10s -v ./...",
 		WorkDir: "/my-project",
