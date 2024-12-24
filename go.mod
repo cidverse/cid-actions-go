@@ -13,7 +13,7 @@ require (
 	github.com/containers/image/v5 v5.33.0
 	github.com/go-resty/resty/v2 v2.16.2
 	github.com/google/go-github/v68 v68.0.0
-	github.com/gosimple/slug v1.14.0
+	github.com/gosimple/slug v1.15.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/owenrumney/go-sarif/v2 v2.3.3
