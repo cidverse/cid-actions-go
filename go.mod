@@ -11,7 +11,7 @@ require (
 	github.com/cidverse/cidverseutils/filesystem v0.1.1
 	github.com/cidverse/cidverseutils/version v0.1.0
 	github.com/containers/image/v5 v5.33.0
-	github.com/go-resty/resty/v2 v2.16.2
+	github.com/go-resty/resty/v2 v2.16.3
 	github.com/google/go-github/v68 v68.0.0
 	github.com/gosimple/slug v1.15.0
 	github.com/jarcoal/httpmock v1.3.1
@@ -47,8 +47,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
-	golang.org/x/net v0.31.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.9.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
