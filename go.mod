@@ -11,7 +11,7 @@ require (
 	github.com/cidverse/cidverseutils/filesystem v0.1.1
 	github.com/cidverse/cidverseutils/version v0.1.0
 	github.com/containers/image/v5 v5.33.1
-	github.com/go-resty/resty/v2 v2.16.4
+	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/go-github/v68 v68.0.0
 	github.com/gosimple/slug v1.15.0
 	github.com/jarcoal/httpmock v1.3.1
