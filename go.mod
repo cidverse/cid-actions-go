@@ -5,7 +5,7 @@ go 1.22.8
 toolchain go1.24.0
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20241219232850-efb010995d2e
+	github.com/cidverse/cid-sdk-go v0.0.0-20250205000148-17c4edf2e37d
 	github.com/cidverse/cidverseutils v0.0.0-20240302003507-f592801a7e1a
 	github.com/cidverse/cidverseutils/compress v0.1.1
 	github.com/cidverse/cidverseutils/filesystem v0.1.1
@@ -41,14 +41,15 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
-	github.com/otiai10/copy v1.14.0 // indirect
+	github.com/otiai10/copy v1.14.1 // indirect
+	github.com/otiai10/mint v1.6.3 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
-	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect
+	golang.org/x/net v0.35.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
