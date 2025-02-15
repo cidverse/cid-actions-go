@@ -7,7 +7,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type PublishNexusAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -18,7 +18,51 @@ type PublishNexusConfig struct {
 	NexusPassword   string `json:"nexus_password" env:"HELM_NEXUS_PASSWORD"`
 }
 
-func (a PublishNexusAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "helm-publish-nexus",
+		Description: "Publishes the helm chart into a nexus repository server.",
+		Category:    "publish",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "helm" && ENV["HELM_NEXUS_URL"] != ""`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "HELM_NEXUS_URL",
+					Description: "The url of the nexus server.",
+					Required:    true,
+				},
+				{
+					Name:        "HELM_NEXUS_REPOSITORY",
+					Description: "The name of the nexus repository.",
+					Required:    true,
+				},
+				{
+					Name:        "HELM_NEXUS_USERNAME",
+					Description: "The username to use for authentication.",
+					Required:    true,
+				},
+				{
+					Name:        "HELM_NEXUS_PASSWORD",
+					Description: "The password to use for authentication.",
+					Required:    true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "helm",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := PublishNexusConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

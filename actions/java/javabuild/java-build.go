@@ -16,6 +16,29 @@ type Config struct {
 	MavenVersion string `json:"maven_version"        env:"MAVEN_VERSION"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "java-build",
+		Description: `Builds the java module using the configured build system.`,
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gradle"`,
+			},
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "maven"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

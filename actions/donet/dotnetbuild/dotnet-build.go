@@ -13,6 +13,29 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "dotnet-build",
+		Description: `Builds a .NET project using dotnet.`,
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "dotnet"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "dotnet",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() error {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
@@ -41,19 +64,6 @@ func (a Action) Execute() error {
 	} else if buildResult.Code != 0 {
 		return fmt.Errorf("dotnet build failed, exit code %d", buildResult.Code)
 	}
-
-	// store result
-	/*
-		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
-			File:   outputFile,
-			Module: ctx.Module.Slug,
-			Type:   "binary",
-			Format: "go",
-		})
-		if err != nil {
-			return err
-		}
-	*/
 
 	return nil
 }

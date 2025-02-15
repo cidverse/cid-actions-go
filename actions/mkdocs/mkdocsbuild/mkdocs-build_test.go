@@ -31,7 +31,7 @@ func TestMkdocsBuild(t *testing.T) {
 		ExtractFile:   true,
 	}).Return(nil)
 
-	action := BuildAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

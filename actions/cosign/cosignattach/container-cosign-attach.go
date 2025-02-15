@@ -10,7 +10,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type AttachAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -21,7 +21,47 @@ type AttachConfig struct {
 	CosignTransparencyLogDisable bool   `json:"cosign_tlog_disable" env:"COSIGN_TLOG_DISABLE"`
 }
 
-func (a AttachAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "cosign-container-sbom-attach",
+		Description: `Cosign allows to attach SBOMs to a container image.`,
+		Category:    "security",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "container" && getMapValue(ENV, "COSIGN_KEY") != "" && getMapValue(ENV, "COSIGN_PASSWORD") != ""`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "COSIGN_MODE",
+					Description: "The cosign mode, either 'KEYLESS' or 'PRIVATEKEY'.",
+				},
+				{
+					Name:        "COSIGN_KEY",
+					Description: "The cosign key, base64 encoded.",
+				},
+				{
+					Name:        "COSIGN_PASSWORD",
+					Description: "The password for the cosign key.",
+				},
+				{
+					Name:        "COSIGN_TLOG_DISABLE",
+					Description: "Disable using the public rekor transparency log.",
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "cosign",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := AttachConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

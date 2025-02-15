@@ -16,6 +16,29 @@ type Config struct {
 	AlwaysPublishManifest bool `json:"buildah_always_publish_manifest" env:"BUILDAH_ALWAYS_PUBLISH_MANIFEST"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "buildah-publish",
+		Description: "Publish container images using buildah",
+		Category:    "publish",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "container" && (MODULE_BUILD_SYSTEM_SYNTAX == "buildah-script" || MODULE_BUILD_SYSTEM_SYNTAX == "containerfile")`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "buildah",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() error {
 	cfg := Config{AlwaysPublishManifest: false}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

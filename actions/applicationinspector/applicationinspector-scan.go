@@ -14,6 +14,35 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "applicationinspector-scan",
+		Description: "Scans the repository for used features using Microsoft Application Inspector.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules:       []cidsdk.ActionRule{},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "NCI_REPOSITORY_.*",
+					Description: "The project properties to identify the repository.",
+					Pattern:     true,
+				},
+				{
+					Name:        "NCI_COMMIT_.*",
+					Description: "The commit properties to identify the revision.",
+					Pattern:     true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "appinspector",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

@@ -21,6 +21,29 @@ type Config struct {
 	Rebuild bool `json:"rebuild"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "buildah-build",
+		Description: "Builds a container image using buildah.",
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "container" && (MODULE_BUILD_SYSTEM_SYNTAX == "buildah-script" || MODULE_BUILD_SYSTEM_SYNTAX == "containerfile")`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "buildah",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() error {
 	cfg := Config{NoCache: false, Squash: true, Rebuild: false}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

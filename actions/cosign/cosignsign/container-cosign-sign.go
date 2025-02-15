@@ -10,7 +10,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type SignAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -21,7 +21,50 @@ type SignConfig struct {
 	CosignTransparencyLogDisable bool   `json:"cosign_tlog_disable" env:"COSIGN_TLOG_DISABLE"`
 }
 
-func (a SignAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name: "cosign-container-sign",
+		Description: `Cosign is a tool that enables container image signing, verification, and storage in an OCI registry.
+        It supports various signing methods, including keyless signing using a public good certificate authority and transparency log, hardware and KMS signing, and bring-your-own PKI.
+        With Cosign, you can sign your container images to ensure their authenticity and integrity, and store them in a trusted registry.
+        The signed images can then be verified by others to ensure that they have not been tampered with.`,
+		Category: "security",
+		Scope:    cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "container" && getMapValue(ENV, "COSIGN_KEY") != "" && getMapValue(ENV, "COSIGN_PASSWORD") != ""`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "COSIGN_MODE",
+					Description: "The cosign mode, either 'KEYLESS' or 'PRIVATEKEY'.",
+				},
+				{
+					Name:        "COSIGN_KEY",
+					Description: "The cosign key, base64 encoded.",
+				},
+				{
+					Name:        "COSIGN_PASSWORD",
+					Description: "The password for the cosign key.",
+				},
+				{
+					Name:        "COSIGN_TLOG_DISABLE",
+					Description: "Disable using the public rekor transparency log.",
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "cosign",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := SignConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

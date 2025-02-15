@@ -22,6 +22,62 @@ type Config struct {
 	S3ForcePathStyle bool   `json:"s3_force_path_style"  env:"TECHDOCS_S3_FORCE_PATH_STYLE"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "techdocs-publish",
+		Description: "Publishes the generated documentation to the target location.",
+		Category:    "publish",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "mkdocs" && MODULE_BUILD_SYSTEM_SYNTAX == "mkdocs-techdocs"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "TECHDOCS_ENTITY",
+					Description: "The entity to publish the documentation for.",
+				},
+				{
+					Name:        "TECHDOCS_PUBLISH_TARGET",
+					Description: "The target to publish the documentation to. (awsS3, ...)",
+				},
+				{
+					Name:        "TECHDOCS_S3_ENDPOINT",
+					Description: "The S3 endpoint url.",
+				},
+				{
+					Name:        "TECHDOCS_S3_REGION",
+					Description: "The S3 bucket region.",
+				},
+				{
+					Name:        "TECHDOCS_S3_BUCKET",
+					Description: "The S3 bucket name.",
+				},
+				{
+					Name:        "TECHDOCS_S3_ACCESS_KEY",
+					Description: "The S3 Access Key.",
+				},
+				{
+					Name:        "TECHDOCS_S3_SECRET_KEY",
+					Description: "The S3 Secret Key.",
+				},
+				{
+					Name:        "TECHDOCS_S3_FORCE_PATH_STYLE",
+					Description: "Use s3 path style to address the bucket, required for ie. minio.",
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "techdocs-cli",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

@@ -14,6 +14,29 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "grype-container-sbom-report",
+		Description: "Generate a SBOM report for sbom filese",
+		Category:    "security",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "container"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "grype",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

@@ -6,7 +6,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type PublishRegistryAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -14,7 +14,36 @@ type PublishRegistryConfig struct {
 	OCIRepository string `json:"helm_oci_repository" env:"HELM_OCI_REPOSITORY"`
 }
 
-func (a PublishRegistryAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "helm-publish-registry",
+		Description: "Publishes the helm chart into a OCI registry.",
+		Category:    "publish",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "helm" && ENV["HELM_OCI_REPOSITORY"] != ""`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "HELM_OCI_REPOSITORY",
+					Description: "The url of the OCI registry for the chart publication.",
+					Required:    true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "helm",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := PublishRegistryConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

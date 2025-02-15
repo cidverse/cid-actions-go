@@ -14,6 +14,29 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "techdocs-build",
+		Description: "Builds the techdocs documentation assets.",
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "mkdocs" && MODULE_BUILD_SYSTEM_SYNTAX == "mkdocs-techdocs"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "techdocs-cli",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

@@ -34,7 +34,7 @@ func TestCosignAttachManifest(t *testing.T) {
 		},
 	}, nil)
 
-	action := AttachAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -124,7 +124,7 @@ func TestCosignAttach(t *testing.T) {
 		},
 	}).Return(nil, nil)
 
-	action := AttachAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

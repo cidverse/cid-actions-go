@@ -64,7 +64,7 @@ func TestGoModTest(t *testing.T) {
 		FormatVersion: "html",
 	}).Return(nil)
 
-	action := TestAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -121,7 +121,7 @@ func TestDebugTest(t *testing.T) {
 		FormatVersion: "html",
 	}).Return(nil)
 
-	action := TestAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -130,7 +130,7 @@ func TestUnsupportedTest(t *testing.T) {
 	sdk := test.Setup(t)
 	sdk.On("ModuleAction", mock.Anything).Return(api.GetUnknownTestData(false), nil)
 
-	action := TestAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.Error(t, errors.New("build system unknown is not supported"), err)
 }

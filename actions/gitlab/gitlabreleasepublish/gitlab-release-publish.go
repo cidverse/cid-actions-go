@@ -8,7 +8,7 @@ import (
 	"github.com/cidverse/cidverseutils/pkg/cihelper"
 )
 
-type PublishAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -16,7 +16,37 @@ type PublishConfig struct {
 	GitLabToken string `json:"gitlab_token"  env:"GITLAB_TOKEN"`
 }
 
-func (a PublishAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "gitlab-release-publish",
+		Description: "Publishes a new release on GitLab, including the release notes and artifacts.",
+		Category:    "publish",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `NCI_COMMIT_REF_TYPE == "tag" && hasPrefix(ENV["NCI_REPOSITORY_REMOTE"], "https://gitlab.com/")`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "GITLAB_TOKEN",
+					Description: "The GitLab token to use for creating the release when using a personal access token.",
+					Required:    false,
+				},
+				{
+					Name:        "GITLAB_BOT_TOKEN",
+					Description: "The GitLab token to use for creating the release when using a project bot account.",
+					Required:    false,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := PublishConfig{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)
 	if err != nil {

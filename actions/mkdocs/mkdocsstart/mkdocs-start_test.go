@@ -23,7 +23,7 @@ func TestTechdocsStart(t *testing.T) {
 		Ports:   []int{7600},
 	}).Return(nil, nil)
 
-	action := StartAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

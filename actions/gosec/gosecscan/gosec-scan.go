@@ -8,14 +8,37 @@ import (
 	"github.com/owenrumney/go-sarif/v2/sarif"
 )
 
-type ScanAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
 type ScanConfig struct {
 }
 
-func (a ScanAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "gosec-scan",
+		Description: `Scans the repository for security issues using gosec.`,
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gomod"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "gosec",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := ScanConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

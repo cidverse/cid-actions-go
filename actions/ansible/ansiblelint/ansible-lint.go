@@ -16,6 +16,31 @@ type ScanConfig struct {
 	LintProfile string `json:"ansible_lint_profile"  env:"ANSIBLE_LINT_PROFILE"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "ansible-lint",
+		Description: "Lint the ansible playbooks using ansible-lint.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "ansible"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "ansible-lint",
+				},
+				{
+					Name: "ansible-galaxy",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := ScanConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

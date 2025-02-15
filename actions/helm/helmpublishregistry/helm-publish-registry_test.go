@@ -34,7 +34,7 @@ func TestHelmPublishRegistry(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	action := PublishRegistryAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

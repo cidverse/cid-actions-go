@@ -4,14 +4,54 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type BuildAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
 type BuildConfig struct {
 }
 
-func (a BuildAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "python-build",
+		Description: "Builds the python project.",
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "python-requirements.txt"`,
+			},
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "pipfile"`,
+			},
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "setup.py"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "SEMGREP_.*",
+					Description: "Semgrep configuration properties",
+					Pattern:     true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "pip",
+				},
+				{
+					Name: "pipenv",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := BuildConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

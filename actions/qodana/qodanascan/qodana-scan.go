@@ -9,7 +9,7 @@ import (
 	"github.com/thoas/go-funk"
 )
 
-type ScanAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -17,7 +17,46 @@ type ScanConfig struct {
 	QodanaToken string `json:"qodana_token"  env:"QODANA_TOKEN"`
 }
 
-func (a ScanAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "qodana-scan",
+		Description: "Scans the repository for security issues using JetBrains Qodana.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `ENV["QODANA_TOKEN"] != "" && NCI_COMMIT_REF_TYPE == "branch"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "QODANA_TOKEN",
+					Description: "The Qodana authentication token.",
+					Required:    true,
+				},
+				{
+					Name:        "NCI_REPOSITORY_.*",
+					Description: "The project properties sonar needs to identify the repository.",
+					Pattern:     true,
+				},
+				{
+					Name:        "NCI_COMMIT_.*",
+					Description: "The commit properties sonar needs to identify the revision.",
+					Pattern:     true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "semgrep",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := ScanConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

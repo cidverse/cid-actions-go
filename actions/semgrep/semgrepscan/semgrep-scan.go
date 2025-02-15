@@ -16,6 +16,35 @@ type ScanConfig struct {
 	RuleSets []string
 }
 
+func (a ScanAction) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "semgrep-scan",
+		Description: "Scans the repository for security issues using semgrep.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `NCI_COMMIT_REF_TYPE == "branch"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "SEMGREP_.*",
+					Description: "Semgrep configuration properties",
+					Pattern:     true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "semgrep",
+				},
+			},
+		},
+	}
+}
+
 func (a ScanAction) Execute() (err error) {
 	cfg := ScanConfig{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

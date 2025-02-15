@@ -9,11 +9,34 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type TestAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
-func (a TestAction) Execute() error {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "go-test",
+		Description: "Runs all tests in your go project.",
+		Category:    "test",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gomod"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "go",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() error {
 	ctx, err := a.Sdk.ModuleAction(nil)
 	if err != nil {
 		return err

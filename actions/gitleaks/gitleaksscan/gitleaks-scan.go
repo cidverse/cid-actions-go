@@ -15,6 +15,29 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "gitleaks-scan",
+		Description: "Scans the repository for secrets using Gitleaks.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `NCI_COMMIT_REF_TYPE == "branch"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "gitleaks",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

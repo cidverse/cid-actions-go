@@ -8,14 +8,37 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type BuildAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
 type BuildConfig struct {
 }
 
-func (a BuildAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "mkdocs-build",
+		Description: "Builds the mkdocs project and stores the generated static files for later publication.",
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "mkdocs" && MODULE_BUILD_SYSTEM_SYNTAX == "default"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "pipenv",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := BuildConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

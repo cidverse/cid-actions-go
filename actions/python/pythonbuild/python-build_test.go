@@ -18,7 +18,7 @@ func TestRequirementsBuild(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
-	action := BuildAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -31,7 +31,7 @@ func TestPipenvBuild(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
-	action := BuildAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -44,7 +44,7 @@ func TestSetupPyBuild(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
-	action := BuildAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

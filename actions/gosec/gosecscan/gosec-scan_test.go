@@ -29,7 +29,7 @@ func TestGosecScan(t *testing.T) {
 		FormatVersion: "2.1.0",
 	}).Return(nil)
 
-	action := ScanAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

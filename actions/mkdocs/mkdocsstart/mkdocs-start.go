@@ -8,7 +8,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type StartAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -16,7 +16,30 @@ type StartConfig struct {
 	Port int
 }
 
-func (a StartAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "mkdocs-start",
+		Description: "Starts the mkdocs server for local development.",
+		Category:    "dev",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "mkdocs" && MODULE_BUILD_SYSTEM_SYNTAX == "default"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "pipenv",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := StartConfig{Port: 7600}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

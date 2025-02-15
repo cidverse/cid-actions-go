@@ -4,7 +4,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-type OptimizeAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -12,7 +12,35 @@ type OptimizeConfig struct {
 	Mode string `json:"mode"`
 }
 
-func (a OptimizeAction) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name: "upx-optimize",
+		Description: `
+			Optimizes the binary size using upx.
+
+			Notes:
+        	- This action requires the UPX_ENABLED environment variable to be set to true.
+        	- upx requires a lot of compute resources and runs for a long time, only use this action if you have enough resources available (public ci providers have limits).`,
+		Category: "optimize",
+		Scope:    cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `ENV["UPX_ENABLED"] == "true"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "upx",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() (err error) {
 	cfg := OptimizeConfig{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)
 	if err != nil {

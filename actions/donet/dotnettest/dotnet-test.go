@@ -13,6 +13,29 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "dotnet-test",
+		Description: `Runs the dotnet test command`,
+		Category:    "test",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "dotnet"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "dotnet",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() error {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

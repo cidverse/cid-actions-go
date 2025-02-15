@@ -11,6 +11,24 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "fossa-scan",
+		Description: `FOSSA is a dependency analysis tool that scans your source code for dependencies and licenses.`,
+		Category:    "security",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules:       []cidsdk.ActionRule{},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "fossa",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

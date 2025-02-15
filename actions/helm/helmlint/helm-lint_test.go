@@ -17,7 +17,7 @@ func TestHelmLint(t *testing.T) {
 		WorkDir: "/my-project/charts/mychart",
 	}).Return(nil, nil)
 
-	action := LintAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

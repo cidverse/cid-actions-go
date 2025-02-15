@@ -16,6 +16,31 @@ type Config struct {
 	GitHubToken string `json:"github_token"  env:"GITHUB_TOKEN"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "github-release-publish",
+		Description: "Publishes a new release on GitHub, including the release notes and artifacts.",
+		Category:    "publish",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `hasPrefix(ENV["NCI_REPOSITORY_REMOTE"], "https://github.com/") && NCI_COMMIT_REF_TYPE == "tag"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "GITHUB_TOKEN",
+					Description: "The GitHub token to use for creating the release.",
+					Required:    true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

@@ -10,6 +10,29 @@ type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "go-test",
+		Description: "Runs the golangci-lint tool on your go project.",
+		Category:    "lint",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gomod"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "golangci-lint",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	ctx, err := a.Sdk.ModuleAction(nil)
 	if err != nil {

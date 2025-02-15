@@ -49,7 +49,7 @@ func TestGoModBuild(t *testing.T) {
 		FormatVersion: "",
 	}).Return(nil)
 
-	action := BuildAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -66,7 +66,7 @@ func TestUnsupportedBuild(t *testing.T) {
 		}
 	})
 
-	action := BuildAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.Error(t, errors.New("build system unknown is not supported"), err)
 }

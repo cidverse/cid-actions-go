@@ -22,6 +22,90 @@ type Config struct {
 	GPGSignKeyId            string `json:"gpg_sign_key_id"      env:"MAVEN_GPG_SIGN_KEYID"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name: "java-publish",
+		Description: `This action publishes maven artifacts.
+
+        **Publication**
+
+        Username and password are not required when publishing to GitHub Packages. (https://maven.pkg.github.com/<your_username>/<your_repository>)
+
+        **Signing**
+
+        To sign the artifacts, MAVEN_GPG_SIGN_PRIVATEKEY and MAVEN_GPG_SIGN_PASSWORD must be set.
+        You can generate a private key using the gpg command line tools:
+
+        gpg --full-generate-key
+        // When asked for the key type, select RSA (sign only).
+        // For the key size, select 4096.
+        // For the expiration date, select 0 to make the key never expire.
+        // The Key-ID will appear in the output, it will look something like this A1B2C3D4E5F6G7H8.
+        // Use a strong password to protect the key, store it in the MAVEN_GPG_SIGN_PASSWORD secret.
+        gpg --armor --export-secret-keys A1B2C3D4E5F6G7H8 | base64 -w0
+        // Now store the secret key in the MAVEN_GPG_SIGN_PRIVATEKEY
+        `,
+		Category: "publish",
+		Scope:    cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gradle" && getMapValue(ENV, "MAVEN_REPO_URL") != ""`,
+			},
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "maven" && getMapValue(ENV, "MAVEN_REPO_URL") != ""`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "MAVEN_VERSION",
+					Description: "Overwrites the version of the maven artifact to publish, defaults to the git tag or branch name.",
+				},
+				{
+					Name:        "MAVEN_REPO_URL",
+					Description: "The URL of the maven repository to publish to.",
+					Required:    true,
+				},
+				{
+					Name:        "MAVEN_REPO_USERNAME",
+					Description: "The username to use for authentication with the maven repository.",
+				},
+				{
+					Name:        "MAVEN_REPO_PASSWORD",
+					Description: "The password to use for authentication with the maven repository.",
+				},
+				{
+					Name:        "MAVEN_GPG_SIGN_PRIVATEKEY",
+					Description: "The ASCII-armored private key (base64 encoded).",
+				},
+				{
+					Name:        "MAVEN_GPG_SIGN_PASSWORD",
+					Description: "The password for the private key.",
+				},
+				{
+					Name:        "MAVEN_GPG_SIGN_KEYID",
+					Description: "The GPG key ID, only required when using sub keys.",
+				},
+				{
+					Name:        "GITHUB_ACTOR",
+					Description: "The GitHub actor to use for pushing the artifacts to a maven repository on GitHub Packages (https://maven.pkg.github.com/).",
+				},
+				{
+					Name:        "GITHUB_TOKEN",
+					Description: "The GitHub token to use for pushing the artifacts to a maven repository on GitHub Packages (https://maven.pkg.github.com/).",
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "java",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

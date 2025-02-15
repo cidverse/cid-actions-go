@@ -18,7 +18,7 @@ func TestRustTest(t *testing.T) {
 		WorkDir: "/my-project",
 	}).Return(nil, nil)
 
-	action := TestAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

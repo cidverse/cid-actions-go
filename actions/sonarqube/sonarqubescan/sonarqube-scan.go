@@ -23,6 +23,56 @@ type Config struct {
 	SonarToken         string `json:"sonar_token"  env:"SONAR_TOKEN"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "sonarqube-scan",
+		Description: "Scans the repository for security issues using SonarQube.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `ENV["SONAR_TOKEN"] != "" && NCI_COMMIT_REF_TYPE == "branch"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "SONAR_HOST_URL",
+					Description: `The SonarQube host URL.`,
+				},
+				{
+					Name:        "SONAR_ORGANIZATION",
+					Description: `The SonarQube organization.`,
+				},
+				{
+					Name:        "SONAR_PROJECTKEY",
+					Description: `The SonarQube project key.`,
+				},
+				{
+					Name:        "SONAR_DEFAULT_BRANCH",
+					Description: `The SonarQube default branch.`,
+				},
+				{
+					Name:        "SONAR_TOKEN",
+					Description: `The SonarQube authentication token.`,
+					Required:    true,
+				},
+				{
+					Name:        "NCI_.*",
+					Description: `The project properties sonar needs to identify the repository, commit, merge request, etc.`,
+					Pattern:     true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "cargo",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

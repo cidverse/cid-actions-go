@@ -16,6 +16,41 @@ type Config struct {
 	InventoryFile string `json:"ansible_inventory"  env:"ANSIBLE_INVENTORY"`
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "ansible-deploy",
+		Description: "Deploys the ansible playbook using ansible-playbook.",
+		Category:    "deployment",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "ansible"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "ANSIBLE_PLAYBOOK",
+					Description: "The ansible playbook to deploy.",
+				},
+				{
+					Name:        "ANSIBLE_INVENTORY",
+					Description: "The ansible inventory to use. Defaults to 'inventory'.",
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "ansible-playbook",
+				},
+				{
+					Name: "ansible-galaxy",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

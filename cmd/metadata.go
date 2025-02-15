@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -8,10 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func runCmd() *cobra.Command {
+func metadataCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "run",
-		Short: `executes the specified action`,
+		Use:   "cid-metadata",
+		Short: `returns metadata about all available actions`,
 		Run: func(cmd *cobra.Command, args []string) {
 			// sdk
 			sdk, sdkErr := cidsdk.NewSDK()
@@ -22,19 +23,20 @@ func runCmd() *cobra.Command {
 
 			// actions
 			var actions = getActions(sdk)
+			var metadata []cidsdk.ActionMetadata
 
-			// execute
-			action := actions[args[0]]
-			if action == nil {
-				fmt.Printf("Fatal: action %s is not known!", args[0])
-				os.Exit(1)
+			for _, action := range actions {
+				metadata = append(metadata, action.Metadata())
 			}
 
-			err := action.Execute()
+			// output as json
+			output, err := json.Marshal(metadata)
 			if err != nil {
-				fmt.Printf("Fatal: action encountered an error, %s", err.Error())
+				fmt.Println("Fatal: Failed to marshal metadata: " + err.Error())
 				os.Exit(1)
 			}
+
+			fmt.Println(string(output))
 		},
 	}
 

@@ -11,7 +11,7 @@ import (
 	"github.com/shomali11/parallelizer"
 )
 
-type BuildAction struct {
+type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
@@ -19,7 +19,30 @@ type BuildConfig struct {
 	Platform []golangcommon.Platform `json:"platform"`
 }
 
-func (a BuildAction) Execute() error {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "go-build",
+		Description: "Builds the go project using go mod, generated binaries are stored for later publication.",
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gomod"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "go",
+				},
+			},
+		},
+	}
+}
+
+func (a Action) Execute() error {
 	cfg := BuildConfig{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

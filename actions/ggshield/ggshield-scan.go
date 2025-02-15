@@ -15,6 +15,34 @@ type ScanConfig struct {
 
 const GitguardianPrefix = "GITGUARDIAN_"
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "gitguardian-scan",
+		Description: "Scans the repository for secrets using GitGuardian.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `ENV["GITGUARDIAN_API_KEY"] != "" && NCI_COMMIT_REF_TYPE == "branch"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:    "GITGUARDIAN_.*",
+					Pattern: true,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "ggshield",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := ScanConfig{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

@@ -13,7 +13,30 @@ type Action struct {
 type Config struct {
 }
 
-func (a Action) Execute() (err error) {
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name: "java-gradle-wrapper-scan",
+		Description: `Verifies the integrity of the gradle-wrapper.
+
+        - queries information from https://services.gradle.org/versions/all
+        - verifies the distribution hash in the gradle-wrapper.properties file against checksumUrl
+        - verifies the gradle-wrapper.jar hash against wrapperChecksumUrl`,
+		Category: "sast",
+		Scope:    cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gradle"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{},
+		},
+	}
+}
+
+func (a Action) Execute() error {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)
 	if err != nil {

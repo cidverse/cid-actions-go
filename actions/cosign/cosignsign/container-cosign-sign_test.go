@@ -34,7 +34,7 @@ func TestContainerSignPrivateKey(t *testing.T) {
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	action := SignAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -59,7 +59,7 @@ func TestContainerSignKeyless(t *testing.T) {
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	action := SignAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

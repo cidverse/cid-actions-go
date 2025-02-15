@@ -15,6 +15,38 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name: "ossf-scorecard-scan",
+		Description: `Scorecard is an automated tool that assesses a number of important heuristics ("checks") associated with software security and assigns each check a score of 0-10.
+        You can use these scores to understand specific areas to improve in order to strengthen the security posture of your project.
+
+        This action will evaluate your project using the scorecard tool and store the result as sarif report.`,
+		Category: "security",
+		Scope:    cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `NCI_REPOSITORY_HOST_TYPE == "github"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "GITHUB_TOKEN",
+					Description: "The GitHub token to use when querying project information from the GitHub API.",
+					Required:    false,
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "scorecard",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ProjectAction(&cfg)

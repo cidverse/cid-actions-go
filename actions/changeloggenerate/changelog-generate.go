@@ -13,6 +13,25 @@ type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "changelog-generate",
+		Description: `Generates a changelog based on the commit history. The default regex expression supports parsing semantic commit messages.`,
+		Category:    "release",
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `NCI_COMMIT_REF_TYPE == "tag"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{},
+		},
+	}
+}
+
 func (a Action) Execute() error {
 	// default configuration
 	cfg := changelog.Config{

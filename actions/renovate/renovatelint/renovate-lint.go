@@ -11,6 +11,24 @@ type Action struct {
 type Config struct {
 }
 
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "renovate-lint",
+		Description: "Lint the Renovate configuration file.",
+		Category:    "sast",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules:       []cidsdk.ActionRule{},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{},
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name: "renovate-config-validator",
+				},
+			},
+		},
+	}
+}
+
 func (a Action) Execute() (err error) {
 	cfg := Config{}
 	ctx, err := a.Sdk.ModuleAction(&cfg)

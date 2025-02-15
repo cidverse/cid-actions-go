@@ -29,7 +29,7 @@ func TestGithubReleasePublishWithChangelog(t *testing.T) {
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	action := PublishAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -51,7 +51,7 @@ func TestGithubReleasePublishAutoChangelog(t *testing.T) {
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	action := PublishAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -77,7 +77,7 @@ func TestGithubReleasePublishSelfHosted(t *testing.T) {
 		},
 	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
-	action := PublishAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
