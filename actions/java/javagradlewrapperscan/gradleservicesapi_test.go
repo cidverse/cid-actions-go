@@ -7,6 +7,24 @@ import (
 )
 
 func TestFindGradleRelease(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("GET", "https://services.gradle.org/versions/all", httpmock.NewStringResponder(200, `[{
+  "version" : "8.1.1",
+  "buildTime" : "20230421123126+0000",
+  "current" : false,
+  "snapshot" : false,
+  "nightly" : false,
+  "releaseNightly" : false,
+  "activeRc" : false,
+  "rcFor" : "",
+  "milestoneFor" : "",
+  "broken" : false,
+  "downloadUrl" : "https://services.gradle.org/distributions/gradle-8.1.1-bin.zip",
+  "checksumUrl" : "https://services.gradle.org/distributions/gradle-8.1.1-bin.zip.sha256",
+  "wrapperChecksumUrl" : "https://services.gradle.org/distributions/gradle-8.1.1-wrapper.jar.sha256"
+}]`))
+
 	version := "8.1.1"
 	release, err := FindGradleRelease(version, false)
 	if err != nil {
