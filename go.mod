@@ -12,7 +12,7 @@ require (
 	github.com/cidverse/cidverseutils/version v0.1.0
 	github.com/containers/image/v5 v5.34.0
 	github.com/go-resty/resty/v2 v2.16.5
-	github.com/google/go-github/v69 v69.1.0
+	github.com/google/go-github/v69 v69.2.0
 	github.com/gosimple/slug v1.15.0
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
