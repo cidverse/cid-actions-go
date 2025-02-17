@@ -18,7 +18,7 @@ require (
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/owenrumney/go-sarif/v2 v2.3.3
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/thoas/go-funk v0.9.3
 	golang.org/x/oauth2 v0.26.0
