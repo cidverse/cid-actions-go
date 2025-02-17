@@ -69,6 +69,17 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name: "cargo",
 				},
 			},
+			Network: []cidsdk.ActionAccessNetwork{
+				{
+					Host: "sonarcloud.io:443",
+				},
+				{
+					Host: "api.sonarcloud.io:443",
+				},
+				{
+					Host: "scanner.sonarcloud.io:443",
+				},
+			},
 		},
 	}
 }

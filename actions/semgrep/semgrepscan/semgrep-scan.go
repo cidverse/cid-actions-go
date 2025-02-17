@@ -41,6 +41,11 @@ func (a ScanAction) Metadata() cidsdk.ActionMetadata {
 					Name: "semgrep",
 				},
 			},
+			Network: []cidsdk.ActionAccessNetwork{
+				{
+					Host: "semgrep.dev:443",
+				},
+			},
 		},
 	}
 }
