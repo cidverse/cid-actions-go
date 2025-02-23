@@ -35,6 +35,14 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				},
 			},
 		},
+		Output: cidsdk.ActionOutput{
+			Artifacts: []cidsdk.ActionArtifactType{
+				{
+					Type:   "report",
+					Format: "sarif",
+				},
+			},
+		},
 	}
 }
 

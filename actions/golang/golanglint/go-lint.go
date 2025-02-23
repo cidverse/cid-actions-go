@@ -12,9 +12,9 @@ type Action struct {
 
 func (a Action) Metadata() cidsdk.ActionMetadata {
 	return cidsdk.ActionMetadata{
-		Name:        "go-test",
+		Name:        "go-lint",
 		Description: "Runs the golangci-lint tool on your go project.",
-		Category:    "lint",
+		Category:    "sast",
 		Scope:       cidsdk.ActionScopeModule,
 		Rules: []cidsdk.ActionRule{
 			{

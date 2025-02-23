@@ -42,6 +42,14 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			},
 			Executables: []cidsdk.ActionAccessExecutable{},
 		},
+		Input: cidsdk.ActionInput{
+			Artifacts: []cidsdk.ActionArtifactType{
+				{
+					Type:   "report",
+					Format: "sarif",
+				},
+			},
+		},
 	}
 }
 

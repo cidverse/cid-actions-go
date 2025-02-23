@@ -16,8 +16,13 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Name:        "renovate-lint",
 		Description: "Lint the Renovate configuration file.",
 		Category:    "sast",
-		Scope:       cidsdk.ActionScopeModule,
-		Rules:       []cidsdk.ActionRule{},
+		Scope:       cidsdk.ActionScopeProject,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `contains(PROJECT_CONFIG_TYPES, "renovate")`,
+			},
+		},
 		Access: cidsdk.ActionAccess{
 			Environment: []cidsdk.ActionAccessEnv{},
 			Executables: []cidsdk.ActionAccessExecutable{
@@ -31,15 +36,15 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 
 func (a Action) Execute() (err error) {
 	cfg := Config{}
-	ctx, err := a.Sdk.ModuleAction(&cfg)
+	ctx, err := a.Sdk.ProjectAction(&cfg)
 	if err != nil {
 		return err
 	}
 
 	// run renovate-config-validator
 	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: `renovate-config-validator --strict`,
-		WorkDir: ctx.Module.ModuleDir,
+		Command: `renovate-config-validator --strict .`,
+		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {
 		return err

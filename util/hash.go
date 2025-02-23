@@ -1,4 +1,4 @@
-package javagradlewrapperscan
+package util
 
 import (
 	"crypto/sha256"
@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func hashFileSHA256(filePath string) (string, error) {
+func HashFileSHA256(filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err

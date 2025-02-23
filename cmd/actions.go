@@ -28,7 +28,6 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugobuild"
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugostart"
 	"github.com/cidverse/cid-actions-go/actions/java/javabuild"
-	"github.com/cidverse/cid-actions-go/actions/java/javagradlewrapperscan"
 	"github.com/cidverse/cid-actions-go/actions/java/javapublish"
 	"github.com/cidverse/cid-actions-go/actions/java/javatest"
 	"github.com/cidverse/cid-actions-go/actions/mkdocs/mkdocsbuild"
@@ -93,7 +92,6 @@ func getActions(sdk *cidsdk.SDK) map[string]cidsdk.Action {
 		javabuild.Action{Sdk: *sdk},
 		javatest.Action{Sdk: *sdk},
 		javapublish.Action{Sdk: *sdk},
-		javagradlewrapperscan.Action{Sdk: *sdk},
 		// node
 		nodebuild.Action{Sdk: *sdk},
 		nodetest.Action{Sdk: *sdk},

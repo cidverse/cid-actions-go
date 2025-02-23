@@ -53,6 +53,12 @@ func (a Action) Execute() (err error) {
 
 	// test
 	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
+		// verify gradle wrapper
+		err = javacommon.VerifyGradleWrapper(ctx.Module.ModuleDir)
+		if err != nil {
+			return err
+		}
+
 		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
 		if !a.Sdk.FileExists(gradleWrapper) {
 			return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)

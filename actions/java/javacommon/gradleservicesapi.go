@@ -1,4 +1,4 @@
-package javagradlewrapperscan
+package javacommon
 
 import (
 	"encoding/json"
