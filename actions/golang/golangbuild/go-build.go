@@ -35,7 +35,8 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			Environment: []cidsdk.ActionAccessEnv{},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
-					Name: "go",
+					Name:       "go",
+					Constraint: "=> 1.16.0",
 				},
 			},
 		},

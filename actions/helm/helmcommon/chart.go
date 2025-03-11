@@ -7,11 +7,13 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/cidverse/cidverseutils/filesystem"
 	"gopkg.in/yaml.v3"
 )
 
@@ -113,4 +115,40 @@ func createForm(form map[string]string) (string, io.Reader, error) {
 func extractNumbers(input string) string {
 	reg := regexp.MustCompile(`\D+`)
 	return reg.ReplaceAllString(input, "")
+}
+
+type ChartSource string
+
+const (
+	ChartSourceLocal      ChartSource = "local"
+	ChartSourceRepository ChartSource = "repo"
+	ChartSourceOCI        ChartSource = "oci"
+	ChartSourceUnknown    ChartSource = "unknown"
+)
+
+func GetChartSource(input string) ChartSource {
+	if strings.HasPrefix(input, "oci://") {
+		return ChartSourceOCI
+	} else if strings.Count(input, "/") == 1 {
+		return ChartSourceRepository
+	} else if isHelmChartDir(input) {
+		return ChartSourceLocal
+	}
+
+	return ChartSourceUnknown
+}
+
+func isHelmChartDir(path string) bool {
+	path = filesystem.ResolveAbsolutePath(path)
+	if path == "" {
+		return false
+	}
+
+	stat, err := os.Stat(path)
+	if err != nil || !stat.IsDir() {
+		return false
+	}
+	chartPath := filepath.Join(path, "Chart.yaml")
+	_, err = os.Stat(chartPath)
+	return err == nil
 }

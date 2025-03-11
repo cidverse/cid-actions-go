@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/owenrumney/go-sarif/v2/sarif"
 )
 
 type ScanAction struct {
@@ -25,7 +24,7 @@ func (a ScanAction) Metadata() cidsdk.ActionMetadata {
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",
-				Expression: `NCI_COMMIT_REF_TYPE == "branch"`,
+				Expression: `NCI_COMMIT_REF_TYPE == "branch" && size(PROJECT_BUILD_SYSTEMS) > 0`,
 			},
 		},
 		Access: cidsdk.ActionAccess{
@@ -100,18 +99,12 @@ func (a ScanAction) Execute() (err error) {
 
 	_ = a.Sdk.FileWrite(reportFile, []byte(scanResult.Stdout))
 
-	// parse report
-	report, err := sarif.FromBytes([]byte(scanResult.Stdout))
-	if err != nil {
-		return err
-	}
-
 	// store report
 	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
 		File:          reportFile,
 		Type:          "report",
 		Format:        "sarif",
-		FormatVersion: report.Version,
+		FormatVersion: "2.1.0",
 	})
 	if err != nil {
 		return err

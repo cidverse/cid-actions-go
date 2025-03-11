@@ -4,8 +4,10 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-func GradleTestData(debug bool) cidsdk.ModuleActionData {
-	return cidsdk.ModuleActionData{
+func GradleTestData(env map[string]string, debug bool) *cidsdk.ModuleActionData {
+	env["NCI_COMMIT_REF_TYPE"] = "tag"
+	env["NCI_COMMIT_REF_RELEASE"] = "1.0.0"
+	return &cidsdk.ModuleActionData{
 		ProjectDir: "/my-project",
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
@@ -24,9 +26,6 @@ func GradleTestData(debug bool) cidsdk.ModuleActionData {
 			ArtifactDir: "/my-project/.dist",
 			TempDir:     "/my-project/.tmp",
 		},
-		Env: map[string]string{
-			"NCI_COMMIT_REF_TYPE":    "tag",
-			"NCI_COMMIT_REF_RELEASE": "1.0.0",
-		},
+		Env: env,
 	}
 }

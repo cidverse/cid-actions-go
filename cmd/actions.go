@@ -22,6 +22,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/golang/golangtest"
 	"github.com/cidverse/cid-actions-go/actions/gosec/gosecscan"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmbuild"
+	"github.com/cidverse/cid-actions-go/actions/helm/helmdeploy"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmlint"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmpublishnexus"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmpublishregistry"
@@ -88,6 +89,7 @@ func getActions(sdk *cidsdk.SDK) map[string]cidsdk.Action {
 		helmlint.Action{Sdk: *sdk},
 		helmpublishnexus.Action{Sdk: *sdk},
 		helmpublishregistry.Action{Sdk: *sdk},
+		helmdeploy.Action{Sdk: *sdk},
 		// java
 		javabuild.Action{Sdk: *sdk},
 		javatest.Action{Sdk: *sdk},

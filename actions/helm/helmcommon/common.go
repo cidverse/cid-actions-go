@@ -4,8 +4,10 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-func GetHelmTestData(debug bool) cidsdk.ModuleActionData {
-	return cidsdk.ModuleActionData{
+const HelmVersionConstraint = ">=3.16.0"
+
+func GetHelmTestData(env map[string]string, debug bool) *cidsdk.ModuleActionData {
+	return &cidsdk.ModuleActionData{
 		ProjectDir: "/my-project",
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
@@ -24,5 +26,6 @@ func GetHelmTestData(debug bool) cidsdk.ModuleActionData {
 			ArtifactDir: ".dist",
 			TempDir:     ".tmp",
 		},
+		Env: env,
 	}
 }

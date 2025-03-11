@@ -2,7 +2,7 @@ package helmbuild
 
 import (
 	"fmt"
-	"path/filepath"
+	"os"
 
 	"github.com/cidverse/cid-actions-go/actions/helm/helmcommon"
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -31,7 +31,8 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			Environment: []cidsdk.ActionAccessEnv{},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
-					Name: "helm",
+					Name:       "helm",
+					Constraint: helmcommon.HelmVersionConstraint,
 				},
 			},
 		},
@@ -39,72 +40,80 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 }
 
 func (a Action) Execute() (err error) {
-	cfg := BuildConfig{}
-	ctx, err := a.Sdk.ModuleAction(&cfg)
+	// query action data
+	d, err := a.Sdk.ModuleActionDataV1()
 	if err != nil {
 		return err
 	}
 
+	// parse config
+	cfg := BuildConfig{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
 	// globals
-	chartsDir := cidsdk.JoinPath(ctx.Config.TempDir, "helm-charts")
-	chartName := filepath.Base(ctx.Module.ModuleDir)
+	chartsDir := cidsdk.JoinPath(d.Config.TempDir, "helm-charts")
+	_ = os.MkdirAll(chartsDir, 0755)
 
-	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemHelm) {
-		// restore the charts/ directory based on the Chart.lock file
-		_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `helm dependency build .`,
-			WorkDir: ctx.Module.ModuleDir,
-		})
-		if err != nil {
-			return err
-		}
+	// restore the charts/ directory based on the Chart.lock file
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: `helm dependency build .`,
+		WorkDir: d.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("command failed, exit code %d", cmdResult.Code)
+	}
 
-		// parse chart
-		chartFile := cidsdk.JoinPath(ctx.Module.ModuleDir, "Chart.yaml")
-		chartFileContent, err := a.Sdk.FileRead(chartFile)
-		if err != nil {
-			return fmt.Errorf("failed to read chart file: %s", err.Error())
-		}
-		chart, err := helmcommon.ParseChart([]byte(chartFileContent))
-		if err != nil {
-			return err
-		}
-		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "building chart", Context: map[string]interface{}{"chart": chart.Name}})
+	// parse chart
+	chartFile := cidsdk.JoinPath(d.Module.ModuleDir, "Chart.yaml")
+	chartFileContent, err := a.Sdk.FileRead(chartFile)
+	if err != nil {
+		return fmt.Errorf("failed to read chart file: %s", err.Error())
+	}
+	chart, err := helmcommon.ParseChart([]byte(chartFileContent))
+	if err != nil {
+		return err
+	}
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "building chart", Context: map[string]interface{}{"chart-name": chart.Name, "chart-version": chart.Version}})
 
-		// version
-		chartVersion := chart.Version
-		if chartVersion == "0.0.0" {
-			chartVersion = ctx.Env["NCI_COMMIT_REF_NAME"]
-		}
+	// version
+	chartVersion := chart.Version
+	if chartVersion == "0.0.0" {
+		chartVersion = d.Env["NCI_COMMIT_REF_NAME"]
+	}
 
-		// package
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `helm package . --version ` + chartVersion + ` --destination ` + chartsDir,
-			WorkDir: ctx.Module.ModuleDir,
-		})
-		if err != nil {
-			return err
-		}
+	// package
+	cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: `helm package . --version ` + chartVersion + ` --destination ` + chartsDir,
+		WorkDir: d.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("command failed, exit code %d", cmdResult.Code)
+	}
 
-		// update index
-		_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `helm repo index ` + chartsDir,
-			WorkDir: ctx.Module.ModuleDir,
-		})
-		if err != nil {
-			return err
-		}
+	// update index
+	cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: `helm repo index ` + chartsDir,
+		WorkDir: d.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("command failed, exit code %d", cmdResult.Code)
+	}
 
-		// upload charts
-		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
-			File:   cidsdk.JoinPath(chartsDir, fmt.Sprintf("%s-%s.tgz", chartName, chartVersion)),
-			Module: ctx.Module.Slug,
-			Type:   "helm-chart",
-			Format: "tgz",
-		})
-		if err != nil {
-			return err
-		}
+	// upload charts
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		File:   cidsdk.JoinPath(chartsDir, fmt.Sprintf("%s-%s.tgz", chart.Name, chartVersion)),
+		Module: d.Module.Slug,
+		Type:   "helm-chart",
+		Format: "tgz",
+	})
+	if err != nil {
+		return err
 	}
 
 	return nil

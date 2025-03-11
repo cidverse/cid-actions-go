@@ -1,6 +1,8 @@
 package renovatelint
 
 import (
+	"fmt"
+
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -35,19 +37,25 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 }
 
 func (a Action) Execute() (err error) {
-	cfg := Config{}
-	ctx, err := a.Sdk.ProjectAction(&cfg)
+	// query action data
+	d, err := a.Sdk.ProjectActionDataV1()
 	if err != nil {
 		return err
 	}
 
+	// parse config
+	cfg := Config{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
 	// run renovate-config-validator
-	_, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: `renovate-config-validator --strict .`,
-		WorkDir: ctx.ProjectDir,
+		WorkDir: d.ProjectDir,
 	})
 	if err != nil {
 		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("command failed, exit code %d", cmdResult.Code)
 	}
 
 	return nil

@@ -7,16 +7,15 @@ import (
 	"github.com/cidverse/cid-actions-go/testdata"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestRenovateLint(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ModuleAction", mock.Anything).Return(testdata.ModuleRenovate(), nil)
+	sdk.On("ProjectActionDataV1").Return(testdata.ProjectRenovate(), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "renovate-config-validator --strict",
+		Command: "renovate-config-validator --strict .",
 		WorkDir: "/my-project",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := Action{Sdk: sdk}
 	err := action.Execute()

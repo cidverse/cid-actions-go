@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/owenrumney/go-sarif/v2/sarif"
+	"github.com/owenrumney/go-sarif/v3/pkg/report/v210/sarif"
 	"github.com/thoas/go-funk"
 )
 

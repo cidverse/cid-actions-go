@@ -7,15 +7,13 @@ import (
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestHelmPublishRegistry(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ModuleAction", &PublishRegistryConfig{}).Return(helmcommon.GetHelmTestData(false), nil).Run(func(args mock.Arguments) {
-		arg := args.Get(0).(*PublishRegistryConfig)
-		arg.OCIRepository = "localhost:5000/helm-charts"
-	})
+	sdk.On("ModuleActionDataV1").Return(helmcommon.GetHelmTestData(map[string]string{
+		"HELM_OCI_REPOSITORY": "localhost:5000/helm-charts",
+	}, false), nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "helm-chart" && format == "tgz"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			ID:     "root/helm-chart/mychart.tgz",

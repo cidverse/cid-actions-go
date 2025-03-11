@@ -1,6 +1,9 @@
 package helmlint
 
 import (
+	"fmt"
+
+	"github.com/cidverse/cid-actions-go/actions/helm/helmcommon"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -27,7 +30,8 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			Environment: []cidsdk.ActionAccessEnv{},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
-					Name: "helm",
+					Name:       "helm",
+					Constraint: helmcommon.HelmVersionConstraint,
 				},
 			},
 		},
@@ -35,20 +39,25 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 }
 
 func (a Action) Execute() (err error) {
-	cfg := LintConfig{}
-	ctx, err := a.Sdk.ModuleAction(&cfg)
+	// query action data
+	d, err := a.Sdk.ModuleActionDataV1()
 	if err != nil {
 		return err
 	}
 
-	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemHelm) {
-		_, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: `helm lint . --strict`,
-			WorkDir: ctx.Module.ModuleDir,
-		})
-		if err != nil {
-			return err
-		}
+	// parse config
+	cfg := LintConfig{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
+	// lint
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: `helm lint . --strict`,
+		WorkDir: d.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("command failed, exit code %d", cmdResult.Code)
 	}
 
 	return nil

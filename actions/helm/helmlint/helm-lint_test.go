@@ -11,11 +11,11 @@ import (
 
 func TestHelmLint(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ModuleAction", &LintConfig{}).Return(helmcommon.GetHelmTestData(false), nil)
+	sdk.On("ModuleActionDataV1").Return(helmcommon.GetHelmTestData(map[string]string{}, false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
 		Command: "helm lint . --strict",
 		WorkDir: "/my-project/charts/mychart",
-	}).Return(nil, nil)
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
 
 	action := Action{Sdk: sdk}
 	err := action.Execute()

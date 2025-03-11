@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/cidverse/cidverseutils/pkg/cihelper"
+	"github.com/cidverse/cidverseutils/core/ci"
 )
 
 type Action struct {
@@ -61,7 +61,7 @@ func (a Action) Execute() (err error) {
 	})
 
 	// support for self-hosted instances
-	host, err := cihelper.GetHostFromGitRemote(ctx.Env["NCI_REPOSITORY_REMOTE"])
+	host, err := ci.GetHostFromGitRemote(ctx.Env["NCI_REPOSITORY_REMOTE"])
 	if err != nil {
 		return err
 	}

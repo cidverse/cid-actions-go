@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/owenrumney/go-sarif/v2/sarif"
+	"github.com/owenrumney/go-sarif/v3/pkg/report/v210/sarif"
 )
 
 type Action struct {
@@ -24,7 +24,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",
-				Expression: `NCI_COMMIT_REF_TYPE == "branch"`,
+				Expression: `NCI_COMMIT_REF_TYPE == "branch" && size(PROJECT_BUILD_SYSTEMS) > 0`,
 			},
 		},
 		Access: cidsdk.ActionAccess{

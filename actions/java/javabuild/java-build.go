@@ -13,7 +13,8 @@ type Action struct {
 }
 
 type Config struct {
-	MavenVersion string `json:"maven_version"        env:"MAVEN_VERSION"`
+	MavenVersion        string `json:"maven_version"        env:"MAVEN_VERSION"`
+	WrapperVerification bool   `json:"wrapper_verification" env:"WRAPPER_VERIFICATION"`
 }
 
 func (a Action) Metadata() cidsdk.ActionMetadata {
@@ -40,26 +41,32 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 }
 
 func (a Action) Execute() (err error) {
-	cfg := Config{}
-	ctx, err := a.Sdk.ModuleAction(&cfg)
+	// query action data
+	d, err := a.Sdk.ModuleActionDataV1()
 	if err != nil {
 		return err
 	}
 
+	// parse config
+	cfg := Config{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
 	// version
 	if cfg.MavenVersion == "" {
-		cfg.MavenVersion = javacommon.GetVersion(ctx.Env["NCI_COMMIT_REF_TYPE"], ctx.Env["NCI_COMMIT_REF_RELEASE"], ctx.Env["NCI_COMMIT_HASH_SHORT"])
+		cfg.MavenVersion = javacommon.GetVersion(d.Env["NCI_COMMIT_REF_TYPE"], d.Env["NCI_COMMIT_REF_RELEASE"], d.Env["NCI_COMMIT_HASH_SHORT"])
 	}
 
 	// build
-	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
+	if d.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
 		// verify gradle wrapper
-		err = javacommon.VerifyGradleWrapper(ctx.Module.ModuleDir)
-		if err != nil {
-			return err
+		if cfg.WrapperVerification {
+			err = javacommon.VerifyGradleWrapper(d.Module.ModuleDir)
+			if err != nil {
+				return err
+			}
 		}
 
-		gradleWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "gradlew")
+		gradleWrapper := cidsdk.JoinPath(d.Module.ModuleDir, "gradlew")
 		if !a.Sdk.FileExists(gradleWrapper) {
 			return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
 		}
@@ -74,15 +81,15 @@ func (a Action) Execute() (err error) {
 		}
 		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("java-exec %s %s", gradleWrapper, strings.Join(buildArgs, " ")),
-			WorkDir: ctx.Module.ModuleDir,
+			WorkDir: d.Module.ModuleDir,
 		})
 		if err != nil {
 			return err
 		} else if buildResult.Code != 0 {
 			return fmt.Errorf("gradle build failed, exit code %d", buildResult.Code)
 		}
-	} else if ctx.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
-		mavenWrapper := cidsdk.JoinPath(ctx.Module.ModuleDir, "mvnw")
+	} else if d.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
+		mavenWrapper := cidsdk.JoinPath(d.Module.ModuleDir, "mvnw")
 		if !a.Sdk.FileExists(mavenWrapper) {
 			return fmt.Errorf("maven wrapper not found at %s", mavenWrapper)
 		}
@@ -94,7 +101,7 @@ func (a Action) Execute() (err error) {
 		}
 		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("java-exec %s %s", mavenWrapper, strings.Join(buildArgs, " ")),
-			WorkDir: ctx.Module.ModuleDir,
+			WorkDir: d.Module.ModuleDir,
 		})
 		if err != nil {
 			return err

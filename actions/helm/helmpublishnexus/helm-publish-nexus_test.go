@@ -8,18 +8,16 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestHelmPublishNexus(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ModuleAction", &PublishNexusConfig{}).Return(helmcommon.GetHelmTestData(false), nil).Run(func(args mock.Arguments) {
-		arg := args.Get(0).(*PublishNexusConfig)
-		arg.NexusURL = "https://localhost:9999"
-		arg.NexusRepository = "dummy"
-		arg.NexusUsername = "admin"
-		arg.NexusPassword = "admin"
-	})
+	sdk.On("ModuleActionDataV1").Return(helmcommon.GetHelmTestData(map[string]string{
+		"HELM_NEXUS_URL":        "https://localhost:9999",
+		"HELM_NEXUS_REPOSITORY": "dummy",
+		"HELM_NEXUS_USERNAME":   "admin",
+		"HELM_NEXUS_PASSWORD":   "admin",
+	}, false), nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "helm-chart" && format == "tgz"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			ID:     "root/helm-chart/mychart.tgz",
