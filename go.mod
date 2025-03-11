@@ -10,7 +10,7 @@ require (
 	github.com/cidverse/cidverseutils/compress v0.1.1
 	github.com/cidverse/cidverseutils/filesystem v0.1.1
 	github.com/cidverse/cidverseutils/version v0.1.0
-	github.com/containers/image/v5 v5.34.1
+	github.com/containers/image/v5 v5.34.2
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/go-github/v69 v69.2.0
 	github.com/gosimple/slug v1.15.0
@@ -29,7 +29,7 @@ require (
 	github.com/charlievieth/fastwalk v1.0.9 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.2.1 // indirect
-	github.com/containers/storage v1.57.1 // indirect
+	github.com/containers/storage v1.57.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/docker/docker v28.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
