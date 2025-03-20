@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,7 +14,7 @@ func PrepareKubeConfig(kubeConfigFile string, environmentName string, env map[st
 	var possibleKeys []string
 
 	if environmentName != "" {
-		possibleKeys = append(possibleKeys, fmt.Sprintf("KUBECONFIG_%s_BASE64", environmentName))
+		possibleKeys = append(possibleKeys, fmt.Sprintf("KUBECONFIG_%s_BASE64", strings.ToUpper(environmentName)))
 	}
 	possibleKeys = append(possibleKeys, "KUBECONFIG_BASE64")
 
@@ -29,7 +30,7 @@ func PrepareKubeConfig(kubeConfigFile string, environmentName string, env map[st
 		}
 	}
 
-	return fmt.Errorf("no valid kubeconfig Base64 environment variable found")
+	return fmt.Errorf("no valid kubeconfig Base64 environment variable found - checked %v", possibleKeys)
 }
 
 type KubeConfig struct {

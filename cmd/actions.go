@@ -26,6 +26,8 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/helm/helmlint"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmpublishnexus"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmpublishregistry"
+	"github.com/cidverse/cid-actions-go/actions/helmfile/helmfiledeploy"
+	"github.com/cidverse/cid-actions-go/actions/helmfile/helmfilelint"
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugobuild"
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugostart"
 	"github.com/cidverse/cid-actions-go/actions/java/javabuild"
@@ -90,6 +92,9 @@ func getActions(sdk *cidsdk.SDK) map[string]cidsdk.Action {
 		helmpublishnexus.Action{Sdk: *sdk},
 		helmpublishregistry.Action{Sdk: *sdk},
 		helmdeploy.Action{Sdk: *sdk},
+		// helmfile
+		helmfilelint.Action{Sdk: *sdk},
+		helmfiledeploy.Action{Sdk: *sdk},
 		// java
 		javabuild.Action{Sdk: *sdk},
 		javatest.Action{Sdk: *sdk},

@@ -9,6 +9,7 @@ import (
 	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cidverseutils/filesystem"
+	"github.com/go-playground/validator/v10"
 	cp "github.com/otiai10/copy"
 )
 
@@ -17,13 +18,13 @@ type Action struct {
 }
 
 type Config struct {
-	DeploymentChart          string `json:"deployment_chart"        env:"DEPLOYMENT_CHART"`
-	DeploymentChartVersion   string `json:"deployment_chart_version" env:"DEPLOYMENT_CHART_VERSION"`
-	DeploymentChartLocalPath string `json:"deployment_chart_local_path"        env:"DEPLOYMENT_CHART_LOCAL_PATH"`
-	DeploymentNamespace      string `json:"deployment_namespace" env:"DEPLOYMENT_NAMESPACE"`
-	DeploymentID             string `json:"deployment_id"            env:"DEPLOYMENT_ID"`
-	DeploymentEnvironment    string `json:"deployment_environment" env:"DEPLOYMENT_ENVIRONMENT"`
-	HelmArgs                 string `json:"helm_args" env:"HELM_ARGS"`
+	DeploymentChart          string `json:"deployment_chart"            env:"DEPLOYMENT_CHART"           validate:"required"`
+	DeploymentChartVersion   string `json:"deployment_chart_version"    env:"DEPLOYMENT_CHART_VERSION"`
+	DeploymentChartLocalPath string `json:"deployment_chart_local_path" env:"DEPLOYMENT_CHART_LOCAL_PATH"`
+	DeploymentNamespace      string `json:"deployment_namespace"        env:"DEPLOYMENT_NAMESPACE"       validate:"required"`
+	DeploymentID             string `json:"deployment_id"               env:"DEPLOYMENT_ID"              validate:"required"`
+	DeploymentEnvironment    string `json:"deployment_environment"      env:"DEPLOYMENT_ENVIRONMENT"     validate:"required"`
+	HelmArgs                 string `json:"helm_args"                   env:"HELM_ARGS"`
 }
 
 func (a Action) Metadata() cidsdk.ActionMetadata {
@@ -72,13 +73,17 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Description: "The environment the deployment is targeting",
 				},
 				{
-					Name:        "HELM_ARGS",
-					Description: "Additional arguments to pass to the helm command",
+					Name:        "KUBECONFIG_BASE64",
+					Description: "The base 64 encoded Kubernetes config",
 				},
 				{
 					Name:        "KUBECONFIG_.*_BASE64",
-					Description: "The base 64 encoded Kubernetes config file to use for installation",
+					Description: "Environment-specific base 64 encoded Kubernetes config",
 					Pattern:     true,
+				},
+				{
+					Name:        "HELM_ARGS",
+					Description: "Additional arguments to pass to the helm command",
 				},
 			},
 			Executables: []cidsdk.ActionAccessExecutable{
@@ -91,6 +96,31 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 	}
 }
 
+func (a Action) GetConfig(env map[string]string) (Config, error) {
+	cfg := Config{}
+	cidsdk.PopulateFromEnv(&cfg, env)
+
+	// defaults
+	if cfg.DeploymentNamespace == "" {
+		cfg.DeploymentNamespace = env["NCI_PROJECT_UID"] // fallback to project uid
+	}
+	if cfg.DeploymentID == "" {
+		cfg.DeploymentID = cfg.DeploymentEnvironment // fallback to environment
+	}
+	if cfg.DeploymentChart == "" && cfg.DeploymentChartLocalPath != "" {
+		cfg.DeploymentChart = cfg.DeploymentChartLocalPath
+	}
+
+	// validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(cfg)
+	if err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
 func (a Action) Execute() (err error) {
 	// query action data
 	d, err := a.Sdk.ModuleActionDataV1()
@@ -99,29 +129,15 @@ func (a Action) Execute() (err error) {
 	}
 
 	// parse config
-	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "Starting Helm deployment..."})
-	cfg := Config{}
-	cidsdk.PopulateFromEnv(&cfg, d.Env)
-
-	// verify required properties
-	if cfg.DeploymentChart == "" && cfg.DeploymentChartLocalPath != "" {
-		cfg.DeploymentChart = cfg.DeploymentChartLocalPath
-	}
-	if cfg.DeploymentChart == "" {
-		return fmt.Errorf("missing required input: DEPLOYMENT_CHART")
-	}
-	if cfg.DeploymentNamespace == "" {
-		// default to project id
-		cfg.DeploymentNamespace = d.Env["NCI_PROJECT_ID"]
-	}
-	if cfg.DeploymentID == "" {
-		return fmt.Errorf("missing required input: DEPLOYMENT_ID")
+	cfg, err := a.GetConfig(d.Env)
+	if err != nil {
+		return err
 	}
 
 	// prepare kubeconfig
 	kubeConfigFile := cidsdk.JoinPath(d.Config.TempDir, "kube", "kubeconfig")
-	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "Using kubeconfig...", Context: map[string]interface{}{"file": kubeConfigFile}})
-	err = helmcommon.PrepareKubeConfig(kubeConfigFile, cfg.DeploymentEnvironment, d.Env)
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "Starting Helm deployment...", Context: map[string]interface{}{"KUBECONFIG": kubeConfigFile}})
+	err = helmcommon.PrepareKubeConfig(kubeConfigFile, d.Deployment.DeploymentEnvironment, d.Env)
 	if err != nil {
 		return err
 	}
