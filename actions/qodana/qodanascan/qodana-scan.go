@@ -38,6 +38,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:        "QODANA_TOKEN",
 					Description: "The Qodana cloud project token.",
 					Required:    true,
+					Secret:      true,
 				},
 				{
 					Name:        "QODANA_ULTIMATE",

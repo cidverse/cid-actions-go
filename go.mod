@@ -5,7 +5,7 @@ go 1.24
 toolchain go1.24.0
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20250323012705-1200ef593e18
+	github.com/cidverse/cid-sdk-go v0.0.0-20250323222924-7b668e911844
 	github.com/cidverse/cidverseutils/compress v0.1.1
 	github.com/cidverse/cidverseutils/core v0.0.0-20250318215805-037061ab84fc
 	github.com/cidverse/cidverseutils/filesystem v0.1.2-0.20250318215805-037061ab84fc
@@ -22,7 +22,6 @@ require (
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	github.com/thoas/go-funk v0.9.3
 	golang.org/x/oauth2 v0.28.0
 	gopkg.in/yaml.v3 v3.0.1
 )

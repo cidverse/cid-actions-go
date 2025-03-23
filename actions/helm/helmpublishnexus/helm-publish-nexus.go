@@ -51,6 +51,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:        "HELM_NEXUS_PASSWORD",
 					Description: "The password to use for authentication.",
 					Required:    true,
+					Secret:      true,
 				},
 			},
 			Executables: []cidsdk.ActionAccessExecutable{

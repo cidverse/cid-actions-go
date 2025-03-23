@@ -57,6 +57,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:        "SONAR_TOKEN",
 					Description: `The SonarQube authentication token.`,
 					Required:    true,
+					Secret:      true,
 				},
 				{
 					Name:        "NCI_.*",
