@@ -15,7 +15,7 @@ type Action struct {
 
 type Config struct {
 	DeploymentNamespace   string `json:"deployment_namespace"   env:"DEPLOYMENT_NAMESPACE"   validate:"required"`
-	DeploymentEnvironment string `json:"deployment_environment" env:"DEPLOYMENT_ENVIRONMENT"`
+	DeploymentEnvironment string `json:"deployment_environment" env:"DEPLOYMENT_ENVIRONMENT" validate:"required"`
 	HelmfileArgs          string `json:"helmfile_args"          env:"HELMFILE_ARGS"`
 }
 
@@ -123,6 +123,7 @@ func (a Action) Execute() (err error) {
 	}
 
 	// deployment
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "Deploying to cluster...", Context: map[string]interface{}{"cluster": targetCluster.Name, "namespace": cfg.DeploymentNamespace, "environment": cfg.DeploymentEnvironment}})
 	cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: fmt.Sprintf(`helmfile apply -f %q --namespace=%q --environment=%q --suppress-diff %s`, d.Deployment.DeploymentFile, cfg.DeploymentNamespace, d.Deployment.DeploymentEnvironment, cfg.HelmfileArgs),
 		WorkDir: d.Module.ModuleDir,

@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/thoas/go-funk"
-
 	"github.com/oriser/regroup"
 )
 
@@ -78,16 +76,16 @@ func ProcessCommits(config *Config, commits []cidsdk.VCSCommit) TemplateData {
 		commit.Description = AddLinks(commit.Description)
 
 		// contributor
-		if !funk.Contains(contributors, commit.Author.Email) {
+		if contributor, ok := contributors[commit.Author.Email]; ok {
+			contributor.Commits++
+			contributors[commit.Author.Email] = contributor
+		} else {
 			contributors[commit.Author.Email] = ContributorData{
 				Name:    commit.Author.Name,
 				Email:   commit.Author.Email,
-				Commits: 0,
+				Commits: 1,
 			}
 		}
-		contributor := contributors[commit.Author.Email]
-		contributor.Commits += 1
-		contributors[commit.Author.Email] = contributor
 
 		// commit groups - overwrite type
 		for typeOrig, typeNew := range config.TitleMaps {

@@ -5,7 +5,7 @@ go 1.24
 toolchain go1.24.0
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20250320195334-7e94904da22d
+	github.com/cidverse/cid-sdk-go v0.0.0-20250323012705-1200ef593e18
 	github.com/cidverse/cidverseutils/compress v0.1.1
 	github.com/cidverse/cidverseutils/core v0.0.0-20250318215805-037061ab84fc
 	github.com/cidverse/cidverseutils/filesystem v0.1.2-0.20250318215805-037061ab84fc

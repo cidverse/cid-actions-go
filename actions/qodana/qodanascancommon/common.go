@@ -4,8 +4,8 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-func GoModuleTestData() cidsdk.ModuleActionData {
-	return cidsdk.ModuleActionData{
+func GoModuleTestData() *cidsdk.ModuleActionData {
+	return &cidsdk.ModuleActionData{
 		ProjectDir: "/my-project",
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
@@ -24,6 +24,9 @@ func GoModuleTestData() cidsdk.ModuleActionData {
 			ProjectDir:  "/my-project",
 			ArtifactDir: "/my-project/.dist",
 			TempDir:     "/my-project/.tmp",
+		},
+		Env: map[string]string{
+			"QODANA_EAP": "true",
 		},
 	}
 }

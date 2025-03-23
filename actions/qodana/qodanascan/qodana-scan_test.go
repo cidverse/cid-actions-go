@@ -8,7 +8,6 @@ import (
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 //go:embed qodana.sarif.json
@@ -16,9 +15,9 @@ var reportJson string
 
 func TestQodanaScan(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ModuleAction", mock.Anything).Return(qodanascancommon.GoModuleTestData(), nil)
+	sdk.On("ModuleActionDataV1").Return(qodanascancommon.GoModuleTestData(), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: "qodana-go --source-directory=/my-project --results-dir=/my-project/.tmp --fail-threshold 10000",
+		Command: "qodana scan --ide=QDGO-EAP --project-dir=/my-project --source-directory=/my-project --results-dir=/my-project/.tmp --fail-threshold 10000",
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"QODANA_BRANCH":     "",

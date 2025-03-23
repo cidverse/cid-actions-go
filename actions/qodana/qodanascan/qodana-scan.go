@@ -5,36 +5,47 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/go-playground/validator/v10"
 	"github.com/owenrumney/go-sarif/v3/pkg/report/v210/sarif"
-	"github.com/thoas/go-funk"
 )
 
 type Action struct {
 	Sdk cidsdk.SDKClient
 }
 
-type ScanConfig struct {
-	QodanaToken string `json:"qodana_token"  env:"QODANA_TOKEN"`
+type Config struct {
+	QodanaToken              string `json:"qodana_token"                 env:"QODANA_TOKEN"`
+	QodanaUltimate           bool   `json:"qodana_ultimate"              env:"QODANA_ULTIMATE"`
+	QodanaEarlyAccessPreview bool   `json:"qodana_early_access_preview"  env:"QODANA_EAP"`
 }
 
 func (a Action) Metadata() cidsdk.ActionMetadata {
 	return cidsdk.ActionMetadata{
-		Name:        "qodana-scan",
-		Description: "Scans the repository for security issues using JetBrains Qodana.",
-		Category:    "sast",
-		Scope:       cidsdk.ActionScopeModule,
+		Name:          "qodana-scan",
+		Description:   "Scans the repository for security issues using JetBrains Qodana.",
+		Documentation: ``,
+		Category:      "sast",
+		Scope:         cidsdk.ActionScopeModule,
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",
-				Expression: `ENV["QODANA_TOKEN"] != "" && NCI_COMMIT_REF_TYPE == "branch"`,
+				Expression: `ENV["QODANA_TOKEN"] != "" && MODULE_BUILD_SYSTEM != "" && NCI_COMMIT_REF_TYPE == "branch"`,
 			},
 		},
 		Access: cidsdk.ActionAccess{
 			Environment: []cidsdk.ActionAccessEnv{
 				{
 					Name:        "QODANA_TOKEN",
-					Description: "The Qodana authentication token.",
+					Description: "The Qodana cloud project token.",
 					Required:    true,
+				},
+				{
+					Name:        "QODANA_ULTIMATE",
+					Description: "Set if you have a Qodana Ultimate license, will use the commercial IDEs instead of the community edition.",
+				},
+				{
+					Name:        "QODANA_EAP",
+					Description: "Enable Qodana Early Access Preview IDEs, does not require a license.",
 				},
 				{
 					Name:        "NCI_REPOSITORY_.*",
@@ -49,59 +60,112 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
-					Name: "semgrep",
+					Name: "qodana",
 				},
 			},
 		},
 	}
 }
 
+func (a Action) GetConfig(d *cidsdk.ModuleActionData) (Config, error) {
+	cfg := Config{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
+	// enable eap by default
+	cfg.QodanaEarlyAccessPreview = true
+
+	// validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(cfg)
+	if err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
 func (a Action) Execute() (err error) {
-	cfg := ScanConfig{}
-	ctx, err := a.Sdk.ModuleAction(&cfg)
+	// query action data
+	d, err := a.Sdk.ModuleActionDataV1()
 	if err != nil {
 		return err
 	}
 
-	// choose linter
-	linter := ""
-	if ctx.Module.Language != nil {
-		if funk.Contains(*ctx.Module.Language, string(cidsdk.LanguageJava)) {
-			linter = "jvm"
-		} else if funk.Contains(*ctx.Module.Language, string(cidsdk.LanguageJavascript)) || funk.Contains(*ctx.Module.Language, string(cidsdk.LanguageTypescript)) {
-			linter = "js"
-		} else if funk.Contains(*ctx.Module.Language, string(cidsdk.LanguageGolang)) {
-			linter = "go"
-		} else if funk.Contains(*ctx.Module.Language, string(cidsdk.LanguagePython)) {
-			linter = "python"
-		} else if funk.Contains(*ctx.Module.Language, string(cidsdk.LanguagePHP)) {
-			linter = "php"
+	// parse config
+	cfg, err := a.GetConfig(d)
+	if err != nil {
+		return err
+	}
+
+	// choose ide
+	ideName := ""
+	if d.Module.Language != nil {
+		if (*d.Module.Language)[string(cidsdk.LanguagePython)] != "" {
+			if cfg.QodanaUltimate {
+				ideName = "QDPY"
+			} else {
+				ideName = "QDPYC"
+			}
+		} else if (*d.Module.Language)[string(cidsdk.LanguagePHP)] != "" {
+			if cfg.QodanaEarlyAccessPreview {
+				ideName = "QDPHP-EAP"
+			} else if cfg.QodanaUltimate {
+				ideName = "QDPHP"
+			}
 		}
 	}
-	if ctx.Module.BuildSystem == string(cidsdk.BuildSystemDotNet) {
-		linter = "dotnet"
+	if d.Module.BuildSystem == string(cidsdk.BuildSystemDotNet) {
+		if cfg.QodanaEarlyAccessPreview {
+			ideName = "QDNET-EAP"
+		} else if cfg.QodanaUltimate {
+			ideName = "QDNET"
+		}
+	} else if d.Module.BuildSystem == string(cidsdk.BuildSystemGoMod) {
+		if cfg.QodanaEarlyAccessPreview {
+			ideName = "QDGO-EAP"
+		} else if cfg.QodanaUltimate {
+			ideName = "QDGO"
+		}
+	} else if d.Module.BuildSystem == string(cidsdk.BuildSystemMaven) || d.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
+		if cfg.QodanaEarlyAccessPreview {
+			ideName = "QDJVM-EAP"
+		} else if cfg.QodanaUltimate {
+			ideName = "QDJVM"
+		} else {
+			ideName = "QDJVMC"
+		}
+	} else if d.Module.BuildSystem == string(cidsdk.BuildSystemNpm) {
+		if cfg.QodanaEarlyAccessPreview {
+			ideName = "QDJS-EAP"
+		} else if cfg.QodanaUltimate {
+			ideName = "QDJS"
+		}
 	}
-	if linter == "" {
-		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "warn", Message: "no supported linter, skipping!"})
+
+	if ideName == "" {
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "no supported linter, skipping!"})
 		return nil
 	}
-	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "using qodana linter", Context: map[string]interface{}{"linter": "qodana-" + linter}})
+	_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "using qodana linter", Context: map[string]interface{}{"qodana-type": ideName}})
 
 	// qodana scan
 	var scanOpts = []string{
-		"--source-directory=" + ctx.Module.ModuleDir,
-		"--results-dir=" + ctx.Config.TempDir,
+		"--ide=" + ideName,
+		"--project-dir=" + d.ProjectDir,
+		"--source-directory=" + d.Module.ModuleDir,
+		"--results-dir=" + d.Config.TempDir,
 		"--fail-threshold 10000",
 	}
 	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		CaptureOutput: false,
-		Command:       fmt.Sprintf("qodana-%s %s", linter, strings.Join(scanOpts, " ")),
-		WorkDir:       ctx.Module.ModuleDir,
+		Command:       fmt.Sprintf("qodana scan %s", strings.Join(scanOpts, " ")),
+		Constraint:    "",
+		WorkDir:       d.Module.ModuleDir,
 		Env: map[string]string{
-			"QODANA_TOKEN":      ctx.Env["QODANA_TOKEN"],
-			"QODANA_REMOTE_URL": ctx.Env["NCI_REPOSITORY_REMOTE"],
-			"QODANA_BRANCH":     ctx.Env["NCI_COMMIT_REF_NAME"],
-			"QODANA_REVISION":   ctx.Env["NCI_COMMIT_HASH"],
+			"QODANA_TOKEN":      d.Env["QODANA_TOKEN"],
+			"QODANA_REMOTE_URL": d.Env["NCI_REPOSITORY_REMOTE"],
+			"QODANA_BRANCH":     d.Env["NCI_COMMIT_REF_NAME"],
+			"QODANA_REVISION":   d.Env["NCI_COMMIT_HASH"],
 			//"QODANA_JOB_URL":    ...,
 		},
 	})
@@ -112,7 +176,7 @@ func (a Action) Execute() (err error) {
 	}
 
 	// parse / validate report
-	qodanaReportFile := fmt.Sprintf("%s/qodana.sarif.json", ctx.Config.TempDir)
+	qodanaReportFile := fmt.Sprintf("%s/qodana.sarif.json", d.Config.TempDir)
 	content, err := a.Sdk.FileRead(qodanaReportFile)
 	if err != nil {
 		return err
@@ -124,8 +188,8 @@ func (a Action) Execute() (err error) {
 
 	// store result
 	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
-		File:          fmt.Sprintf("%s/qodana.sarif.json", ctx.Config.TempDir),
-		Module:        ctx.Module.Slug,
+		File:          fmt.Sprintf("%s/qodana.sarif.json", d.Config.TempDir),
+		Module:        d.Module.Slug,
 		Type:          "report",
 		Format:        "sarif",
 		FormatVersion: report.Version,
