@@ -58,18 +58,15 @@ func (a Action) Execute() (err error) {
 
 	// opts
 	var opts = []string{
-		"gitleaks",
-		"detect",
+		"gitleaks", "detect",
 		"--source=.",
 		"-v",
 		"--no-git",
 		"--report-format=sarif",
-		"--report-path=" + reportFile,
+		fmt.Sprintf("--report-path=%q", reportFile),
 		"--no-banner",
+		"--redact=85", // redact 85% of the secret
 		"--exit-code 0",
-	}
-	if ctx.Env["CI"] == "true" {
-		opts = append(opts, "--redact")
 	}
 
 	// scan
