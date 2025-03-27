@@ -10,7 +10,7 @@ require (
 	github.com/cidverse/cidverseutils/core v0.0.0-20250318215805-037061ab84fc
 	github.com/cidverse/cidverseutils/filesystem v0.1.2-0.20250318215805-037061ab84fc
 	github.com/cidverse/cidverseutils/version v0.1.0
-	github.com/containers/image/v5 v5.34.2
+	github.com/containers/image/v5 v5.34.3
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/go-github/v70 v70.0.0
