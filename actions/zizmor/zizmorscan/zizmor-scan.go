@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/owenrumney/go-sarif/v3/pkg/report/v210/sarif"
+	"github.com/go-playground/validator/v10"
 )
 
 type Action struct {
@@ -13,6 +13,8 @@ type Action struct {
 }
 
 type Config struct {
+	GHHost  string `json:"gh_host"  env:"GH_HOST"`
+	GHToken string `json:"gh_token"  env:"GH_TOKEN"`
 }
 
 func (a Action) Metadata() cidsdk.ActionMetadata {
@@ -41,6 +43,14 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:        "GH_TOKEN",
 					Description: "GH_TOKEN is required for some online audits",
 				},
+				{
+					Name:        "ZIZMOR_NO_ONLINE_AUDITS",
+					Description: "Disables online audits.",
+				},
+				{
+					Name:        "ZIZMOR_OFFLINE",
+					Description: "Runs in offline mode.",
+				},
 			},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
@@ -60,25 +70,60 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 	}
 }
 
-func (a Action) Execute() (err error) {
+func (a Action) GetConfig(d *cidsdk.ProjectActionData) (Config, error) {
 	cfg := Config{}
-	ctx, err := a.Sdk.ProjectAction(&cfg)
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
+	if cfg.GHHost == "" {
+		cfg.GHHost = "github.com"
+	}
+
+	// validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(cfg)
+	if err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
+func (a Action) Execute() (err error) {
+	// query action data
+	d, err := a.Sdk.ProjectActionDataV1()
+	if err != nil {
+		return err
+	}
+
+	// parse config
+	cfg, err := a.GetConfig(d)
 	if err != nil {
 		return err
 	}
 
 	// files
-	reportFile := cidsdk.JoinPath(ctx.Config.TempDir, "zizmor.sarif.json")
+	reportFile := cidsdk.JoinPath(d.Config.TempDir, "zizmor.sarif.json")
 
 	// scan
-	var opts = []string{".", "--format", "sarif", "-q"}
+	var opts = []string{
+		"zizmor",
+		".",
+		"--format", "sarif",
+		"--no-online-audits", // online audits need a non-project token to lookup other repos
+	}
 	resp, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command:       strings.TrimRight(`zizmor `+strings.Join(opts, " "), " "),
-		WorkDir:       ctx.ProjectDir,
+		Command: strings.Join(opts, " "),
+		WorkDir: d.ProjectDir,
+		Env: map[string]string{
+			"GH_HOST":  cfg.GHHost,
+			"GH_TOKEN": cfg.GHToken,
+		},
 		CaptureOutput: true,
 	})
 	if err != nil {
 		return err
+	} else if resp.Code != 0 {
+		return fmt.Errorf("zizmor scan failed, exit code %d. Stderr: %s", resp.Code, resp.Stderr)
 	}
 
 	// write and parse report
@@ -87,17 +132,13 @@ func (a Action) Execute() (err error) {
 	if err != nil {
 		return fmt.Errorf("failed to write report content to file %s: %s", reportFile, err.Error())
 	}
-	report, err := sarif.FromBytes(sarifContent)
-	if err != nil {
-		return err
-	}
 
 	// store report
 	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
 		File:          reportFile,
 		Type:          "report",
 		Format:        "sarif",
-		FormatVersion: report.Version,
+		FormatVersion: "2.1.0",
 	})
 	if err != nil {
 		return err

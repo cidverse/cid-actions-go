@@ -8,6 +8,7 @@ import (
 	"github.com/cidverse/cid-actions-go/pkg/githubapi"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cidverseutils/compress"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/go-github/v70/github"
 	"golang.org/x/oauth2"
 )
@@ -29,7 +30,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",
-				Expression: `hasPrefix(ENV["NCI_REPOSITORY_REMOTE"], "https://github.com/") && ENV["GITHUB_TOKEN"] != ""`,
+				Expression: `hasPrefix(ENV["NCI_REPOSITORY_REMOTE"], "https://github.com/")`,
 			},
 		},
 		Access: cidsdk.ActionAccess{
@@ -38,6 +39,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:        "GITHUB_TOKEN",
 					Description: "The GitHub token to use for uploading the SARIF file.",
 					Required:    true,
+					Secret:      true,
 				},
 			},
 			Executables: []cidsdk.ActionAccessExecutable{},
@@ -53,16 +55,36 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 	}
 }
 
-func (a Action) Execute() (err error) {
+func (a Action) GetConfig(d *cidsdk.ProjectActionData) (Config, error) {
 	cfg := Config{}
-	ctx, err := a.Sdk.ProjectAction(&cfg)
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
+	// validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(cfg)
+	if err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
+func (a Action) Execute() (err error) {
+	// query action data
+	d, err := a.Sdk.ProjectActionDataV1()
+	if err != nil {
+		return err
+	}
+
+	// parse config
+	cfg, err := a.GetConfig(d)
 	if err != nil {
 		return err
 	}
 
 	// properties
-	organization := githubapi.GetGithubOrganizationFromRemote(ctx.Env["NCI_REPOSITORY_REMOTE"])
-	repository := githubapi.GetGithubRepositoryFromRemote(ctx.Env["NCI_REPOSITORY_REMOTE"])
+	organization := githubapi.GetGithubOrganizationFromRemote(d.Env["NCI_REPOSITORY_REMOTE"])
+	repository := githubapi.GetGithubRepositoryFromRemote(d.Env["NCI_REPOSITORY_REMOTE"])
 
 	// GitHub Client
 	ts := oauth2.StaticTokenSource(
@@ -92,14 +114,14 @@ func (a Action) Execute() (err error) {
 		}
 
 		// git reference (sarif upload with pull request ref will result in pull request comments)
-		ref := ctx.Env["NCI_COMMIT_REF_VCS"]
-		if ctx.Env["NCI_PIPELINE_TRIGGER"] == "merge_request" && ctx.Env["NCI_MERGE_REQUEST_ID"] != "" {
-			ref = fmt.Sprintf("refs/pull/%s/merge", ctx.Env["NCI_MERGE_REQUEST_ID"])
+		ref := d.Env["NCI_COMMIT_REF_VCS"]
+		if d.Env["NCI_PIPELINE_TRIGGER"] == "merge_request" && d.Env["NCI_MERGE_REQUEST_ID"] != "" {
+			ref = fmt.Sprintf("refs/pull/%s/merge", d.Env["NCI_MERGE_REQUEST_ID"])
 		}
 
 		// upload
-		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading sarif report to github code scanning api", Context: map[string]interface{}{"report": report.Name, "ref": ref, "commit_hash": ctx.Env["NCI_COMMIT_HASH"]}})
-		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.String(ctx.Env["NCI_COMMIT_HASH"]), Ref: github.String(ref), Sarif: github.String(sarifEncoded), CheckoutURI: github.String(ctx.Config.ProjectDir)}
+		_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "info", Message: "uploading sarif report to github code scanning api", Context: map[string]interface{}{"report": report.Name, "ref": ref, "commit_hash": d.Env["NCI_COMMIT_HASH"]}})
+		sarifAnalysis := &github.SarifAnalysis{CommitSHA: github.Ptr(d.Env["NCI_COMMIT_HASH"]), Ref: github.Ptr(ref), Sarif: github.Ptr(sarifEncoded), CheckoutURI: github.Ptr(d.Config.ProjectDir)}
 		sarifId, _, reportErr := client.CodeScanning.UploadSarif(context.Background(), organization, repository, sarifAnalysis)
 
 		if reportErr != nil {

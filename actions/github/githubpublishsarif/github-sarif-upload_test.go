@@ -7,14 +7,14 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/google/go-github/v70/github"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestGithubSarifUpload(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
+	sdk.On("ProjectActionDataV1").Return(github.Ptr(api.GetProjectActionData(false)), nil)
 	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "report" && format == "sarif" && format_version == "2.1.0"`}).Return(&[]cidsdk.ActionArtifact{
 		{
 			BuildID:       "0",

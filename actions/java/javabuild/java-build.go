@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/actions/java/javacommon"
+	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -36,6 +37,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Access: cidsdk.ActionAccess{
 			Environment: []cidsdk.ActionAccessEnv{},
 			Executables: []cidsdk.ActionAccessExecutable{},
+			Network:     util.MergeActionAccessNetwork(javacommon.NetworkJvm, javacommon.NetworkGradle),
 		},
 	}
 }

@@ -39,6 +39,24 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Constraint: "=> 1.16.0",
 				},
 			},
+			Network: []cidsdk.ActionAccessNetwork{
+				{
+					Host: "proxy.golang.org:443",
+				},
+				{
+					Host: "storage.googleapis.com:443",
+				},
+				{
+					Host: "sum.golang.org:443",
+				},
+			},
+		},
+		Output: cidsdk.ActionOutput{
+			Artifacts: []cidsdk.ActionArtifactType{
+				{
+					Type: "binary",
+				},
+			},
 		},
 	}
 }

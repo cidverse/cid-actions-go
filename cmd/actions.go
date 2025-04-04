@@ -132,7 +132,7 @@ func getActions(sdk *cidsdk.SDK) map[string]cidsdk.Action {
 		// upx-optimize
 		upxoptimize.Action{Sdk: *sdk},
 		// semgrep
-		semgrepscan.ScanAction{Sdk: *sdk},
+		semgrepscan.Action{Sdk: *sdk},
 		// qodana
 		qodanascan.Action{Sdk: *sdk},
 		// github

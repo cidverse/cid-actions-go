@@ -8,24 +8,21 @@ import (
 	"github.com/cidverse/cid-actions-go/testdata"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-//go:embed files/report.sarif.json
-var reportJson string
 
 func TestSemgrepScan(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(testdata.ModuleDefault(nil, false), nil)
+	sdk.On("ProjectActionDataV1").Return(testdata.ModuleDefault(nil, false), nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command:       "semgrep ci --sarif --quiet --metrics=off --disable-version-check --exclude=.dist --exclude=.tmp --config \"p/ci\"",
-		WorkDir:       "/my-project",
-		CaptureOutput: true,
+		Command: `semgrep ci --text --sarif-output="/my-project/.tmp/semgrep.sarif.json" --metrics=off --disable-version-check --exclude=.dist --exclude=.tmp --config "p/ci"`,
+		WorkDir: "/my-project",
+		Env: map[string]string{
+			"SEMGREP_APP_TOKEN": "",
+			"SEMGREP_RULES":     "",
+		},
 	}).Return(&cidsdk.ExecuteCommandResponse{
-		Code:   0,
-		Stdout: reportJson,
+		Code: 0,
 	}, nil)
-	sdk.On("FileWrite", "/my-project/.tmp/semgrep.sarif.json", []byte(reportJson)).Return(nil)
 	sdk.On("ArtifactUpload", cidsdk.ArtifactUploadRequest{
 		File:          "/my-project/.tmp/semgrep.sarif.json",
 		Type:          "report",
@@ -33,7 +30,7 @@ func TestSemgrepScan(t *testing.T) {
 		FormatVersion: "2.1.0",
 	}).Return(nil)
 
-	action := ScanAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
@@ -60,7 +57,7 @@ func TestSemgrepPRScan(t *testing.T) {
 		FormatVersion: "2.1.0",
 	}).Return(nil)
 
-	action := ScanAction{Sdk: sdk}
+	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }

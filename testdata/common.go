@@ -4,7 +4,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-func ModuleDefault(env map[string]string, debug bool) cidsdk.ProjectActionData {
+func ModuleDefault(env map[string]string, debug bool) *cidsdk.ProjectActionData {
 	m := cidsdk.ProjectActionData{
 		ProjectDir: "/my-project",
 		Config: cidsdk.CurrentConfig{
@@ -29,5 +29,5 @@ func ModuleDefault(env map[string]string, debug bool) cidsdk.ProjectActionData {
 	for k, v := range env {
 		m.Env[k] = v
 	}
-	return m
+	return &m
 }

@@ -22,7 +22,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
         	- This action requires the UPX_ENABLED environment variable to be set to true.
         	- upx requires a lot of compute resources and runs for a long time, only use this action if you have enough resources available (public ci providers have limits).`,
 		Category: "optimize",
-		Scope:    cidsdk.ActionScopeModule,
+		Scope:    cidsdk.ActionScopeProject,
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",
@@ -34,6 +34,13 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
 					Name: "upx",
+				},
+			},
+		},
+		Input: cidsdk.ActionInput{
+			Artifacts: []cidsdk.ActionArtifactType{
+				{
+					Type: "binary",
 				},
 			},
 		},

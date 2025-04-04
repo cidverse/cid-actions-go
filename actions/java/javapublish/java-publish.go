@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/actions/java/javacommon"
+	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
@@ -103,6 +104,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name: "java",
 				},
 			},
+			Network: util.MergeActionAccessNetwork(javacommon.NetworkJvm, javacommon.NetworkGradle, javacommon.NetworkPublish),
 		},
 	}
 }
