@@ -15,7 +15,7 @@ require (
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/go-github/v70 v70.0.0
 	github.com/gosimple/slug v1.15.0
-	github.com/jarcoal/httpmock v1.3.1
+	github.com/jarcoal/httpmock v1.4.0
 	github.com/oriser/regroup v0.0.0-20240925165441-f6bb0e08289e
 	github.com/otiai10/copy v1.14.1
 	github.com/owenrumney/go-sarif/v3 v3.0.2
