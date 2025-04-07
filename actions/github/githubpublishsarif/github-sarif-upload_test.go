@@ -7,7 +7,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
-	"github.com/google/go-github/v70/github"
+	"github.com/google/go-github/v71/github"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 )
