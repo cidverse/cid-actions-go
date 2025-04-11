@@ -21,6 +21,9 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/golang/golanglint"
 	"github.com/cidverse/cid-actions-go/actions/golang/golangtest"
 	"github.com/cidverse/cid-actions-go/actions/gosec/gosecscan"
+	"github.com/cidverse/cid-actions-go/actions/gradle/gradlebuild"
+	"github.com/cidverse/cid-actions-go/actions/gradle/gradlepublish"
+	"github.com/cidverse/cid-actions-go/actions/gradle/gradletest"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmbuild"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmdeploy"
 	"github.com/cidverse/cid-actions-go/actions/helm/helmlint"
@@ -30,9 +33,9 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/helmfile/helmfilelint"
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugobuild"
 	"github.com/cidverse/cid-actions-go/actions/hugo/hugostart"
-	"github.com/cidverse/cid-actions-go/actions/java/javabuild"
-	"github.com/cidverse/cid-actions-go/actions/java/javapublish"
-	"github.com/cidverse/cid-actions-go/actions/java/javatest"
+	"github.com/cidverse/cid-actions-go/actions/maven/mavenbuild"
+	"github.com/cidverse/cid-actions-go/actions/maven/mavenpublish"
+	"github.com/cidverse/cid-actions-go/actions/maven/maventest"
 	"github.com/cidverse/cid-actions-go/actions/mkdocs/mkdocsbuild"
 	"github.com/cidverse/cid-actions-go/actions/mkdocs/mkdocsstart"
 	"github.com/cidverse/cid-actions-go/actions/node/nodebuild"
@@ -95,10 +98,14 @@ func getActions(sdk *cidsdk.SDK) map[string]cidsdk.Action {
 		// helmfile
 		helmfilelint.Action{Sdk: *sdk},
 		helmfiledeploy.Action{Sdk: *sdk},
-		// java
-		javabuild.Action{Sdk: *sdk},
-		javatest.Action{Sdk: *sdk},
-		javapublish.Action{Sdk: *sdk},
+		// gradle
+		gradlebuild.Action{Sdk: *sdk},
+		gradletest.Action{Sdk: *sdk},
+		gradlepublish.Action{Sdk: *sdk},
+		// maven
+		mavenbuild.Action{Sdk: *sdk},
+		maventest.Action{Sdk: *sdk},
+		mavenpublish.Action{Sdk: *sdk},
 		// node
 		nodebuild.Action{Sdk: *sdk},
 		nodetest.Action{Sdk: *sdk},

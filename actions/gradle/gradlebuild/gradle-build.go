@@ -1,0 +1,111 @@
+package gradlebuild
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/cidverse/cid-actions-go/actions/gradle/gradlecommon"
+	"github.com/cidverse/cid-actions-go/util"
+	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/go-playground/validator/v10"
+)
+
+type Action struct {
+	Sdk cidsdk.SDKClient
+}
+
+type Config struct {
+	WrapperVerification bool   `json:"wrapper_verification" env:"WRAPPER_VERIFICATION"`
+	MavenVersion        string `json:"maven_version"        env:"MAVEN_VERSION"`
+}
+
+func (a Action) Metadata() cidsdk.ActionMetadata {
+	return cidsdk.ActionMetadata{
+		Name:        "gradle-build",
+		Description: `Builds the java module using the configured build system.`,
+		Category:    "build",
+		Scope:       cidsdk.ActionScopeModule,
+		Rules: []cidsdk.ActionRule{
+			{
+				Type:       "cel",
+				Expression: `MODULE_BUILD_SYSTEM == "gradle"`,
+			},
+		},
+		Access: cidsdk.ActionAccess{
+			Environment: []cidsdk.ActionAccessEnv{
+				{
+					Name:        "WRAPPER_VERIFICATION",
+					Description: "Enable verification of the gradle wrapper",
+				},
+			},
+			Executables: []cidsdk.ActionAccessExecutable{},
+			Network:     util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle),
+		},
+	}
+}
+
+func (a Action) GetConfig(d *cidsdk.ModuleActionData) (Config, error) {
+	cfg := Config{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
+	// version
+	if cfg.MavenVersion == "" {
+		cfg.MavenVersion = gradlecommon.GetVersion(d.Env["NCI_COMMIT_REF_TYPE"], d.Env["NCI_COMMIT_REF_RELEASE"], d.Env["NCI_COMMIT_HASH_SHORT"])
+	}
+
+	// validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(cfg)
+	if err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
+func (a Action) Execute() (err error) {
+	// query action data
+	d, err := a.Sdk.ModuleActionDataV1()
+	if err != nil {
+		return err
+	}
+
+	// parse config
+	cfg, err := a.GetConfig(d)
+	if err != nil {
+		return err
+	}
+
+	// verify gradle wrapper
+	if cfg.WrapperVerification {
+		err = gradlecommon.VerifyGradleWrapper(d.Module.ModuleDir)
+		if err != nil {
+			return err
+		}
+	}
+
+	gradleWrapper := cidsdk.JoinPath(d.Module.ModuleDir, "gradlew")
+	if !a.Sdk.FileExists(gradleWrapper) {
+		return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
+	}
+
+	buildArgs := []string{
+		fmt.Sprintf(`-Pversion=%q`, cfg.MavenVersion),
+		`assemble`,
+		`--no-daemon`,
+		`--warning-mode=all`,
+		`--console=plain`,
+		`--stacktrace`,
+	}
+	buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: gradlecommon.GradleWrapperCommand(strings.Join(buildArgs, " "), d.Module.ModuleDir),
+		WorkDir: d.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	} else if buildResult.Code != 0 {
+		return fmt.Errorf("gradle build failed, exit code %d", buildResult.Code)
+	}
+
+	return nil
+}

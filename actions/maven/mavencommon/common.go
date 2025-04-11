@@ -1,10 +1,10 @@
-package javacommon
+package mavencommon
 
 import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 )
 
-func GradleTestData(env map[string]string, debug bool) *cidsdk.ModuleActionData {
+func MavenTestData(env map[string]string, debug bool) *cidsdk.ModuleActionData {
 	env["NCI_COMMIT_REF_TYPE"] = "tag"
 	env["NCI_COMMIT_REF_RELEASE"] = "1.0.0"
 	return &cidsdk.ModuleActionData{
@@ -12,11 +12,11 @@ func GradleTestData(env map[string]string, debug bool) *cidsdk.ModuleActionData 
 		Module: cidsdk.ProjectModule{
 			ProjectDir:        "/my-project",
 			ModuleDir:         "/my-project",
-			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/build.gradle.kts"}},
+			Discovery:         []cidsdk.ProjectModuleDiscovery{{File: "/my-project/pom.xml"}},
 			Name:              "my-module",
 			Slug:              "my-module",
-			BuildSystem:       string(cidsdk.BuildSystemGradle),
-			BuildSystemSyntax: string(cidsdk.BuildSystemSyntaxGradleKotlinDSL),
+			BuildSystem:       string(cidsdk.BuildSystemMaven),
+			BuildSystemSyntax: string(cidsdk.BuildSystemSyntaxDefault),
 			Language:          &map[string]string{},
 			Submodules:        nil,
 		},

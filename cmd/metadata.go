@@ -30,7 +30,7 @@ func metadataCmd() *cobra.Command {
 			}
 
 			// output as json
-			output, err := json.Marshal(metadata)
+			output, err := json.MarshalIndent(metadata, "", "  ")
 			if err != nil {
 				fmt.Println("Fatal: Failed to marshal metadata: " + err.Error())
 				os.Exit(1)

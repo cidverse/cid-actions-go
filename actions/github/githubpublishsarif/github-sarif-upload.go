@@ -37,7 +37,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			Environment: []cidsdk.ActionAccessEnv{
 				{
 					Name:        "GITHUB_TOKEN",
-					Description: "The GitHub token to use for uploading the SARIF file.",
+					Description: "The GitHub token to use for uploading the SARIF file. This token is available automatically in the GitHub Actions environment.",
 					Required:    true,
 					Secret:      true,
 				},
@@ -94,7 +94,7 @@ func (a Action) Execute() (err error) {
 	client := github.NewClient(tc)
 
 	// iterate over all sarif reports
-	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "report" && format == "sarif" && format_version == "2.1.0"`})
+	artifacts, err := a.Sdk.ArtifactList(cidsdk.ArtifactListRequest{Query: `artifact_type == "report" && format == "sarif"`})
 	if err != nil {
 		return err
 	}

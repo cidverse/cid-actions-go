@@ -1,12 +1,14 @@
-package javapublish
+package mavenpublish
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/cidverse/cid-actions-go/actions/java/javacommon"
+	"github.com/cidverse/cid-actions-go/actions/gradle/gradlecommon"
+	"github.com/cidverse/cid-actions-go/actions/maven/mavencommon"
 	"github.com/cidverse/cid-actions-go/util"
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/go-playground/validator/v10"
 )
 
 type Action struct {
@@ -26,7 +28,7 @@ type Config struct {
 
 func (a Action) Metadata() cidsdk.ActionMetadata {
 	return cidsdk.ActionMetadata{
-		Name: "java-publish",
+		Name: "maven-publish",
 		Description: `This action publishes maven artifacts.
 
         **Publication**
@@ -50,10 +52,6 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Category: "publish",
 		Scope:    cidsdk.ActionScopeModule,
 		Rules: []cidsdk.ActionRule{
-			{
-				Type:       "cel",
-				Expression: `MODULE_BUILD_SYSTEM == "gradle" && getMapValue(ENV, "MAVEN_REPO_URL") != ""`,
-			},
 			{
 				Type:       "cel",
 				Expression: `MODULE_BUILD_SYSTEM == "maven" && getMapValue(ENV, "MAVEN_REPO_URL") != ""`,
@@ -97,6 +95,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Name:        "GITHUB_TOKEN",
 					Description: "The GitHub token to use for pushing the artifacts to a maven repository on GitHub Packages (https://maven.pkg.github.com/).",
+					Secret:      true,
 				},
 			},
 			Executables: []cidsdk.ActionAccessExecutable{
@@ -104,9 +103,28 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name: "java",
 				},
 			},
-			Network: util.MergeActionAccessNetwork(javacommon.NetworkJvm, javacommon.NetworkGradle, javacommon.NetworkPublish),
+			Network: util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle, gradlecommon.NetworkPublish),
 		},
 	}
+}
+
+func (a Action) GetConfig(d *cidsdk.ModuleActionData) (Config, error) {
+	cfg := Config{}
+	cidsdk.PopulateFromEnv(&cfg, d.Env)
+
+	// version
+	if cfg.MavenVersion == "" {
+		cfg.MavenVersion = gradlecommon.GetVersion(d.Env["NCI_COMMIT_REF_TYPE"], d.Env["NCI_COMMIT_REF_RELEASE"], d.Env["NCI_COMMIT_HASH_SHORT"])
+	}
+
+	// validate
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(cfg)
+	if err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
 }
 
 func (a Action) Execute() (err error) {
@@ -117,8 +135,10 @@ func (a Action) Execute() (err error) {
 	}
 
 	// parse config
-	cfg := Config{}
-	cidsdk.PopulateFromEnv(&cfg, d.Env)
+	cfg, err := a.GetConfig(d)
+	if err != nil {
+		return err
+	}
 
 	// github packages
 	if strings.HasPrefix(cfg.MavenRepositoryUrl, "https://maven.pkg.github.com/") {
@@ -130,79 +150,37 @@ func (a Action) Execute() (err error) {
 		}
 	}
 
+	// wrapper
+	mavenWrapper := cidsdk.JoinPath(d.Module.ModuleDir, "mvnw")
+	if !a.Sdk.FileExists(mavenWrapper) {
+		return fmt.Errorf("maven wrapper not found at %s", mavenWrapper)
+	}
+
 	// version
-	if cfg.MavenVersion == "" {
-		cfg.MavenVersion = javacommon.GetVersion(d.Env["NCI_COMMIT_REF_TYPE"], d.Env["NCI_COMMIT_REF_RELEASE"], d.Env["NCI_COMMIT_HASH_SHORT"])
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: mavencommon.MavenWrapperCommand(fmt.Sprintf("versions:set -DnewVersion=%q", cfg.MavenVersion)),
+		WorkDir: d.Module.ModuleDir,
+	})
+	if err != nil {
+		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("maven build failed, exit code %d", cmdResult.Code)
 	}
 
 	// publish
-	if d.Module.BuildSystem == string(cidsdk.BuildSystemGradle) {
-		// verify gradle wrapper
-		if cfg.WrapperVerification {
-			err = javacommon.VerifyGradleWrapper(d.Module.ModuleDir)
-			if err != nil {
-				return err
-			}
-		}
-
-		gradleWrapper := cidsdk.JoinPath(d.Module.ModuleDir, "gradlew")
-		if !a.Sdk.FileExists(gradleWrapper) {
-			return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
-		}
-
-		// TODO: run "gradle tasks --all" and check if the "publish" task is available?
-		publishEnv := make(map[string]string)
-		if cfg.GPGSignKeyId != "" {
-			publishEnv["ORG_GRADLE_PROJECT_signingKeyId"] = cfg.GPGSignKeyId
-		}
-		if cfg.GPGSignPrivateKey != "" {
-			publishEnv["ORG_GRADLE_PROJECT_signingKey"] = cfg.GPGSignPrivateKey
-		}
-		if cfg.GPGSignPassword != "" {
-			publishEnv["ORG_GRADLE_PROJECT_signingPassword"] = cfg.GPGSignPassword
-		}
-		publishEnv["MAVEN_REPO_URL"] = cfg.MavenRepositoryUrl
-		publishEnv["MAVEN_REPO_USERNAME"] = cfg.MavenRepositoryUsername
-		publishEnv["MAVEN_REPO_PASSWORD"] = cfg.MavenRepositoryPassword
-
-		// args
-		publishArgs := []string{
-			fmt.Sprintf(`-Pversion=%q`, cfg.MavenVersion),
-			`publish`,
-			`--no-daemon`,
-			`--warning-mode=all`,
-			`--console=plain`,
-			`--stacktrace`,
-		}
-		publishResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("java-exec %s %s", gradleWrapper, strings.Join(publishArgs, " ")),
-			WorkDir: d.Module.ModuleDir,
-			Env:     publishEnv,
-		})
-		if err != nil {
-			return err
-		} else if publishResult.Code != 0 {
-			return fmt.Errorf("gradle publish failed, exit code %d", publishResult.Code)
-		}
-	} else if d.Module.BuildSystem == string(cidsdk.BuildSystemMaven) {
-		mavenWrapper := cidsdk.JoinPath(d.Module.ModuleDir, "mvnw")
-		if !a.Sdk.FileExists(mavenWrapper) {
-			return fmt.Errorf("maven wrapper not found at %s", mavenWrapper)
-		}
-
-		buildArgs := []string{
-			`deploy`,
-			`--batch-mode`,
-		}
-		buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-			Command: fmt.Sprintf("java-exec %s %s", mavenWrapper, strings.Join(buildArgs, " ")),
-			WorkDir: d.Module.ModuleDir,
-		})
-		if err != nil {
-			return err
-		} else if buildResult.Code != 0 {
-			return fmt.Errorf("maven publish failed, exit code %d", buildResult.Code)
-		}
+	cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: mavencommon.MavenWrapperCommand(`deploy --batch-mode`),
+		WorkDir: d.Module.ModuleDir,
+		Env: map[string]string{
+			"MAVEN_REPO_URL":      cfg.MavenRepositoryUrl,
+			"MAVEN_REPO_USERNAME": cfg.MavenRepositoryUsername,
+			"MAVEN_REPO_PASSWORD": cfg.MavenRepositoryPassword,
+		},
+	})
+	if err != nil {
+		return err
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("maven build failed, exit code %d", cmdResult.Code)
 	}
 
 	return nil

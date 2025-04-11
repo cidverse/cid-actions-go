@@ -1,25 +1,29 @@
-package javapublish
+package mavenpublish
 
 import (
 	"testing"
 
-	"github.com/cidverse/cid-actions-go/actions/java/javacommon"
+	"github.com/cidverse/cid-actions-go/actions/maven/mavencommon"
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestJavaPublishGradle(t *testing.T) {
+func TestMavenPublish(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ModuleActionDataV1").Return(javacommon.GradleTestData(map[string]string{
+	sdk.On("ModuleActionDataV1").Return(mavencommon.MavenTestData(map[string]string{
 		"WRAPPER_VERIFICATION": "false",
 		"MAVEN_REPO_URL":       "http://localhost:9100/test",
 		"MAVEN_REPO_USERNAME":  "admin",
 		"MAVEN_REPO_PASSWORD":  "secret",
 	}, false), nil)
-	sdk.On("FileExists", "/my-project/gradlew").Return(true)
+	sdk.On("FileExists", "/my-project/mvnw").Return(true)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `java-exec /my-project/gradlew -Pversion="1.0.0" publish --no-daemon --warning-mode=all --console=plain --stacktrace`,
+		Command: `java -classpath=".mvn/wrapper/maven-wrapper.jar" org.apache.maven.wrapper.MavenWrapperMain versions:set -DnewVersion="1.0.0"`,
+		WorkDir: "/my-project",
+	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
+		Command: `java -classpath=".mvn/wrapper/maven-wrapper.jar" org.apache.maven.wrapper.MavenWrapperMain deploy --batch-mode`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"MAVEN_REPO_URL":      "http://localhost:9100/test",

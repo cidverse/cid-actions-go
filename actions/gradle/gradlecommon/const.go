@@ -1,4 +1,4 @@
-package javacommon
+package gradlecommon
 
 import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
