@@ -21,7 +21,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Name:        "hugo-start",
 		Description: "Starts the hugo server for local development.",
 		Category:    "dev",
-		Scope:       cidsdk.ActionScopeProject,
+		Scope:       cidsdk.ActionScopeModule,
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",

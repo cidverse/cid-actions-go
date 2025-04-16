@@ -19,7 +19,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Name:        "hugo-build",
 		Description: "Builds the hugo project and stores the generated static files for later publication.",
 		Category:    "build",
-		Scope:       cidsdk.ActionScopeProject,
+		Scope:       cidsdk.ActionScopeModule,
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",

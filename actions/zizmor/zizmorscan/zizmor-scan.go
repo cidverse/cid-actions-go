@@ -43,6 +43,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:        "GH_TOKEN",
 					Description: "GH_TOKEN is required for some online audits",
 				},
+				/*
 				{
 					Name:        "ZIZMOR_NO_ONLINE_AUDITS",
 					Description: "Disables online audits.",
@@ -50,7 +51,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Name:        "ZIZMOR_OFFLINE",
 					Description: "Runs in offline mode.",
-				},
+				},*/
 			},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{

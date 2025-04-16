@@ -70,22 +70,27 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Name:        "MAVEN_REPO_USERNAME",
 					Description: "The username to use for authentication with the maven repository.",
+					Secret:      true,
 				},
 				{
 					Name:        "MAVEN_REPO_PASSWORD",
 					Description: "The password to use for authentication with the maven repository.",
+					Secret:      true,
 				},
 				{
 					Name:        "MAVEN_GPG_SIGN_PRIVATEKEY",
 					Description: "The ASCII-armored private key (base64 encoded).",
+					Secret:      true,
 				},
 				{
 					Name:        "MAVEN_GPG_SIGN_PASSWORD",
 					Description: "The password for the private key.",
+					Secret:      true,
 				},
 				{
 					Name:        "MAVEN_GPG_SIGN_KEYID",
 					Description: "The GPG key ID, only required when using sub keys.",
+					Secret:      true,
 				},
 				{
 					Name:        "GITHUB_ACTOR",
@@ -116,6 +121,16 @@ func (a Action) GetConfig(d *cidsdk.ModuleActionData) (Config, error) {
 		cfg.MavenVersion = gradlecommon.GetVersion(d.Env["NCI_COMMIT_REF_TYPE"], d.Env["NCI_COMMIT_REF_RELEASE"], d.Env["NCI_COMMIT_HASH_SHORT"])
 	}
 
+	// github packages
+	if strings.HasPrefix(cfg.MavenRepositoryUrl, "https://maven.pkg.github.com/") {
+		if cfg.MavenRepositoryUsername == "" {
+			cfg.MavenRepositoryUsername = d.Env["GITHUB_ACTOR"]
+		}
+		if cfg.MavenRepositoryPassword == "" {
+			cfg.MavenRepositoryPassword = d.Env["GITHUB_TOKEN"]
+		}
+	}
+
 	// validate
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	err := validate.Struct(cfg)
@@ -137,16 +152,6 @@ func (a Action) Execute() (err error) {
 	cfg, err := a.GetConfig(d)
 	if err != nil {
 		return err
-	}
-
-	// github packages
-	if strings.HasPrefix(cfg.MavenRepositoryUrl, "https://maven.pkg.github.com/") {
-		if cfg.MavenRepositoryUsername == "" {
-			cfg.MavenRepositoryUsername = d.Env["GITHUB_ACTOR"]
-		}
-		if cfg.MavenRepositoryPassword == "" {
-			cfg.MavenRepositoryPassword = d.Env["GITHUB_TOKEN"]
-		}
 	}
 
 	// verify gradle wrapper
@@ -173,6 +178,8 @@ func (a Action) Execute() (err error) {
 	if cfg.GPGSignPassword != "" {
 		publishEnv["ORG_GRADLE_PROJECT_signingPassword"] = cfg.GPGSignPassword
 	}
+
+	// maven repository (project needs to support this)
 	publishEnv["MAVEN_REPO_URL"] = cfg.MavenRepositoryUrl
 	publishEnv["MAVEN_REPO_USERNAME"] = cfg.MavenRepositoryUsername
 	publishEnv["MAVEN_REPO_PASSWORD"] = cfg.MavenRepositoryPassword
