@@ -5,12 +5,12 @@ go 1.24
 toolchain go1.24.0
 
 require (
-	github.com/cidverse/cid-sdk-go v0.0.0-20250404161503-6e8efdb0dc81
+	github.com/cidverse/cid-sdk-go v0.0.0-20250414231155-b49bf610b6c3
 	github.com/cidverse/cidverseutils/compress v0.1.1
 	github.com/cidverse/cidverseutils/core v0.0.0-20250401202032-ac7521ed90dd
 	github.com/cidverse/cidverseutils/filesystem v0.1.2-0.20250318215805-037061ab84fc
 	github.com/cidverse/cidverseutils/version v0.1.0
-	github.com/containers/image/v5 v5.34.3
+	github.com/containers/image/v5 v5.35.0
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/go-github/v71 v71.0.0
@@ -30,7 +30,7 @@ require (
 	github.com/charlievieth/fastwalk v1.0.10 // indirect
 	github.com/containers/libtrust v0.0.0-20230121012942-c1716e8a8d01 // indirect
 	github.com/containers/ocicrypt v1.2.1 // indirect
-	github.com/containers/storage v1.57.2 // indirect
+	github.com/containers/storage v1.58.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/docker/docker v28.0.4+incompatible // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
