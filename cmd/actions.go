@@ -56,6 +56,7 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/techdocs/techdocsbuild"
 	"github.com/cidverse/cid-actions-go/actions/techdocs/techdocspublish"
 	"github.com/cidverse/cid-actions-go/actions/techdocs/techdocsstart"
+	"github.com/cidverse/cid-actions-go/actions/trivy/trivyfsscan"
 	"github.com/cidverse/cid-actions-go/actions/upx/upxoptimize"
 	"github.com/cidverse/cid-actions-go/actions/zizmor/zizmorscan"
 	cidsdk "github.com/cidverse/cid-sdk-go"
@@ -135,7 +136,7 @@ func getActions(sdk *cidsdk.SDK) map[string]cidsdk.Action {
 		techdocsbuild.Action{Sdk: *sdk},
 		techdocspublish.Action{Sdk: *sdk},
 		// trivy
-		// TODO: trivy.Action{Sdk: *sdk},
+		trivyfsscan.Action{Sdk: *sdk},
 		// upx-optimize
 		upxoptimize.Action{Sdk: *sdk},
 		// semgrep
