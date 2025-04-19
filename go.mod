@@ -22,6 +22,7 @@ require (
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
+	gitlab.com/gitlab-org/api/client-go v0.127.0
 	golang.org/x/oauth2 v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -32,13 +33,15 @@ require (
 	github.com/containers/ocicrypt v1.2.1 // indirect
 	github.com/containers/storage v1.58.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/docker/docker v28.0.4+incompatible // indirect
-	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/docker/docker v28.1.1+incompatible // indirect
+	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -59,5 +62,6 @@ require (
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/time v0.11.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

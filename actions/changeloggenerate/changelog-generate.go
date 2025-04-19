@@ -22,12 +22,19 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Rules: []cidsdk.ActionRule{
 			{
 				Type:       "cel",
-				Expression: `NCI_COMMIT_REF_TYPE == "tag"`,
+				Expression: `CID_WORKFLOW_TYPE == "release"`,
 			},
 		},
 		Access: cidsdk.ActionAccess{
 			Environment: []cidsdk.ActionAccessEnv{},
 			Executables: []cidsdk.ActionAccessExecutable{},
+		},
+		Output: cidsdk.ActionOutput{
+			Artifacts: []cidsdk.ActionArtifactType{
+				{
+					Type:   "changelog",
+				},
+			},
 		},
 	}
 }
@@ -37,6 +44,7 @@ func (a Action) Execute() error {
 	cfg := changelog.Config{
 		Templates: []string{
 			"github.changelog",
+			"gitlab.changelog",
 			"discord.changelog",
 		},
 		CommitPattern: []string{
@@ -125,7 +133,7 @@ func (a Action) Execute() error {
 		}
 
 		// store
-		err := a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
 			File:    templateFile,
 			Content: output,
 			Type:    "changelog",

@@ -5,77 +5,82 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cidverse/cid-actions-go/actions/gitlab/gitlabcommon"
+	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/google/go-github/v71/github"
+	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
-func TestGithubReleasePublishWithChangelog(t *testing.T) {
+func TestGitLabReleasePublishWithChangelog(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(gitlabcommon.GitLabTestData(), nil)
+	sdk.On("ProjectActionDataV1").Return(github.Ptr(api.GetProjectGitLabActionData(false)), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		ID:         "root|changelog|github.changelog",
-		TargetFile: "/my-project/.tmp/github.changelog",
+		ID:         "root|changelog|gitlab.changelog",
+		TargetFile: "/my-project/.tmp/gitlab.changelog",
 	}).Return(nil)
-	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `glab release create "v1.2.0" -F /my-project/.tmp/github.changelog`,
-		WorkDir: "/my-project",
-		Env: map[string]string{
-			"GITLAB_HOST":     "gitlab.com",
-			"GITLAB_API_HOST": "gitlab.com",
-			"GITLAB_TOKEN":    "",
-		},
-	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("FileRead", "/my-project/.tmp/gitlab.changelog").Return(`changes ...`, nil)
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "binary"`}).Return(&[]cidsdk.ActionArtifact{}, nil)
+
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("POST", "https://gitlab.com/api/v4/projects/123456/releases", httpmock.NewStringResponder(200, `{
+   "tag_name":"v0.3",
+   "description":"Super nice release",
+   "name":"New release",
+   "created_at":"2019-01-03T02:22:45.118Z",
+   "released_at":"2019-01-03T02:22:45.118Z"
+}`))
 
 	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
 
-func TestGithubReleasePublishAutoChangelog(t *testing.T) {
+func TestGitLabReleasePublishAutoChangelog(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(gitlabcommon.GitLabTestData(), nil)
+	sdk.On("ProjectActionDataV1").Return(github.Ptr(api.GetProjectGitLabActionData(false)), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		ID:         "root|changelog|github.changelog",
-		TargetFile: "/my-project/.tmp/github.changelog",
+		ID:         "root|changelog|gitlab.changelog",
+		TargetFile: "/my-project/.tmp/gitlab.changelog",
 	}).Return(fmt.Errorf("a error of some kind"))
-	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `glab release create "v1.2.0" --notes "no release notes"`,
-		WorkDir: "/my-project",
-		Env: map[string]string{
-			"GITLAB_HOST":     "gitlab.com",
-			"GITLAB_API_HOST": "gitlab.com",
-			"GITLAB_TOKEN":    "",
-		},
-	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "binary"`}).Return(&[]cidsdk.ActionArtifact{}, nil)
+
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("POST", "https://gitlab.com/api/v4/projects/123456/releases", httpmock.NewStringResponder(200, `{
+   "tag_name":"v0.3",
+   "description":"Super nice release",
+   "name":"New release",
+   "created_at":"2019-01-03T02:22:45.118Z",
+   "released_at":"2019-01-03T02:22:45.118Z"
+}`))
 
 	action := Action{Sdk: sdk}
 	err := action.Execute()
 	assert.NoError(t, err)
 }
 
-func TestGithubReleasePublishSelfHosted(t *testing.T) {
+func TestGitLabReleasePublishSelfHosted(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(gitlabcommon.GitLabSelfHostedTestData(), nil)
+	sdk.On("ProjectActionDataV1").Return(github.Ptr(api.GetProjectGitLabActionData(false)), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
-		ID:         "root|changelog|github.changelog",
-		TargetFile: "/my-project/.tmp/github.changelog",
+		ID:         "root|changelog|gitlab.changelog",
+		TargetFile: "/my-project/.tmp/gitlab.changelog",
 	}).Return(nil)
-	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `glab config set skip_tls_verify true --host "gitlab.local"`,
-		WorkDir: "/my-project",
-	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
-	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `glab release create "v1.2.0" -F /my-project/.tmp/github.changelog`,
-		WorkDir: "/my-project",
-		Env: map[string]string{
-			"GITLAB_HOST":     "gitlab.local",
-			"GITLAB_API_HOST": "gitlab.local",
-			"GITLAB_TOKEN":    "",
-		},
-	}).Return(&cidsdk.ExecuteCommandResponse{Code: 0}, nil)
+	sdk.On("FileRead", "/my-project/.tmp/gitlab.changelog").Return(`changes ...`, nil)
+	sdk.On("ArtifactList", cidsdk.ArtifactListRequest{Query: `artifact_type == "binary"`}).Return(&[]cidsdk.ActionArtifact{}, nil)
+
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("POST", "https://gitlab.com/api/v4/projects/123456/releases", httpmock.NewStringResponder(200, `{
+   "tag_name":"v0.3",
+   "description":"Super nice release",
+   "name":"New release",
+   "created_at":"2019-01-03T02:22:45.118Z",
+   "released_at":"2019-01-03T02:22:45.118Z"
+}`))
 
 	action := Action{Sdk: sdk}
 	err := action.Execute()

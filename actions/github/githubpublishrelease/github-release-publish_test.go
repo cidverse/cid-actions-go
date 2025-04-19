@@ -8,13 +8,13 @@ import (
 	"github.com/cidverse/cid-actions-go/actions/api"
 	"github.com/cidverse/cid-actions-go/pkg/core/test"
 	cidsdk "github.com/cidverse/cid-sdk-go"
+	"github.com/google/go-github/v71/github"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestGithubReleasePublishWithChangelog(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
+	sdk.On("ProjectActionDataV1").Return(github.Ptr(api.GetProjectActionData(false)), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
 		ID:         "root|changelog|github.changelog",
 		TargetFile: "/my-project/.tmp/github.changelog",
@@ -34,7 +34,7 @@ func TestGithubReleasePublishWithChangelog(t *testing.T) {
 		TargetFile: "/my-project/.tmp/linux_amd64",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `gh release create "v1.2.0" --verify-tag -F "/my-project/.tmp/github.changelog" '/my-project/.tmp/linux_amd64#linux_amd64'`,
+		Command: `gh release create "v1.2.0" --verify-tag -F "/my-project/.tmp/github.changelog" '/my-project/.tmp/linux_amd64#my-module/linux_amd64'`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"GH_TOKEN": "",
@@ -48,7 +48,7 @@ func TestGithubReleasePublishWithChangelog(t *testing.T) {
 
 func TestGithubReleasePublishAutoChangelog(t *testing.T) {
 	sdk := test.Setup(t)
-	sdk.On("ProjectAction", mock.Anything).Return(api.GetProjectActionData(false), nil)
+	sdk.On("ProjectActionDataV1").Return(github.Ptr(api.GetProjectActionData(false)), nil)
 	sdk.On("ArtifactDownload", cidsdk.ArtifactDownloadRequest{
 		ID:         "root|changelog|github.changelog",
 		TargetFile: "/my-project/.tmp/github.changelog",
@@ -68,7 +68,7 @@ func TestGithubReleasePublishAutoChangelog(t *testing.T) {
 		TargetFile: "/my-project/.tmp/linux_amd64",
 	}).Return(nil)
 	sdk.On("ExecuteCommand", cidsdk.ExecuteCommandRequest{
-		Command: `gh release create "v1.2.0" --verify-tag --generate-notes '/my-project/.tmp/linux_amd64#linux_amd64'`,
+		Command: `gh release create "v1.2.0" --verify-tag --generate-notes '/my-project/.tmp/linux_amd64#my-module/linux_amd64'`,
 		WorkDir: "/my-project",
 		Env: map[string]string{
 			"GH_TOKEN": "",
