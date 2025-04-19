@@ -118,7 +118,7 @@ func (a Action) Execute() (err error) {
 	// gitlab conversion
 	if d.Env["NCI_REPOSITORY_HOST_TYPE"] == "gitlab" {
 		// code-quality report
-		codeQualityFile := cidsdk.JoinPath(d.Config.TempDir, "gl-codequality-report.json")
+		codeQualityFile := cidsdk.JoinPath(d.Config.TempDir, "gl-code-quality-report.json")
 		cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 			Command: fmt.Sprintf("gitlab-sarif-converter --type=codequality %q %q", reportFile, codeQualityFile),
 			WorkDir: d.ProjectDir,
