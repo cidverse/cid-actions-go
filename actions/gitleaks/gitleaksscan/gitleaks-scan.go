@@ -33,6 +33,9 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Name: "gitleaks",
 				},
+				{
+					Name: "gitlab-sarif-converter",
+				},
 			},
 		},
 		Output: cidsdk.ActionOutput{
@@ -40,6 +43,10 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Type:   "report",
 					Format: "sarif",
+				},
+				{
+					Type:   "report",
+					Format: "gl-codequality",
 				},
 			},
 		},
@@ -70,14 +77,14 @@ func (a Action) Execute() (err error) {
 	}
 
 	// scan
-	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: strings.Join(opts, " "),
 		WorkDir: ctx.ProjectDir,
 	})
 	if err != nil {
 		return err
-	} else if scanResult.Code != 0 {
-		return fmt.Errorf("gitleaks scan failed, exit code %d", scanResult.Code)
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("gitleaks scan failed, exit code %d", cmdResult.Code)
 	}
 
 	// parse report
@@ -99,6 +106,30 @@ func (a Action) Execute() (err error) {
 	})
 	if err != nil {
 		return err
+	}
+
+	// gitlab conversion
+	if ctx.Env["NCI_REPOSITORY_HOST_TYPE"] == "gitlab" {
+		// code-quality report
+		codeQualityFile := cidsdk.JoinPath(ctx.Config.TempDir, "gl-codequality-report.json")
+		cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command: fmt.Sprintf("gitlab-sarif-converter --type=codequality %q %q", reportFile, codeQualityFile),
+			WorkDir: ctx.ProjectDir,
+		})
+		if err != nil {
+			return err
+		} else if cmdResult.Code != 0 {
+			return fmt.Errorf("gitlab-sarif-converter failed, exit code %d", cmdResult.Code)
+		}
+
+		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+			File:   codeQualityFile,
+			Type:   "report",
+			Format: "gl-codequality",
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

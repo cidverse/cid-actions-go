@@ -58,6 +58,10 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Type:   "report",
 					Format: "sarif",
 				},
+				{
+					Type:   "report",
+					Format: "gl-codequality",
+				},
 			},
 		},
 	}
@@ -120,7 +124,7 @@ func (a Action) Execute() (err error) {
 	}
 
 	// scan
-	scanResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
 		Command: strings.Join(opts, " "),
 		WorkDir: d.ProjectDir,
 		Env: map[string]string{
@@ -130,8 +134,8 @@ func (a Action) Execute() (err error) {
 	})
 	if err != nil {
 		return err
-	} else if scanResult.Code != 0 {
-		return fmt.Errorf("failed, exit code %d. error: %s", scanResult.Code, scanResult.Stderr)
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("failed, exit code %d. error: %s", cmdResult.Code, cmdResult.Stderr)
 	}
 
 	// store report
@@ -143,6 +147,30 @@ func (a Action) Execute() (err error) {
 	})
 	if err != nil {
 		return fmt.Errorf("failed to upload report %s: %w", reportFile, err)
+	}
+
+	// gitlab conversion
+	if d.Env["NCI_REPOSITORY_HOST_TYPE"] == "gitlab" {
+		// code-quality report
+		codeQualityFile := cidsdk.JoinPath(d.Config.TempDir, "gl-codequality-report.json")
+		cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+			Command: fmt.Sprintf("gitlab-sarif-converter --type=codequality %q %q", reportFile, codeQualityFile),
+			WorkDir: d.ProjectDir,
+		})
+		if err != nil {
+			return err
+		} else if cmdResult.Code != 0 {
+			return fmt.Errorf("gitlab-sarif-converter failed, exit code %d", cmdResult.Code)
+		}
+
+		err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+			File:   codeQualityFile,
+			Type:   "report",
+			Format: "gl-codequality",
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

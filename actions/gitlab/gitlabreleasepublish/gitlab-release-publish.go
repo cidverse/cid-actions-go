@@ -149,8 +149,8 @@ func (a Action) Execute() (err error) {
 			TargetFile: targetFile,
 		})
 		if dlErr != nil {
-			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "warn", Message: "failed to retrieve release artifact", Context: map[string]interface{}{"artifact": fmt.Sprintf("%s-%s", artifact.Module, artifact.Name)}})
-			continue
+			_ = a.Sdk.Log(cidsdk.LogMessageRequest{Level: "error", Message: "failed to retrieve release artifact", Context: map[string]interface{}{"artifact": fmt.Sprintf("%s-%s", artifact.Module, artifact.Name)}})
+			return fmt.Errorf("failed to retrieve release artifact: %w", dlErr)
 		}
 
 		reader, err := os.Open(targetFile)
