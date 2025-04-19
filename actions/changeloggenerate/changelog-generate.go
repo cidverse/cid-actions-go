@@ -32,7 +32,7 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		Output: cidsdk.ActionOutput{
 			Artifacts: []cidsdk.ActionArtifactType{
 				{
-					Type:   "changelog",
+					Type: "changelog",
 				},
 			},
 		},
@@ -48,7 +48,7 @@ func (a Action) Execute() error {
 			"discord.changelog",
 		},
 		CommitPattern: []string{
-			"(?P<type>[A-Za-z]+)((?:\\((?P<scope>[^()\\r\\n]*)\\)|\\()?(?P<breaking>!)?)(:\\s?(?P<subject>.*))?",
+			"^(?P<type>[A-Za-z]+)((?:\\((?P<scope>[^()\\r\\n]*)\\)|\\()?(?P<breaking>!)?)(:\\s?(?P<subject>.*))?$",
 		},
 		TitleMaps: map[string]string{
 			"build":    "Build System",

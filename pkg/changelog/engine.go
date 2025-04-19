@@ -71,6 +71,10 @@ func ProcessCommits(config *Config, commits []cidsdk.VCSCommit) TemplateData {
 
 	// process commits
 	for _, commit := range commits { //nolint:gocritic
+		if len(commit.Context) == 0 {
+			continue // skip commits without context
+		}
+
 		// issue linking
 		commit.Message = AddLinks(commit.Message)
 		commit.Description = AddLinks(commit.Description)

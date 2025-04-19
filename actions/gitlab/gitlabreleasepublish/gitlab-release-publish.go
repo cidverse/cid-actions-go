@@ -10,7 +10,6 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cidverseutils/core/ci"
 	"github.com/go-playground/validator/v10"
-	"github.com/jarcoal/httpmock"
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 )
 
@@ -123,12 +122,7 @@ func (a Action) Execute() (err error) {
 	// init client
 	var glab *gitlab.Client
 	if cfg.CIJobToken != "" {
-		clientOptionFuncs := []gitlab.ClientOptionFunc{gitlab.WithBaseURL("https://" + host)}
-		if !httpmock.Disabled() { // mock transport
-			clientOptionFuncs = append(clientOptionFuncs, gitlab.WithHTTPClient(&http.Client{Transport: httpmock.DefaultTransport}))
-		}
-
-		glab, err = gitlab.NewJobClient(cfg.CIJobToken, clientOptionFuncs...)
+		glab, err = gitlab.NewJobClient(cfg.CIJobToken, gitlab.WithBaseURL("https://"+host), gitlab.WithHTTPClient(&http.Client{Transport: http.DefaultTransport}))
 		if err != nil {
 			return fmt.Errorf("failed to create client: %w", err)
 		}
