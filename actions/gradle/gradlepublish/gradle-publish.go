@@ -104,7 +104,8 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 			},
 			Executables: []cidsdk.ActionAccessExecutable{
 				{
-					Name: "java",
+					Name:       "java",
+					Constraint: ">= 21.0.0-0",
 				},
 			},
 			Network: util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle, gradlecommon.NetworkPublish),
@@ -167,6 +168,11 @@ func (a Action) Execute() (err error) {
 		return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
 	}
 
+	gradleWrapperJar := cidsdk.JoinPath(d.Module.ModuleDir, "gradle", "wrapper", "gradle-wrapper.jar")
+	if !a.Sdk.FileExists(gradleWrapperJar) {
+		return fmt.Errorf("gradle wrapper jar not found at %s", gradleWrapperJar)
+	}
+
 	// TODO: run "gradle tasks --all" and check if the "publish" task is available?
 	publishEnv := make(map[string]string)
 	if cfg.GPGSignKeyId != "" {
@@ -194,7 +200,7 @@ func (a Action) Execute() (err error) {
 		`--stacktrace`,
 	}
 	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: gradlecommon.GradleWrapperCommand(strings.Join(publishArgs, " "), d.Module.ModuleDir),
+		Command: gradlecommon.GradleWrapperCommand(strings.Join(publishArgs, " "), gradleWrapperJar),
 		WorkDir: d.Module.ModuleDir,
 		Env:     publishEnv,
 	})

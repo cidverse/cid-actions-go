@@ -2,15 +2,12 @@ package gradlecommon
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 )
 
-const wrapperJar = "gradle/wrapper/gradle-wrapper.jar"
-
-func GradleWrapperCommand(args string, rootDir string) string {
+func GradleWrapperCommand(args string, wrapperJar string) string {
 	appName := "gradlew"
-	return fmt.Sprintf("java -Dorg.gradle.appname=%q -classpath %q org.gradle.wrapper.GradleWrapperMain %s", appName, filepath.Join(rootDir, wrapperJar), args)
+	return fmt.Sprintf("java -Dorg.gradle.appname=%q -classpath %q org.gradle.wrapper.GradleWrapperMain %s", appName, wrapperJar, args)
 }
 
 // GetVersion returns the suggested java artifact version

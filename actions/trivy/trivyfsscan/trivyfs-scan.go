@@ -34,6 +34,9 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:       "trivy",
 					Constraint: "=> 0.61.0",
 				},
+				{
+					Name: "gitlab-sarif-converter",
+				},
 			},
 			Network: []cidsdk.ActionAccessNetwork{
 				{

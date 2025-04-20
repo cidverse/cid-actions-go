@@ -33,8 +33,13 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 		},
 		Access: cidsdk.ActionAccess{
 			Environment: []cidsdk.ActionAccessEnv{},
-			Executables: []cidsdk.ActionAccessExecutable{},
-			Network:     util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle),
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name:       "java",
+					Constraint: ">= 21.0.0-0",
+				},
+			},
+			Network: util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle),
 		},
 		Output: cidsdk.ActionOutput{
 			Artifacts: []cidsdk.ActionArtifactType{
@@ -96,6 +101,11 @@ func (a Action) Execute() (err error) {
 		return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
 	}
 
+	gradleWrapperJar := cidsdk.JoinPath(d.Module.ModuleDir, "gradle", "wrapper", "gradle-wrapper.jar")
+	if !a.Sdk.FileExists(gradleWrapperJar) {
+		return fmt.Errorf("gradle wrapper jar not found at %s", gradleWrapperJar)
+	}
+
 	testArgs := []string{
 		fmt.Sprintf(`-Pversion=%q`, cfg.MavenVersion),
 		`check`,
@@ -105,7 +115,7 @@ func (a Action) Execute() (err error) {
 		`--stacktrace`,
 	}
 	testResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: gradlecommon.GradleWrapperCommand(strings.Join(testArgs, " "), d.Module.ModuleDir),
+		Command: gradlecommon.GradleWrapperCommand(strings.Join(testArgs, " "), gradleWrapperJar),
 		WorkDir: d.Module.ModuleDir,
 	})
 	if err != nil {

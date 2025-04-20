@@ -63,6 +63,9 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Name: "qodana",
 				},
+				{
+					Name: "gitlab-sarif-converter",
+				},
 			},
 		},
 	}

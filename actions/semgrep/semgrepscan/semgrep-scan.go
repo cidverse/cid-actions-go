@@ -45,6 +45,9 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Name: "semgrep",
 				},
+				{
+					Name: "gitlab-sarif-converter",
+				},
 			},
 			Network: []cidsdk.ActionAccessNetwork{
 				{

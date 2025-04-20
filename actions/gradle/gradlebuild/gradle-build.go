@@ -38,8 +38,13 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Description: "Enable verification of the gradle wrapper",
 				},
 			},
-			Executables: []cidsdk.ActionAccessExecutable{},
-			Network:     util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle),
+			Executables: []cidsdk.ActionAccessExecutable{
+				{
+					Name:       "java",
+					Constraint: ">= 21.0.0-0",
+				},
+			},
+			Network: util.MergeActionAccessNetwork(gradlecommon.NetworkJvm, gradlecommon.NetworkGradle),
 		},
 	}
 }
@@ -89,6 +94,11 @@ func (a Action) Execute() (err error) {
 		return fmt.Errorf("gradle wrapper not found at %s", gradleWrapper)
 	}
 
+	gradleWrapperJar := cidsdk.JoinPath(d.Module.ModuleDir, "gradle", "wrapper", "gradle-wrapper.jar")
+	if !a.Sdk.FileExists(gradleWrapperJar) {
+		return fmt.Errorf("gradle wrapper jar not found at %s", gradleWrapperJar)
+	}
+
 	buildArgs := []string{
 		fmt.Sprintf(`-Pversion=%q`, cfg.MavenVersion),
 		`assemble`,
@@ -97,14 +107,14 @@ func (a Action) Execute() (err error) {
 		`--console=plain`,
 		`--stacktrace`,
 	}
-	buildResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
-		Command: gradlecommon.GradleWrapperCommand(strings.Join(buildArgs, " "), d.Module.ModuleDir),
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: gradlecommon.GradleWrapperCommand(strings.Join(buildArgs, " "), gradleWrapperJar),
 		WorkDir: d.Module.ModuleDir,
 	})
 	if err != nil {
 		return err
-	} else if buildResult.Code != 0 {
-		return fmt.Errorf("gradle build failed, exit code %d", buildResult.Code)
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("gradle build failed, exit code %d", cmdResult.Code)
 	}
 
 	return nil
