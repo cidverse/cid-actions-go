@@ -2,6 +2,7 @@ package gradletest
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/cidverse/cid-actions-go/actions/gradle/gradlecommon"
@@ -9,6 +10,8 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/go-playground/validator/v10"
 )
+
+var junitRegex = regexp.MustCompile(`build/test-results/test(?:/[^/]+)*/TEST-.*\.xml$`)
 
 type Action struct {
 	Sdk cidsdk.SDKClient
@@ -50,6 +53,10 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				{
 					Type:   "report",
 					Format: "jacoco",
+				},
+				{
+					Type:   "report",
+					Format: "junit",
 				},
 			},
 		},
@@ -127,7 +134,7 @@ func (a Action) Execute() (err error) {
 	// collect and store jacoco test reports
 	testReports, err := a.Sdk.FileList(cidsdk.FileRequest{
 		Directory:  d.Module.ModuleDir,
-		Extensions: []string{"jacocoTestReport.xml", ".sarif"},
+		Extensions: []string{"jacocoTestReport.xml", ".sarif", ".xml"},
 	})
 	for _, report := range testReports {
 		if strings.HasSuffix(report.Path, cidsdk.JoinPath("build", "reports", "jacoco", "test", "jacocoTestReport.xml")) {
@@ -146,6 +153,16 @@ func (a Action) Execute() (err error) {
 				Module: d.Module.Slug,
 				Type:   "report",
 				Format: "sarif",
+			})
+			if err != nil {
+				return err
+			}
+		} else if junitRegex.MatchString(report.Path) {
+			err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+				File:   report.Path,
+				Module: d.Module.Slug,
+				Type:   "report",
+				Format: "junit",
 			})
 			if err != nil {
 				return err

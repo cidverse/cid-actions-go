@@ -1,7 +1,7 @@
 github.com/charlievieth/fastwalk v1.0.10 h1:0qUbvA2O+K+X+IrTfZTC0UH2DK5MOA+KjVfStAHUnGg=
 github.com/charlievieth/fastwalk v1.0.10/go.mod h1:yGy1zbxog41ZVMcKA/i8ojXLFsuayX5VvwhQVoj9PBI=
-github.com/cidverse/cid-sdk-go v0.0.0-20250414231155-b49bf610b6c3 h1:so4t4ilEPArvRI8G2/hH/4eMeCtWROlabYbnXTvjEMg=
-github.com/cidverse/cid-sdk-go v0.0.0-20250414231155-b49bf610b6c3/go.mod h1:mfBWclQu5ECrRJajg35gEXoFt5fgH8m109BpelTQgSY=
+github.com/cidverse/cid-sdk-go v0.0.0-20250421161315-507a6632dee0 h1:xzve7afZ2+nrkK+3hYU8X9tX+Ru50aZDxBiGyUMlgsI=
+github.com/cidverse/cid-sdk-go v0.0.0-20250421161315-507a6632dee0/go.mod h1:mfBWclQu5ECrRJajg35gEXoFt5fgH8m109BpelTQgSY=
 github.com/cidverse/cidverseutils/compress v0.1.1 h1:VKmDRRGc5rQlzhnJy+ul1yS7OgqfRlVYcZVgidxyKYg=
 github.com/cidverse/cidverseutils/compress v0.1.1/go.mod h1:Xga0FDD+hHizd9zH99+DrbqXTAsblYQVEolYiOCN/Ug=
 github.com/cidverse/cidverseutils/core v0.0.0-20250401202032-ac7521ed90dd h1:sf3GB5whzVAEOhlLBsym1cZ3XrfJAvWorRUpM8qK9lc=

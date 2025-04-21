@@ -32,6 +32,12 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 					Name:       "go",
 					Constraint: "=> 1.16.0",
 				},
+				{
+					Name: "go-junit-report",
+				},
+				{
+					Name: "gocover-cobertura",
+				},
 			},
 			Network: []cidsdk.ActionAccessNetwork{
 				{
@@ -42,6 +48,22 @@ func (a Action) Metadata() cidsdk.ActionMetadata {
 				},
 				{
 					Host: "sum.golang.org:443",
+				},
+			},
+		},
+		Output: cidsdk.ActionOutput{
+			Artifacts: []cidsdk.ActionArtifactType{
+				{
+					Type:   "report",
+					Format: "go-coverage",
+				},
+				{
+					Type:   "report",
+					Format: "junit",
+				},
+				{
+					Type:   "report",
+					Format: "cobertura",
 				},
 			},
 		},
@@ -62,6 +84,8 @@ func (a Action) Execute() error {
 	coverageOut := filepath.Join(ctx.Config.TempDir, "cover.out")
 	coverageJSON := filepath.Join(ctx.Config.TempDir, "cover.json")
 	coverageHTML := filepath.Join(ctx.Config.TempDir, "cover.html")
+	junitReport := filepath.Join(ctx.Config.TempDir, "junit.xml")
+	coberturaReport := filepath.Join(ctx.Config.TempDir, "cobertura.xml")
 
 	// pull dependencies
 	pullResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
@@ -159,6 +183,48 @@ func (a Action) Execute() error {
 		Type:          "report",
 		Format:        "go-coverage",
 		FormatVersion: "html",
+	})
+	if err != nil {
+		return err
+	}
+
+	// gojson to junit conversion
+	cmdResult, err := a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: fmt.Sprintf("go-junit-report -in %q -parser gojson -out %q", coverageJSON, junitReport),
+		WorkDir: ctx.Module.ModuleDir,
+	})
+	if err != nil {
+		return errors.New("go test json to junit conversion failed: " + err.Error())
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("go test json to junit conversion failed, exit code %d", cmdResult.Code)
+	}
+
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		Module: ctx.Module.Slug,
+		File:   junitReport,
+		Type:   "report",
+		Format: "junit",
+	})
+	if err != nil {
+		return err
+	}
+
+	// gocover-cobertura to convert go coverage into the cobertura format
+	cmdResult, err = a.Sdk.ExecuteCommand(cidsdk.ExecuteCommandRequest{
+		Command: fmt.Sprintf("gocover-cobertura %q %q", coverageOut, coberturaReport),
+		WorkDir: ctx.Module.ModuleDir,
+	})
+	if err != nil {
+		return errors.New("go test json to junit conversion failed: " + err.Error())
+	} else if cmdResult.Code != 0 {
+		return fmt.Errorf("go test json to junit conversion failed, exit code %d", cmdResult.Code)
+	}
+
+	err = a.Sdk.ArtifactUpload(cidsdk.ArtifactUploadRequest{
+		Module: ctx.Module.Slug,
+		File:   coberturaReport,
+		Type:   "report",
+		Format: "cobertura",
 	})
 	if err != nil {
 		return err
