@@ -22,7 +22,7 @@ require (
 	github.com/shomali11/parallelizer v0.0.0-20220717173222-a6776fbf40a9
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	gitlab.com/gitlab-org/api/client-go v0.127.0
+	gitlab.com/gitlab-org/api/client-go v0.128.0
 	golang.org/x/oauth2 v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
