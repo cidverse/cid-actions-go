@@ -2,7 +2,7 @@ module github.com/cidverse/cid-actions-go
 
 go 1.24
 
-toolchain go1.24.0
+toolchain go1.24.3
 
 require (
 	github.com/cidverse/cid-sdk-go v0.0.0-20250421161315-507a6632dee0
