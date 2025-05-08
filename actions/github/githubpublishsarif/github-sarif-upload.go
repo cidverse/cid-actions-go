@@ -9,7 +9,7 @@ import (
 	cidsdk "github.com/cidverse/cid-sdk-go"
 	"github.com/cidverse/cidverseutils/compress"
 	"github.com/go-playground/validator/v10"
-	"github.com/google/go-github/v71/github"
+	"github.com/google/go-github/v72/github"
 	"golang.org/x/oauth2"
 )
 
